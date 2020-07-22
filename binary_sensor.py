@@ -46,7 +46,7 @@ class SomneoAlarm(BinarySensorEntity):
     @property
     def unique_id(self):
         """Return the id of this sensor."""
-        return self._data.serial + '_' + self._name
+        return self._data.serial + '_' + self._alarm
 
     @property
     def device_info(self):

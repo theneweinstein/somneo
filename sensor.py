@@ -128,7 +128,8 @@ class SomneoNextAlarmSensor(Entity):
         next_alarm = None
         for alarm in list(self._data.alarm_data):
             if self._data.alarm_data[alarm]['enabled'] == True:
-                nu = datetime.datetime.now()
+                nu_tijd = datetime.datetime.now()
+                nu_dag = datetime.date.today()
                 alarm_time = self._data.alarm_data[alarm]['time']
                 alarm_days_int = self._data.alarm_data[alarm]['days']
                 alarm_days = []
@@ -147,14 +148,22 @@ class SomneoNextAlarmSensor(Entity):
                 if alarm_days_int & 128:
                     alarm_days.append(7)
 
-                day_today = nu.isoweekday()
+                day_today = nu_tijd.isoweekday()
 
-                for d in range(0,7):
-                    if day_today + d in alarm_days:
-                        alarm_time_full = datetime.datetime.combine(nu, alarm_time) + datetime.timedelta(days=d)
-                        if alarm_time_full > nu:
-                            new_next_alarm = alarm_time_full
-                            break
+                
+                if not alarm_days:
+                    alarm_time_full = datetime.datetime.combine(nu_dag, alarm_time)
+                    if alarm_time_full > nu_tijd:
+                        new_next_alarm = alarm_time_full
+                    elif alarm_time_full + datetime.timedelta(days=1) > nu_tijd:
+                        new_next_alarm = alarm_time_full
+                else:
+                    for d in range(0,7):
+                        if day_today + d in alarm_days:
+                            alarm_time_full = datetime.datetime.combine(nu_dag, alarm_time) + datetime.timedelta(days=d)
+                            if alarm_time_full > nu_tijd:
+                                new_next_alarm = alarm_time_full
+                                break                
                     
                 if next_alarm:
                     if new_next_alarm < next_alarm:
