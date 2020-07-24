@@ -1,0 +1,10 @@
+{
+    "domain": "somneo",
+    "name": "Philips Somneo",
+    "documentation": "https://github.com/theneweinstein/somneo",
+    "dependencies": [],
+    "after_dependencies": [],
+    "codeowners": [],
+    "requirements": [],
+    "config_flow": true
+}
