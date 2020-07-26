@@ -24,6 +24,10 @@ SENSOR_TYPES = {
     "noise": ["noise", "db"]
 }
 
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidty': UNIT_PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+
+PLATFORMS = ['light', 'binary_sensor', 'sensor']
+
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
