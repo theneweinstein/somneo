@@ -9,23 +9,38 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Somneo Light platform."""
 
-    name = discovery_info['name']
-    somneo_light = SomneoLight(name, hass.data[somneo.DOMAIN])
-    somneo_night_light = SomneoNightLight(name, hass.data[somneo.DOMAIN])
-    add_entities([somneo_light, somneo_night_light])
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """ Add Somneo light from config_entry."""
+    name = config_entry.data[CONF_NAME]
+    data = hass.data[DOMAIN]    
+    dev_info = data.dev_info
+
+    device_info = {
+        "identifiers": {(DOMAIN, dev_info['serial'])},
+        "name": 'Somneo',
+        "manufacturer": dev_info['manufacturer'],
+        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
+    }        
+
+    async_add_entities(
+        [
+            SomneoLight(name, data, device_info, dev_info['serial']),
+            SomneoNightLight(name, data, device_info, dev_info['serial'])
+        ]
+    )
 
 class SomneoLight(LightEntity):
     """Representation of an Somneo Light."""
 
-    def __init__(self, name, data):
+    def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""
         self._name = name
         self._data = data
         self._state = None
         self._brightness = None
+        self._device_info = device_info
+        self._serial = serial
 
     @property
     def name(self):
@@ -54,18 +69,12 @@ class SomneoLight(LightEntity):
     @property
     def unique_id(self):
         """Return the id of this light."""
-        return self._data.serial
+        return self._serial + "_light"
 
     @property
     def device_info(self):
         """Return the device_info of the device."""
-        return {
-            "identifiers": {(DOMAIN, self.unique_id)},
-            "name": self.name,
-            "manufacturer": self._data.manufacturer,
-            "model": f"{self._data.model} {self._data.modelnumber}",
-            "via_device": (DOMAIN, self._data.serial),
-        }
+        return self._device_info
 
     def turn_on(self, **kwargs):
         """Instruct the light to turn on."""
@@ -74,30 +83,32 @@ class SomneoLight(LightEntity):
         else:
             brightness = None
 
-        self._data.toggle_light(True, brightness)
+        self._data.somneo.toggle_light(True, brightness)
         self._state = True
         self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs):
         """Instruct the light to turn off."""
-        self._data.toggle_light(False)
+        self._data.somneo.toggle_light(False)
         self._state = False
         self.schedule_update_ha_state()
 
-    def update(self):
+    async def async_update(self):
         """Fetch new state data for this light."""
-        self._data.update()
-        self._state = self._data.light_data['onoff']
-        self._brightness = int(int(self._data.light_data['ltlvl'])/25*255)
+        await self._data.update()
+        self._state, self._brightness = self._data.somneo.light_status()
 
 class SomneoNightLight(LightEntity):
     """Representation of an Somneo Light."""
 
-    def __init__(self, name, data):
+    def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""
         self._name = name + "_night"
-        self._state = None
         self._data = data
+        self._state = None
+        self._brightness = None
+        self._device_info = device_info
+        self._serial = serial
 
     @property
     def name(self):
@@ -121,32 +132,26 @@ class SomneoNightLight(LightEntity):
     @property
     def unique_id(self):
         """Return the id of this light."""
-        return self._data.serial + '_night'
+        return self._serial + '_night'
 
     @property
     def device_info(self):
         """Return the device_info of the device."""
-        return {
-            "identifiers": {(DOMAIN, self.unique_id)},
-            "name": self.name,
-            "manufacturer": self._data.manufacturer,
-            "model": f"{self._data.model} {self._data.modelnumber}",
-            "via_device": (DOMAIN, self._data.serial),
-        }
+        return self._device_info
 
     def turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        self._data.toggle_night_light(True)
+        self._data.somneo.toggle_night_light(True)
         self._state = True
         self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs):
         """Instruct the light to turn off."""
-        self._data.toggle_night_light(False)
+        self._data.somneo.toggle_night_light(False)
         self._state = False
         self.schedule_update_ha_state()
 
-    def update(self):
+    async def async_update(self):
         """Fetch new state data for this light."""
-        self._data.update()
-        self._state = self._data.light_data['ngtlt']
+        await self._data.update()
+        self._state = self._data.somneo.night_light_status()

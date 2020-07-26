@@ -10,22 +10,34 @@ from .const import *
 _LOGGER = logging.getLogger(__name__)
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Somneo binary sensor platform."""
-    name = discovery_info['name']
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """ Add Somneo sensors from config_entry."""
+    name = config_entry.data[CONF_NAME]
+    data = hass.data[DOMAIN]    
+    dev_info = data.dev_info
 
-    dev = []
-    for alarm in list(hass.data[DOMAIN].alarm_data):
-        dev.append(SomneoAlarm(name, hass.data[DOMAIN], alarm))
-    add_entities(dev, True)
+    device_info = {
+        "identifiers": {(DOMAIN, dev_info['serial'])},
+        "name": 'Somneo',
+        "manufacturer": dev_info['manufacturer'],
+        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
+    } 
+
+    alarms = []
+    for alarm in list(data.somneo.alarms()):
+        alarms.append(SomneoAlarm(name, data, device_info, dev_info['serial'], alarm))
+
+    async_add_entities(alarms, True)
 
 class SomneoAlarm(BinarySensorEntity):
     """Representation of a binary  for alarms."""
-    def __init__(self, name, data, alarm):
+    def __init__(self, name, data, device_info, serial, alarm):
         """Initialize the sensor."""
         self._data = data
         self._name = name + "_" + alarm
         self._alarm = alarm
+        self._device_info = device_info
+        self._serial = serial
         self._state = None
     
     @property
@@ -46,50 +58,26 @@ class SomneoAlarm(BinarySensorEntity):
     @property
     def unique_id(self):
         """Return the id of this sensor."""
-        return self._data.serial + '_' + self._alarm
+        return self._serial + '_' + self._alarm
 
     @property
     def device_info(self):
         """Return the device_info of the device."""
-        return {
-            "identifiers": {(DOMAIN, self.unique_id)},
-            "name": self.name,
-            "manufacturer": self._data.manufacturer,
-            "model": f"{self._data.model} {self._data.modelnumber}",
-            "via_device": (DOMAIN, self._data.serial),
-        }
+        return self._device_info
 
     @property
     def device_state_attributes(self):
         """Return the state attributes of the sensor."""
         attr = {}
 
-        attr['time'] = self._data.alarm_data[self._alarm]['time'].isoformat()
-
-        days = []
-        day_int = self._data.alarm_data[self._alarm]['days']
-        if day_int & 2:
-            days.append('mon')
-        if day_int & 4:
-            days.append('tue')
-        if day_int & 8:
-            days.append('wed')
-        if day_int & 16:
-            days.append('thu')
-        if day_int & 32:
-            days.append('fri')
-        if day_int & 64:
-            days.append('sat')
-        if day_int & 128:
-            days.append('sun')
-
-        attr['days'] = days
-
+        attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
+        
         return attr
     
-    def update(self):
+    async def async_update(self):
         """Get the latest data and updates the states."""
-        if self._data.alarm_data[self._alarm]['enabled'] == True:
+        await self._data.update()
+        if self._data.somneo.alarms()[self._alarm] == True:
             self._state = STATE_ON
         else:
             self._state = STATE_OFF
