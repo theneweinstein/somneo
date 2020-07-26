@@ -14,14 +14,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """ Add Somneo sensors from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]    
-            
-    dev_info = await hass.async_add_executor_job(data.somneo.get_device_info)
+    dev_info = data.dev_info
+
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
         "name": 'Somneo',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    }
+    } 
 
     sensors = []
     for sensor in list(SENSORS):

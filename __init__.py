@@ -38,6 +38,7 @@ async def async_setup_entry(hass, config_entry):
     try:
         
         hass.data[DOMAIN] = SomneoData(hass, config_entry)
+        await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
 
         for platform in PLATFORMS:
@@ -78,6 +79,11 @@ class SomneoData:
         self._hass = hass
         self._config_entry = config_entry
         self.somneo = Somneo(config_entry.data[CONF_HOST])
+        self.dev_info = None
+
+    async def get_device_info(self):
+        """Get device information."""
+        self.dev_info = await self._hass.async_add_executor_job(self.somneo.get_device_info)
 
     @Throttle(UPDATE_TIME)
     async def update(self):

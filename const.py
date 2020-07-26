@@ -17,14 +17,7 @@ ALARMS = 'alarms'
 
 UPDATE_TIME = timedelta(seconds=60)
 
-SENSOR_TYPES = {
-    "temperature": ["temperature", TEMP_CELSIUS],
-    "humidity": ["humidity", UNIT_PERCENTAGE],
-    "luminance": ["luminance", "lux"],
-    "noise": ["noise", "db"]
-}
-
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidty': UNIT_PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': UNIT_PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
 
 PLATFORMS = ['light', 'binary_sensor', 'sensor']
 
@@ -32,7 +25,6 @@ CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Required(CONF_HOST): cv.string,
-        vol.Optional(CONF_SENS, default=list(SENSOR_TYPES)): [vol.In(SENSOR_TYPES)],
     })
 }, extra=vol.ALLOW_EXTRA)
 
