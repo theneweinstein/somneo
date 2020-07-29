@@ -6,8 +6,7 @@ from homeassistant.const import (TEMP_CELSIUS, UNIT_PERCENTAGE)
 DOMAIN = 'somneo'
 VERSION = "0.3"
 
-DEFAULT_NAME = "somneo"
-DEFAULT_HOST = "192.168.2.131"
+DEFAULT_NAME = "Somneo"
 
 CONF_NAME = 'name'
 CONF_HOST = 'host'
