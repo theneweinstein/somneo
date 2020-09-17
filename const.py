@@ -2,7 +2,7 @@ import voluptuous as vol
 from datetime import timedelta
 
 from homeassistant.helpers import config_validation as cv
-from homeassistant.const import (TEMP_CELSIUS, UNIT_PERCENTAGE)
+from homeassistant.const import (TEMP_CELSIUS, PERCENTAGE)
 DOMAIN = 'somneo'
 VERSION = "0.3"
 
