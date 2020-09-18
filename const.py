@@ -3,10 +3,10 @@ from datetime import timedelta
 
 from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (TEMP_CELSIUS, PERCENTAGE)
-DOMAIN = 'somneo'
-VERSION = "0.3"
+DOMAIN = 'smartsleep'
+VERSION = "0.4"
 
-DEFAULT_NAME = "Somneo"
+DEFAULT_NAME = "SmartSleep"
 
 CONF_NAME = 'name'
 CONF_HOST = 'host'
@@ -30,6 +30,3 @@ CONFIG_SCHEMA = vol.Schema({
 
 NOTIFICATION_ID = "somneosensor_notification"
 NOTIFICATION_TITLE = "SomneoSensor Setup"
-
-
-
