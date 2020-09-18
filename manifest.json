@@ -1,7 +1,7 @@
 {
-    "domain": "somneo",
-    "name": "Philips Somneo",
-    "documentation": "https://github.com/theneweinstein/somneo",
+    "domain": "smartsleep",
+    "name": "Phillips SmartSleep",
+    "documentation": "https://github.com/wylek/smartsleep",
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": [],

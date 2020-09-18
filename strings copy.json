@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Philips Somneo",
-        "description": "Set up Philips Somneo integration.",
+        "title": "Phillips SmartSleep",
+        "description": "Set up Phillips SmartSleep integration for Home Assistant.",
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
           "name" : "[%key:common::config_flow::data::name%]"

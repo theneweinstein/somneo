@@ -1,13 +1,13 @@
-# Somneo custom component
-Home Assistant custom component for Philips Someo. This integration let's you control the light of the Somneo and reads the following sensors: temperature, humidity, luminance and noise. Furthermore, it provides the alarms set on your Somneo instance as binary sensors and provides a sensor with the first upcoming alarm. 
+# SmartSleep custom component for Home Assistant
+Home Assistant custom component for Philips SmartSleep (Somneo). This integration lets you control the SmartSleep light and reads the following sensors: temperature, humidity, luminance and noise. It also provides the alarms set on your SmartSleep instance as binary sensors and provides a sensor with the first upcoming alarm.
 
 # Installation
-On your Home Assistant instance, go to /custom_components. Now clone this respository: ```git clone https://github.com/theneweinstein/somneo.git somneo```. Alternatively you can manually copy the files into the somneo folder.
+On your Home Assistant instance, go to /custom_components and clone this repository. Alternatively you can manually copy the files into the smartsleep folder.
 
 # Configuration
-After installation you an either use a config flow to set-up a Somneo device or add:
+After installation you an either use a config flow to set-up a SmartSleep device or add:
 ```
-somneo:
+smartsleep:
   host: IP-ADDRESS (required)
   name: NAME (optional)
 ```
