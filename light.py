@@ -2,7 +2,7 @@
 import logging
 
 # Import the device class from the component that you want to support
-from custom_components import somneo
+from custom_components import smartsleep
 from homeassistant.components.light import (LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
 
 from .const import *

@@ -1,7 +1,7 @@
 """Platform for binary sensor integration."""
 import logging
 
-from custom_components import somneo
+from custom_components import smartsleep
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.components.binary_sensor import BinarySensorEntity
 

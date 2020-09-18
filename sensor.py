@@ -1,7 +1,7 @@
 """Platform for sensor integration."""
 import logging
 
-from custom_components import somneo
+from custom_components import smartsleep
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE
 
@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """ Add Somneo sensors from config_entry."""
     name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]    
+    data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
@@ -21,7 +21,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         "name": 'Somneo',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    } 
+    }
 
     sensors = []
     for sensor in list(SENSORS):
@@ -29,7 +29,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     sensors.append(SomneoNextAlarmSensor(name, data, device_info, dev_info['serial']))
 
     async_add_entities(sensors, True)
-    
+
 
 class SomneoSensor(Entity):
     """Representation of a Sensor."""
@@ -42,16 +42,16 @@ class SomneoSensor(Entity):
         self._state = None
         self._device_info = device_info
         self._serial = serial
-    
+
     @property
     def name(self):
         """Return the name of the sensor."""
         return self._name
-    
+
     @property
     def state(self):
         """Return the state of the sensor."""
-    
+
         return self._state
     @property
     def unit_of_measurement(self):
@@ -79,7 +79,7 @@ class SomneoSensor(Entity):
     def device_info(self):
         """Return the device_info of the device."""
         return self._device_info
-    
+
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
@@ -102,12 +102,12 @@ class SomneoNextAlarmSensor(Entity):
         self._device_info = device_info
         self._serial = serial
         self._state = None
-    
+
     @property
     def name(self):
         """Return the name of the sensor."""
         return self._name
-    
+
     @property
     def state(self):
         """Return the state of the sensor."""
@@ -122,7 +122,7 @@ class SomneoNextAlarmSensor(Entity):
     def device_info(self):
         """Return the device_info of the device."""
         return self._device_info
-    
+
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
