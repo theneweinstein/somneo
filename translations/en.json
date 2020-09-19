@@ -1,0 +1,14 @@
+{
+    "config": {
+      "step": {
+        "user": {
+          "title": "Philips Somneo",
+          "description": "Set up Philips Somneo integration.",
+          "data": {
+            "host": "Host",
+            "name" : "Name"
+          }
+        }
+      }
+    }
+  }

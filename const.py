@@ -2,12 +2,11 @@ import voluptuous as vol
 from datetime import timedelta
 
 from homeassistant.helpers import config_validation as cv
-from homeassistant.const import (TEMP_CELSIUS, UNIT_PERCENTAGE)
+from homeassistant.const import (TEMP_CELSIUS, PERCENTAGE)
 DOMAIN = 'somneo'
 VERSION = "0.3"
 
-DEFAULT_NAME = "somneo"
-DEFAULT_HOST = "192.168.2.131"
+DEFAULT_NAME = "Somneo"
 
 CONF_NAME = 'name'
 CONF_HOST = 'host'
@@ -17,7 +16,7 @@ ALARMS = 'alarms'
 
 UPDATE_TIME = timedelta(seconds=60)
 
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': UNIT_PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
 
 PLATFORMS = ['light', 'binary_sensor', 'sensor']
 
