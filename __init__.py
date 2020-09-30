@@ -19,7 +19,7 @@ from .const import *
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass, config):
-    """Set up the Somneo component from yaml."""
+    """Set up the SmartSleep component from yaml."""
     if not hass.config_entries.async_entries(DOMAIN) and config.get(DOMAIN, {}):
         # No config entry exists and configuration.yaml config exists, trigger the import flow.
         host = config[DOMAIN][CONF_HOST]
@@ -29,14 +29,14 @@ async def async_setup(hass, config):
                 DOMAIN, context={"source": SOURCE_IMPORT}, data={CONF_HOST: host, CONF_NAME: name}
             )
         )
-    
+
     return True
 
 
 async def async_setup_entry(hass, config_entry):
-    """Setup the Somneo component."""
+    """Setup the SmartSleep component."""
     try:
-        
+
         hass.data[DOMAIN] = SomneoData(hass, config_entry)
         await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
@@ -46,13 +46,13 @@ async def async_setup_entry(hass, config_entry):
                 hass.config_entries.async_forward_entry_setup(config_entry, platform)
             )
 
-        
+
         #### NOTHING BELOW THIS LINE ####
         # If Success:
-        _LOGGER.info("Somneo has been set up!")
+        _LOGGER.info("SmartSleep has been set up!")
         return True
     except Exception as ex:
-        _LOGGER.error('Error while initializing Somneo, exception: {}'.format(str(ex)))
+        _LOGGER.error('Error while initializing SmartSleep, exception: {}'.format(str(ex)))
         hass.components.persistent_notification.create(
             f'Error: {str(ex)}<br />Fix issue and restart',
             title=NOTIFICATION_TITLE,
@@ -72,7 +72,7 @@ async def async_unload_entry(hass, config_entry):
 
 
 class SomneoData:
-    """Handle for getting latest data from Somneo."""
+    """Handle for getting latest data from SmartSleep."""
 
     def __init__(self, hass, config_entry):
         """Initialize."""

@@ -23,7 +23,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.name = None
 
     async def async_step_user(self, info):
-        """Hanlde the initial step."""
+        """Handle the initial step."""
         errors = {}
 
         if info is not None:
@@ -33,7 +33,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors[CONF_HOST] = "invalid_host"
 
         return self.async_show_form(
-            step_id="user", 
+            step_id="user",
             data_schema=vol.Schema({vol.Required(CONF_HOST): str, vol.Optional(CONF_NAME, default=DEFAULT_NAME): str})
         )
 
