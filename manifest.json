@@ -1,6 +1,6 @@
 {
     "domain": "smartsleep",
-    "name": "Phillips SmartSleep",
+    "name": "Philips SmartSleep",
     "documentation": "https://github.com/wylek/smartsleep",
     "dependencies": [],
     "after_dependencies": [],

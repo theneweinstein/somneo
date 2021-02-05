@@ -18,9 +18,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
+        "friendlyName": dev_info['friendlyName'],
         "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
+        "model": f"{dev_info['model']} {dev_info['modelNumber']}",
     }
 
     sensors = []

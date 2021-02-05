@@ -2,8 +2,8 @@
     "config": {
       "step": {
         "user": {
-          "title": "Phillips SmartSleep",
-          "description": "Installeer Phillips SmartSleep integratie.",
+          "title": "Philips SmartSleep",
+          "description": "Installeer Philips SmartSleep integratie.",
           "data": {
             "host": "IP-adres",
             "name" : "Naam"
