@@ -29,4 +29,4 @@ CONFIG_SCHEMA = vol.Schema({
 
 
 NOTIFICATION_ID = "somneosensor_notification"
-NOTIFICATION_TITLE = "SomneoSensor Setup"
+NOTIFICATION_TITLE = "SmartSleep Sensor Setup"
