@@ -224,4 +224,4 @@ class SomneoSunset(LightEntity):
     async def async_update(self):
         """Fetch new state data for sunset mode."""
         await self._data.update()
-        self._state = self._data.somneo.sunset_status()
+        self._state, self._brightness = self._data.somneo.sunset_status()
