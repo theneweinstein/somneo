@@ -163,7 +163,7 @@ class SomneoSunset(LightEntity):
 
     def __init__(self, name, data, device_info, serial):
         """Initialize a Sunset mode entity."""
-        self._name = "Sunset"
+        self._name = name + "_sunset"
         self._data = data
         self._state = None
         self._timer = None
