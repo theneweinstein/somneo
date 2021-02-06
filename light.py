@@ -27,7 +27,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(
         [
             SomneoLight(name, data, device_info, dev_info['serial']),
-            SomneoNightLight(name, data, device_info, dev_info['serial'])
+            SomneoNightLight(name, data, device_info, dev_info['serial']),
             SomneoSunset(name, data, device_info, dev_info['serial'])
         ]
     )
