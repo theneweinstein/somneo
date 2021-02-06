@@ -16,7 +16,7 @@ ALARMS = 'alarms'
 
 UPDATE_TIME = timedelta(seconds=60)
 
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db', 'sunset': None}
 
 PLATFORMS = ['light', 'binary_sensor', 'sensor']
 
