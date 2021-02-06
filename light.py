@@ -225,4 +225,3 @@ class SomneoSunset(LightEntity):
         """Fetch new state data for sunset mode."""
         await self._data.update()
         self._state = self._data.somneo.sunset_status()
-        self._state = self._data.somneo.sunset_timer_status()
