@@ -162,8 +162,8 @@ class SomneoSunset(LightEntity):
     """Representation of the SmartSleep's sunset (dusk) mode."""
 
     def __init__(self, name, data, device_info, serial):
-        """Initialize a SomneoSunset."""
-        self._name = name
+        """Initialize a Sunset mode entity."""
+        self._name = "Sunset"
         self._data = data
         self._state = None
         self._brightness = None
@@ -174,6 +174,11 @@ class SomneoSunset(LightEntity):
     def name(self):
         """Return the display name of this light."""
         return self._name
+
+    @property
+    def brightness(self):
+        """Return the brightness of the light setting in sunset mode, between 0..255."""
+        return self._brightness
 
     @property
     def is_on(self):
@@ -187,7 +192,7 @@ class SomneoSunset(LightEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return 0
+        return SUPPORT_BRIGHTNESS
 
     @property
     def unique_id(self):
@@ -201,7 +206,11 @@ class SomneoSunset(LightEntity):
 
     def turn_on(self, **kwargs):
         """Instruct the sunset mode to turn on."""
-        self._data.somneo.toggle_sunset(True)
+        if ATTR_BRIGHTNESS in kwargs:
+            brightness = kwargs[ATTR_BRIGHTNESS]
+        else:
+            brightness = None
+        self._data.somneo.toggle_sunset(True, brightness)
         self._state = True
         self.schedule_update_ha_state()
 
