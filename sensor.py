@@ -67,7 +67,7 @@ class SomneoSensor(Entity):
     @property
     def device_class(self):
         """Return the class of this device, from component DEVICE_CLASSES."""
-        if self._type == "sunset"
+        if self._type == "sunset":
             return None
         if self._type == "temperature":
             return DEVICE_CLASS_TEMPERATURE
