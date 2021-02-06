@@ -18,9 +18,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
+        "friendlyName": dev_info['friendlyName'],
         "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
+        "model": f"{dev_info['model']} {dev_info['modelNumber']}",
     }
 
     async_add_entities(
@@ -31,7 +32,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     )
 
 class SomneoLight(LightEntity):
-    """Representation of an Somneo Light."""
+    """Representation of an SmartSleep Light."""
 
     def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""
@@ -99,7 +100,7 @@ class SomneoLight(LightEntity):
         self._state, self._brightness = self._data.somneo.light_status()
 
 class SomneoNightLight(LightEntity):
-    """Representation of an Somneo Light."""
+    """Representation of a SmartSleep Light."""
 
     def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""

@@ -13,15 +13,16 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """ Add Somneo sensors from config_entry."""
     name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]    
+    data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
+        "friendlyName": dev_info['friendlyName'],
         "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    } 
+        "model": f"{dev_info['model']} {dev_info['modelNumber']}",
+    }
 
     alarms = []
     for alarm in list(data.somneo.alarms()):
@@ -39,7 +40,7 @@ class SomneoAlarm(BinarySensorEntity):
         self._device_info = device_info
         self._serial = serial
         self._state = None
-    
+
     @property
     def name(self):
         """Return the name of the sensor."""
@@ -49,7 +50,7 @@ class SomneoAlarm(BinarySensorEntity):
     def is_on(self):
         """Return true if sensor is on."""
         return self._state
-    
+
     @property
     def state(self):
         """Return the state of the sensor."""
@@ -71,9 +72,9 @@ class SomneoAlarm(BinarySensorEntity):
         attr = {}
 
         attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
-        
+
         return attr
-    
+
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
@@ -81,7 +82,3 @@ class SomneoAlarm(BinarySensorEntity):
             self._state = STATE_ON
         else:
             self._state = STATE_OFF
-
-
-
-

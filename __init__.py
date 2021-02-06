@@ -1,4 +1,4 @@
-""" Philips Somneo """
+""" Philips SmartSleep """
 import asyncio
 import datetime
 import logging
@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 from homeassistant.helpers import discovery
 from homeassistant.util import Throttle
 from homeassistant.config_entries import SOURCE_IMPORT
-
 
 from pysomneo import Somneo
 
