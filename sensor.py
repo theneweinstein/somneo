@@ -86,8 +86,9 @@ class SomneoSensor(Entity):
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        if self._type == "sunset":
-            self._state = self._data.somneo.sunset()
+        if self._type == "sunset_timer":
+            tmp = self._data.somneo.sunset_timer_status()
+            self._state = str(tmp[0]) + ":" + str(tmp[1])
         if self._type == "temperature":
             self._state = self._data.somneo.temperature()
         if self._type == "humidity":
