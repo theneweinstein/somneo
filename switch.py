@@ -51,7 +51,7 @@ class SomneoRadioSwitch(SwitchEntity):
     @property
     def is_on(self):
         """Return true if switch is on."""
-        return self._state
+        return self._state['onoff']
 
     @property
     def should_poll(self):
@@ -65,7 +65,7 @@ class SomneoRadioSwitch(SwitchEntity):
     @property
     def unique_id(self):
         """Return the id of this switch."""
-        return self._serial + '_night'
+        return self._serial + '_radio'
 
     @property
     def device_info(self):
