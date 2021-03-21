@@ -18,7 +18,7 @@ UPDATE_TIME = timedelta(seconds=60)
 
 SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db', 'sunset_timer': None}
 
-PLATFORMS = ['light', 'binary_sensor', 'sensor']
+PLATFORMS = ['light', 'binary_sensor', 'sensor', 'switch']
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
