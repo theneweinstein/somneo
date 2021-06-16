@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 from homeassistant.helpers import discovery
 from homeassistant.util import Throttle
 from homeassistant.config_entries import SOURCE_IMPORT
+from homeassistant.exceptions import PlatformNotReady
 
 
 from pysomneo import Somneo
@@ -51,6 +52,9 @@ async def async_setup_entry(hass, config_entry):
         # If Success:
         _LOGGER.info("Somneo has been set up!")
         return True
+    except requests.RequestException as ex:
+        _LOGGER.error('Error while initializing Somneo, exception: {}'.format(str(ex)))
+        raise PlatformNotReady
     except Exception as ex:
         _LOGGER.error('Error while initializing Somneo, exception: {}'.format(str(ex)))
         hass.components.persistent_notification.create(
