@@ -6,6 +6,6 @@
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": [],
-    "requirements": ["pysomneo==0.1.12"],
+    "requirements": ["pysomneo==0.1.14"],
     "config_flow": true
 }
