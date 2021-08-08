@@ -23,6 +23,7 @@ class Somneo(object):
         self.sensor_data = None
         self.alarm_data = dict()
         self.alarm_toggle_data = dict()
+        self.alarm_time_data = dict()
 
     def get_device_info(self):
         """ Get Device information """
@@ -89,6 +90,50 @@ class Somneo(object):
             payload['ltlvl'] = int(brightness/255 * 25)
         self._put('wulgt', payload = payload)
 
+    def set_time_alarm(self, hour, minute, alarm):
+        #_LOGGER.error("set_time_alarm position " + str(self.alarm_data[alarm]['position'])
+        #              + str(hour) + ":" + str(minute) + " days " + str(self.alarm_data[alarm]['days']))
+
+        payload = dict()
+        self.alarm_data[alarm]['time'] = datetime.time(int(hour), int(minute))
+        payload['prfnr'] = self.alarm_data[alarm]['position']
+        payload['prfen'] = self.alarm_data[alarm]['enabled']
+        payload['prfvs'] = True
+        payload['almhr'] = int(hour)
+        payload['almmn'] = int(minute)
+        payload['pwrsz'] = 0
+        payload['pszhr'] = 0
+        payload['pszmn'] = 0
+        payload['ctype'] = 0
+        payload['curve'] = 20
+        payload['durat'] = 30
+        payload['daynm'] = self.alarm_data[alarm]['days']
+        payload['snddv'] = "wus"
+        payload['snztm'] = 0
+        self._put('wualm/prfwu', payload=payload)
+
+    def set_delete_alarm(self):
+        #_LOGGER.error("set_time_alarm position " + str(self.alarm_data[alarm]['position'])
+        #              + str(hour) + ":" + str(minute) + " days " + str(self.alarm_data[alarm]['days']))
+
+        payload = dict()
+        #self.alarm_data[alarm]['time'] = datetime.time(int(hour), int(minute))
+        payload['prfnr'] = 4
+        payload['prfen'] = True
+        payload['prfvs'] = True
+        payload['almhr'] = 9
+        payload['almmn'] = 30
+        payload['pwrsz'] = 0
+        payload['pszhr'] = 0
+        payload['pszmn'] = 0
+        payload['ctype'] = 0
+        payload['curve'] = 20
+        payload['durat'] = 30
+        payload['daynm'] = 254
+        payload['snddv'] = "wus"
+        payload['snztm'] = 0
+        self._put('wualm/prfwu', payload=payload)
+
     def toggle_alarm(self, status, alarm):
         """ Toggle the light on or off """
         self.alarm_data[alarm]['enabled'] = status
@@ -103,6 +148,7 @@ class Somneo(object):
         payload = self.light_data
         payload['onoff'] = False
         payload['ngtlt'] = state
+        self.set_delete_alarm()
         self._put('wulgt', payload = payload)
 
     def update(self):
@@ -117,12 +163,18 @@ class Somneo(object):
         # Get alarm data
         enabled_alarms = self._get('wualm/aenvs')
         time_alarms = self._get('wualm/aalms')
+        prop_alarms = self._get('wualm/prfwu')
+        _LOGGER.error(enabled_alarms)
+        _LOGGER.error("------UPDATE!!!!!!-----")
+        _LOGGER.error(time_alarms)
+        _LOGGER.error(prop_alarms)
         for alarm, enabled in enumerate(enabled_alarms['prfen']):
             alarm_name = 'alarm' + str(alarm)
             self.alarm_data[alarm_name] = dict()
             self.alarm_data[alarm_name]['position'] = alarm + 1
             self.alarm_data[alarm_name]['enabled'] = bool(enabled)
-            self.alarm_data[alarm_name]['time'] = datetime.time(int(time_alarms['almhr'][alarm]), int(time_alarms['almmn'][alarm]))
+            self.alarm_data[alarm_name]['time'] = datetime.time(int(time_alarms['almhr'][alarm]),
+                                                                int(time_alarms['almmn'][alarm]))
             self.alarm_data[alarm_name]['days'] = int(time_alarms['daynm'][alarm])
 
     def light_status(self):

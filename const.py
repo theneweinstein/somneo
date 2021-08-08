@@ -13,12 +13,14 @@ CONF_HOST = 'host'
 CONF_SENS = 'sensors'
 
 ALARMS = 'alarms'
+HOURS = 'hours'
+MINUTES = 'minutes'
 
 UPDATE_TIME = timedelta(seconds=60)
 
 SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
 
-PLATFORMS = ['light', 'binary_sensor', 'sensor', 'switch']
+PLATFORMS = ['light', 'binary_sensor', 'sensor', 'switch', 'number']
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
