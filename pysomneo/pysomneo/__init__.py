@@ -113,15 +113,12 @@ class Somneo(object):
         self._put('wualm/prfwu', payload=payload)
 
     def set_delete_alarm(self):
-        #_LOGGER.error("set_time_alarm position " + str(self.alarm_data[alarm]['position'])
-        #              + str(hour) + ":" + str(minute) + " days " + str(self.alarm_data[alarm]['days']))
-
         payload = dict()
         #self.alarm_data[alarm]['time'] = datetime.time(int(hour), int(minute))
         payload['prfnr'] = 4
-        payload['prfen'] = True
-        payload['prfvs'] = True
-        payload['almhr'] = 9
+        payload['prfen'] = False
+        payload['prfvs'] = False
+        payload['almhr'] = 7
         payload['almmn'] = 30
         payload['pwrsz'] = 0
         payload['pszhr'] = 0
@@ -148,7 +145,6 @@ class Somneo(object):
         payload = self.light_data
         payload['onoff'] = False
         payload['ngtlt'] = state
-        self.set_delete_alarm()
         self._put('wulgt', payload = payload)
 
     def update(self):
