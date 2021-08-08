@@ -5,6 +5,7 @@ from custom_components import somneo
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.components.number import NumberEntity
 from datetime import datetime
+import asyncio
 
 from .const import *
 

@@ -15,6 +15,8 @@ CONF_SENS = 'sensors'
 ALARMS = 'alarms'
 HOURS = 'hours'
 MINUTES = 'minutes'
+WORKDAYS = 'workdays'
+WEEKEND = 'weekend'
 
 UPDATE_TIME = timedelta(seconds=60)
 

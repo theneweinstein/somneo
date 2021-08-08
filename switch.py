@@ -29,11 +29,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     alarms = []
     for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoToggle(name + "_t", data, device_info, dev_info['serial'] + "_t", alarm))
+        alarms.append(SomneoToggle(name + "_t", data, device_info, dev_info['serial'] + "_t", alarm, ALARMS))
+        alarms.append(SomneoToggle(name + "_wordays", data, device_info,
+                                   dev_info['serial'] + WORKDAYS, alarm, WORKDAYS))
+        alarms.append(SomneoToggle(name + "_weekends", data, device_info,
+                                   dev_info['serial'] + WEEKEND, alarm, WEEKEND))
     async_add_entities(alarms, True)
 
 class SomneoToggle(SwitchEntity):
-    def __init__(self, name, data, device_info, serial, alarm):
+    def __init__(self, name, data, device_info, serial, alarm, type):
         """Initialize the sensor. """
         self._data = data
         self._name = name + "_" + alarm
@@ -41,6 +45,7 @@ class SomneoToggle(SwitchEntity):
         self._device_info = device_info
         self._serial = serial
         self._state = None
+        self._type = type
 
     @property
     def name(self):
@@ -83,19 +88,38 @@ class SomneoToggle(SwitchEntity):
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        if self._data.somneo.alarms()[self._alarm] == True:
-            self._state = STATE_ON
-        else:
-            self._state = STATE_OFF
+        if self._type == ALARMS:
+            if self._data.somneo.alarms()[self._alarm]:
+                self._state = STATE_ON
+            else:
+                self._state = STATE_OFF
+        elif self._type == WORKDAYS:
+            if self._data.somneo.is_workday(self._alarm):
+                self._state = STATE_ON
+            else:
+                self._state = STATE_OFF
+        elif self._type == WEEKEND:
+            if self._data.somneo.is_weekend(self._alarm):
+                self._state = STATE_ON
+            else:
+                self._state = STATE_OFF
 
     def turn_on(self, **kwargs):
         """Turn the entity on."""
-        self._data.somneo.toggle_alarm(True, self._alarm)
-        self._state = STATE_ON
-        #self.schedule_update_ha_state()
+        if self._type == ALARMS:
+            self._data.somneo.toggle_alarm(True, self._alarm)
+            self._state = STATE_ON
+        elif self._type == WORKDAYS:
+            self._data.somneo.set_workdays_alarm(True, self._alarm)
+        elif self._type == WEEKEND:
+            self._data.somneo.set_weekend_alarm(True, self._alarm)
 
     def turn_off(self, **kwargs):
         """Turn the entity off."""
-        self._data.somneo.toggle_alarm(False, self._alarm)
-        self._state = STATE_OFF
-        #self.schedule_update_ha_state()
+        if self._type == ALARMS:
+            self._data.somneo.toggle_alarm(False, self._alarm)
+            self._state = STATE_OFF
+        elif self._type == WORKDAYS:
+            self._data.somneo.set_workdays_alarm(False, self._alarm)
+        elif self._type == WEEKEND:
+            self._data.somneo.set_weekend_alarm(False, self._alarm)

@@ -4,6 +4,7 @@ import json
 import xml.etree.ElementTree as ET
 import logging
 import datetime
+import asyncio
 
 _LOGGER = logging.getLogger('pysomneo')
 
@@ -24,6 +25,7 @@ class Somneo(object):
         self.alarm_data = dict()
         self.alarm_toggle_data = dict()
         self.alarm_time_data = dict()
+        self.set_time_task = None
 
     def get_device_info(self):
         """ Get Device information """
@@ -90,12 +92,12 @@ class Somneo(object):
             payload['ltlvl'] = int(brightness/255 * 25)
         self._put('wulgt', payload = payload)
 
-    def set_time_alarm(self, hour, minute, alarm):
-        #_LOGGER.error("set_time_alarm position " + str(self.alarm_data[alarm]['position'])
-        #              + str(hour) + ":" + str(minute) + " days " + str(self.alarm_data[alarm]['days']))
-
-        payload = dict()
+    def set_alarm(self, hour, minute, days, alarm):
+        _LOGGER.error("set_time_alarm position " + str(self.alarm_data[alarm]['position'])
+                      + str(hour) + ":" + str(minute) + " days " + str(days))
         self.alarm_data[alarm]['time'] = datetime.time(int(hour), int(minute))
+        self.alarm_data[alarm]['days'] = days
+        payload = dict()
         payload['prfnr'] = self.alarm_data[alarm]['position']
         payload['prfen'] = self.alarm_data[alarm]['enabled']
         payload['prfvs'] = True
@@ -107,10 +109,31 @@ class Somneo(object):
         payload['ctype'] = 0
         payload['curve'] = 20
         payload['durat'] = 30
-        payload['daynm'] = self.alarm_data[alarm]['days']
+        payload['daynm'] = days
         payload['snddv'] = "wus"
         payload['snztm'] = 0
         self._put('wualm/prfwu', payload=payload)
+
+    def set_days_alarm(self, days, alarm):
+        self.set_alarm(int(self.alarm_data[alarm]['time'].hour),
+                       int(self.alarm_data[alarm]['time'].minute), days, alarm)
+
+    def set_workdays_alarm(self, is_on, alarm):
+        days = (self.alarm_data[alarm]['days'] & 192)
+        if is_on:
+            days = days + 62
+        _LOGGER.error("Workday " + str(is_on) + " days ="+str(days))
+        self.set_days_alarm(days, alarm)
+
+    def set_weekend_alarm(self, is_on, alarm):
+        days = (self.alarm_data[alarm]['days'] & 62)
+        if is_on:
+            days = days + 192
+        _LOGGER.error("Weekend " + str(is_on) + " days =" + str(days))
+        self.set_days_alarm(days, alarm)
+
+    def set_time_alarm(self, hour, minute, alarm):
+        self.set_alarm(hour,minute, self.alarm_data[alarm]['days'], alarm)
 
     def set_delete_alarm(self):
         payload = dict()
@@ -188,6 +211,18 @@ class Somneo(object):
             alarms[alarm] = self.alarm_data[alarm]['enabled']
 
         return alarms
+
+    def day_int(self, mon, tue, wed, thu, fri, sat, sun):
+        return mon * 2 + tue *4  + wed * 8 + thu * 16 + fri * 32 + sat * 64 + sun * 128
+
+    def is_workday(self, alarm):
+        _LOGGER.error("DAYS " + str(self.alarm_data[alarm]['days']) + " " + str(alarm))
+        days_int = self.alarm_data[alarm]['days']
+        return (days_int & 62) == 62
+
+    def is_weekend(self, alarm):
+        days_int = self.alarm_data[alarm]['days']
+        return (days_int & 192) == 192
 
     def alarm_settings(self, alarm):
         """Return the time and days alarm is set."""
