@@ -2,7 +2,7 @@
 Home Assistant custom component for Philips Someo. This integration let's you control the light of the Somneo and reads the following sensors: temperature, humidity, luminance and noise. Furthermore, it provides the alarms set on your Somneo instance as binary sensors and provides a sensor with the first upcoming alarm. 
 
 # Installation
-On your Home Assistant instance, go to /custom_components. Now clone this respository: ```git clone https://github.com/theneweinstein/somneo.git somneo```. Alternatively you can manually copy the files into the somneo folder.
+On your Home Assistant instance, go to /custom_components. Now clone this respository: ```git clone https://github.com/arnoN7/somneo.git somneo```. Alternatively you can manually copy the files into the somneo folder.
 
 # Configuration
 After installation you an either use a config flow to set-up a Somneo device or add:
@@ -22,13 +22,13 @@ type: vertical-stack
 cards:
   - type: entities
     entities:
-      - entity: switch.name_optional_t_alarm0
+      - entity: switch.somneo_alarm0
         name: On/Off
       - type: custom:slider-entity-row
-        entity: number.name_optional_hour_alarm0
+        entity: number.somneo_alarm0_hours
         hide_state: false
       - type: custom:slider-entity-row
-        entity: number.name_optional_minute_alarm0
+        entity: number.somneo_alarm0_minutes
         hide_state: false
     title: Alarm Yoga
     show_header_toggle: false
@@ -42,9 +42,9 @@ cards:
         show_icon: true
         show_name: true
         icon_height: 40px
-        entity: switch.name_optional_wordays_alarm0
         name: workdays
         show_state: true
+        entity: switch.somneo_workdays_alarm0
       - type: button
         tap_action:
           action: toggle
@@ -53,7 +53,7 @@ cards:
         show_icon: true
         show_name: true
         icon_height: 40px
-        entity: switch.name_optional_weekends_alarm0
+        entity: switch.somneo_weekend_alarm0
         name: Week-ends
         show_state: true
 ```
@@ -66,11 +66,11 @@ type: vertical-stack
 cards:
   - type: entities
     entities:
-      - entity: switch.name_optional_t_alarm0
+      - entity: switch.somneo_alarm0
         name: On/Off
-      - entity: number.name_optional_hour_alarm0
+      - entity: number.somneo_alarm0_hours
         hide_state: false
-      - entity: number.name_optional_minute_alarm0
+      - entity: number.somneo_alarm0_minutes
         hide_state: false
     title: Alarm Yoga
     show_header_toggle: false
@@ -84,9 +84,9 @@ cards:
         show_icon: true
         show_name: true
         icon_height: 40px
-        entity: switch.name_optional_wordays_alarm0
         name: workdays
         show_state: true
+        entity: switch.somneo_workdays_alarm0
       - type: button
         tap_action:
           action: toggle
@@ -95,7 +95,7 @@ cards:
         show_icon: true
         show_name: true
         icon_height: 40px
-        entity: switch.name_optional_weekends_alarm0
+        entity: switch.somneo_weekend_alarm0
         name: Week-ends
         show_state: true
 ```
