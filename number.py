@@ -84,14 +84,13 @@ class SomneoTime(NumberEntity):
         return self.entity_id
 
     def set_value(self, value: float):
-        _LOGGER.error("Set Value " + str(self._attr_value))
         if self._alarm_date is not None:
             self._attr_value = value
             if self._type == MINUTES:
-                _LOGGER.error("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(self._attr_value))
+                _LOGGER.debug("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(self._attr_value))
                 self._data.somneo.set_time_alarm(self._alarm_date.hour, self._attr_value, self._alarm)
             elif self._type == HOURS:
-                _LOGGER.error("Set Alarm Date " + str(self._attr_value) + ":" + str(self._alarm_date.minute))
+                _LOGGER.debug("Set Alarm Date " + str(self._attr_value) + ":" + str(self._alarm_date.minute))
                 self._data.somneo.set_time_alarm(self._attr_value, self._alarm_date.minute, self._alarm)
 
     @property
