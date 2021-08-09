@@ -195,7 +195,6 @@ class Somneo(object):
         return mon * 2 + tue * 4 + wed * 8 + thu * 16 + fri * 32 + sat * 64 + sun * 128
 
     def is_workday(self, alarm):
-        _LOGGER.error("DAYS " + str(self.alarm_data[alarm]['days']) + " " + str(alarm))
         days_int = self.alarm_data[alarm]['days']
         return (days_int & 62) == 62
 
