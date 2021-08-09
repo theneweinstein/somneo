@@ -1,4 +1,4 @@
-"""Platform for binary sensor integration."""
+"""Platform for number entity to catch hour/minute of alarms."""
 import logging
 
 from custom_components import somneo
@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo sensors from config_entry."""
+    """ Add Somneo from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]
     dev_info = data.dev_info
@@ -26,6 +26,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     }
 
     alarms = []
+    # Add hour & min number_entity for each alarms
     for alarm in list(data.somneo.alarms()):
         alarms.append(SomneoTime(name, data, device_info, dev_info['serial'] + "_hour", alarm, HOURS))
         alarms.append(SomneoTime(name, data, device_info, dev_info['serial'] + "_min", alarm, MINUTES))
@@ -34,11 +35,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 
 class SomneoTime(NumberEntity):
-    """Representation of a binary  for alarms."""
     _attr_should_poll = True
 
     def __init__(self, name, data, device_info, serial, alarm, type):
-        """Initialize the sensor."""
+        """Initialize number entities."""
         self._data = data
         self._attr_name = name + "_" + alarm + "_" + type
         self._alarm = alarm
@@ -56,17 +56,25 @@ class SomneoTime(NumberEntity):
 
     @property
     def name(self):
-        """Return the name of the sensor."""
+        """Return the name of the number entity."""
         return self._attr_name
 
     @property
+    def icon(self):
+        """Return the icon of the number entity."""
+        if self._type == HOURS:
+            return HOURS_ICON
+        elif self._type == MINUTES:
+            return MINUTES_ICON
+
+    @property
     def assumed_state(self):
-        """Return the state of the sensor."""
+        """Return the assumed state of the entity."""
         return False
 
     @property
     def available(self):
-        """Return the state of the sensor."""
+        """Return the availability of the entity."""
         return True
 
     @property
@@ -84,6 +92,7 @@ class SomneoTime(NumberEntity):
         return self.entity_id
 
     def set_value(self, value: float):
+        """Called when user adjust Hours / Minutes in the UI"""
         if self._alarm_date is not None:
             self._attr_value = value
             if self._type == MINUTES:
@@ -100,17 +109,14 @@ class SomneoTime(NumberEntity):
 
     @property
     def min_value(self) -> float:
-        """Return the entity value to represent the entity state."""
         return self._attr_min_value
 
     @property
     def max_value(self) -> float:
-        """Return the entity value to represent the entity state."""
         return self._attr_max_value
 
     @property
     def step(self) -> float:
-        """Return the entity value to represent the entity state."""
         return self._attr_step
 
     async def async_update(self):

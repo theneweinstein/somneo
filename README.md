@@ -12,3 +12,88 @@ somneo:
   name: NAME (optional)
 ```
 to your ```configuration.yaml```.
+
+# Alarm Configuration
+### With slider-entity-row from HACS`
+Add a "manual" card into lovelace UI and copy paste the following code. It will create a card for the first Somneo Alarm (alarm0). 
+Other cards can be created for other alarms (alarm1, alarm2, etc.)
+```
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - entity: switch.name_optional_t_alarm0
+        name: On/Off
+      - type: custom:slider-entity-row
+        entity: number.name_optional_hour_alarm0
+        hide_state: false
+      - type: custom:slider-entity-row
+        entity: number.name_optional_minute_alarm0
+        hide_state: false
+    title: Alarm Yoga
+    show_header_toggle: false
+  - type: horizontal-stack
+    cards:
+      - type: button
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        show_icon: true
+        show_name: true
+        icon_height: 40px
+        entity: switch.name_optional_wordays_alarm0
+        name: workdays
+        show_state: true
+      - type: button
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        show_icon: true
+        show_name: true
+        icon_height: 40px
+        entity: switch.name_optional_weekends_alarm0
+        name: Week-ends
+        show_state: true
+```
+### Without slider-entity-row from HACS
+
+```
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - entity: switch.name_optional_t_alarm0
+        name: On/Off
+      - entity: number.name_optional_hour_alarm0
+        hide_state: false
+      - entity: number.name_optional_minute_alarm0
+        hide_state: false
+    title: Alarm Yoga
+    show_header_toggle: false
+  - type: horizontal-stack
+    cards:
+      - type: button
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        show_icon: true
+        show_name: true
+        icon_height: 40px
+        entity: switch.name_optional_wordays_alarm0
+        name: workdays
+        show_state: true
+      - type: button
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        show_icon: true
+        show_name: true
+        icon_height: 40px
+        entity: switch.name_optional_weekends_alarm0
+        name: Week-ends
+        show_state: true
+```

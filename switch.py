@@ -1,4 +1,4 @@
-"""Platform for binary sensor integration."""
+"""Platform for switch integration. (on/off alarms & on/off alarms on workdays and/or weekends"""
 import logging
 
 from custom_components import somneo
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo sensors from config_entry."""
+    """ Add Somneo from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]
     dev_info = data.dev_info
@@ -38,7 +38,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 class SomneoToggle(SwitchEntity):
     def __init__(self, name, data, device_info, serial, alarm, type):
-        """Initialize the sensor. """
+        """Initialize the switches. """
         self._data = data
         self._name = name + "_" + alarm
         self._alarm = alarm
@@ -49,22 +49,32 @@ class SomneoToggle(SwitchEntity):
 
     @property
     def name(self):
-        """Return the name of the sensor."""
+        """Return the name of the switch."""
         return self._name
 
     @property
+    def icon(self):
+        """Return the icon ref of the switches."""
+        if self._type == ALARMS:
+            return ALARMS_ICON
+        elif self._type == WEEKEND:
+            return WEEKEND_ICON
+        elif self._type == WORKDAYS:
+            return WORKDAYS_ICON
+
+    @property
     def is_on(self):
-        """Return true if sensor is on."""
+        """Return true if switch is on."""
         return self._state
 
     @property
     def state(self):
-        """Return the state of the sensor."""
+        """Return the state of the switch."""
         return self._state
 
     @property
     def unique_id(self):
-        """Return the id of this sensor."""
+        """Return the id of this switch."""
         return self._serial + '_' + self._alarm
 
     @property
@@ -86,7 +96,7 @@ class SomneoToggle(SwitchEntity):
         return attr
 
     async def async_update(self):
-        """Get the latest data and updates the states."""
+        """Get the latest data and updates the states of the switches."""
         await self._data.update()
         if self._type == ALARMS:
             if self._data.somneo.alarms()[self._alarm]:
@@ -105,7 +115,7 @@ class SomneoToggle(SwitchEntity):
                 self._state = STATE_OFF
 
     def turn_on(self, **kwargs):
-        """Turn the entity on."""
+        """Called when user Turn On the switch from UI."""
         if self._type == ALARMS:
             self._data.somneo.toggle_alarm(True, self._alarm)
             self._state = STATE_ON
@@ -115,7 +125,7 @@ class SomneoToggle(SwitchEntity):
             self._data.somneo.set_weekend_alarm(True, self._alarm)
 
     def turn_off(self, **kwargs):
-        """Turn the entity off."""
+        """Called when user Turn Off the switch from UI."""
         if self._type == ALARMS:
             self._data.somneo.toggle_alarm(False, self._alarm)
             self._state = STATE_OFF

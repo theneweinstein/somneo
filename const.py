@@ -18,11 +18,17 @@ MINUTES = 'minutes'
 WORKDAYS = 'workdays'
 WEEKEND = 'weekend'
 
+ALARMS_ICON = 'hass:alarm'
+HOURS_ICON = 'hass:counter'
+MINUTES_ICON = 'hass:counter'
+WORKDAYS_ICON = 'hass:calendar-range'
+WEEKEND_ICON = 'hass:calendar-range'
+
 UPDATE_TIME = timedelta(seconds=60)
 
 SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
 
-PLATFORMS = ['light', 'binary_sensor', 'sensor', 'switch', 'number']
+PLATFORMS = ['light', 'sensor', 'switch', 'number']
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
