@@ -8,6 +8,8 @@ import asyncio
 
 _LOGGER = logging.getLogger('pysomneo')
 
+WORKDAYS_BINARY_MASK = 62
+WEEKEND_BINARY_MASK = 192
 
 class Somneo(object):
     """ 
@@ -121,16 +123,16 @@ class Somneo(object):
                        int(self.alarm_data[alarm]['time'].minute), days, alarm)
 
     def set_workdays_alarm(self, is_on, alarm):
-        days = (self.alarm_data[alarm]['days'] & 192)
+        days = (self.alarm_data[alarm]['days'] & WEEKEND_BINARY_MASK)
         if is_on:
-            days = days + 62
+            days = days + WORKDAYS_BINARY_MASK
         _LOGGER.debug("Workday " + str(is_on) + " days =" + str(days))
         self.set_days_alarm(days, alarm)
 
     def set_weekend_alarm(self, is_on, alarm):
-        days = (self.alarm_data[alarm]['days'] & 62)
+        days = (self.alarm_data[alarm]['days'] & WORKDAYS_BINARY_MASK)
         if is_on:
-            days = days + 192
+            days = days + WEEKEND_BINARY_MASK
         _LOGGER.debug("Weekend " + str(is_on) + " days =" + str(days))
         self.set_days_alarm(days, alarm)
 
