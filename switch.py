@@ -29,10 +29,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     alarms = []
     for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoToggle(name + "_t", data, device_info, dev_info['serial'] + "_t", alarm, ALARMS))
-        alarms.append(SomneoToggle(name + "_wordays", data, device_info,
+        alarms.append(SomneoToggle(name, data, device_info, dev_info['serial'], alarm, ALARMS))
+        alarms.append(SomneoToggle(name + "_" + WORKDAYS, data, device_info,
                                    dev_info['serial'] + WORKDAYS, alarm, WORKDAYS))
-        alarms.append(SomneoToggle(name + "_weekends", data, device_info,
+        alarms.append(SomneoToggle(name + "_" + WEEKEND, data, device_info,
                                    dev_info['serial'] + WEEKEND, alarm, WEEKEND))
     async_add_entities(alarms, True)
 
