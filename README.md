@@ -57,6 +57,8 @@ cards:
         name: Week-ends
         show_state: true
 ```
+![Lovelace 1](https://github.com/arnoN7/somneo/blob/master/lovelace1.jpg)
+
 ### Without slider-entity-row from HACS
 
 ```
@@ -97,3 +99,4 @@ cards:
         name: Week-ends
         show_state: true
 ```
+![Lovelace 2](https://github.com/arnoN7/somneo/blob/master/lovelace2.jpg)
