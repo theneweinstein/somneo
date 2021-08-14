@@ -3,7 +3,8 @@ import logging
 
 from custom_components import smartsleep
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE
+from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE
+from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT, SensorEntity
 
 from .const import *
 
@@ -31,7 +32,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(sensors, True)
 
 
-class SomneoSensor(Entity):
+class SomneoSensor(SensorEntity):
+
+    _attr_state_class = STATE_CLASS_MEASUREMENT
+
     """Representation of a Sensor."""
     def __init__(self, name, data, device_info, serial, sensor_type):
         """Initialize the sensor."""
@@ -42,6 +46,7 @@ class SomneoSensor(Entity):
         self._state = None
         self._device_info = device_info
         self._serial = serial
+        self._unique_id = serial + '_' + sensor_type
 
     @property
     def name(self):
@@ -53,6 +58,7 @@ class SomneoSensor(Entity):
         """Return the state of the sensor."""
 
         return self._state
+
     @property
     def unit_of_measurement(self):
         """Return the unit the value is expressed in."""
@@ -72,6 +78,8 @@ class SomneoSensor(Entity):
             return DEVICE_CLASS_HUMIDITY
         if self._type == "luminance":
             return DEVICE_CLASS_ILLUMINANCE
+        if self._type == "pressure":
+            return DEVICE_CLASS_PRESSURE
         else:
             return None
 
@@ -93,7 +101,7 @@ class SomneoSensor(Entity):
             self._state = self._data.somneo.noise()
 
 
-class SomneoNextAlarmSensor(Entity):
+class SomneoNextAlarmSensor(SensorEntity):
     """Representation of a Sensor."""
     def __init__(self, name, data, device_info, serial):
         """Initialize the sensor."""
