@@ -13,10 +13,10 @@ from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.exceptions import PlatformNotReady
 
 
-#from pysomneo import Somneo
+from pysomneo import Somneo
 
 from .const import *
-from .pysomneo.pysomneo import Somneo
+#from .pysomneo.pysomneo import Somneo
 
 _LOGGER = logging.getLogger(__name__)
 

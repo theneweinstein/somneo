@@ -63,18 +63,22 @@ class Somneo(object):
         if headers:
             args['headers'] = headers
 
-        try:
-            r = self._session.request(method, url, verify=False, timeout=20, **args)
-        except requests.Timeout:
-            _LOGGER.error('Connection to Somneo timed out.')
-            raise
-        except requests.RequestException:
-            _LOGGER.error('Error connecting to Somneo.')
-            raise
-        else:
-            if r.status_code == 422:
-                _LOGGER.error('Invalid URL.')
-                raise Exception("Invalid URL.")
+        while True:
+            try:
+                r = self._session.request(method, url, verify=False, timeout=20, **args)
+            except requests.Timeout:
+                _LOGGER.error('Connection to Somneo timed out.')
+                raise
+            except requests.ConnectionError:
+                continue
+            except requests.RequestException:
+                _LOGGER.error('Error connecting to Somneo.')
+                raise
+            else:
+                if r.status_code == 422:
+                    _LOGGER.error('Invalid URL.')
+                    raise Exception("Invalid URL.")
+            break
 
         if method == 'GET':
             return r.json()
