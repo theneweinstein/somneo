@@ -13,9 +13,10 @@ from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.exceptions import PlatformNotReady
 
 
-from pysomneo import Somneo
+#from pysomneo import Somneo
 
 from .const import *
+from .pysomneo.pysomneo import Somneo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,14 +31,14 @@ async def async_setup(hass, config):
                 DOMAIN, context={"source": SOURCE_IMPORT}, data={CONF_HOST: host, CONF_NAME: name}
             )
         )
-    
+
     return True
 
 
 async def async_setup_entry(hass, config_entry):
     """Setup the Somneo component."""
     try:
-        
+
         hass.data[DOMAIN] = SomneoData(hass, config_entry)
         await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
@@ -47,7 +48,7 @@ async def async_setup_entry(hass, config_entry):
                 hass.config_entries.async_forward_entry_setup(config_entry, platform)
             )
 
-        
+
         #### NOTHING BELOW THIS LINE ####
         # If Success:
         _LOGGER.info("Somneo has been set up!")
