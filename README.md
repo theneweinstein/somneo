@@ -2,7 +2,7 @@
 Home Assistant custom component for Philips Someo. This integration let's you control the light of the Somneo and reads the following sensors: temperature, humidity, luminance and noise. Furthermore, it provides the alarms set on your Somneo instance as binary sensors and provides a sensor with the first upcoming alarm. 
 
 # Installation
-On your Home Assistant instance, go to /custom_components. Now clone this respository: ```git clone https://github.com/arnoN7/somneo.git somneo```. Alternatively you can manually copy the files into the somneo folder.
+You can install this custom component via HACS as a custom repository (https://hacs.xyz/docs/faq/custom_repositories/). Alternatively you can clone or copy the files into the somneo folder in the custom_components folder of HomeAssistant.
 
 # Configuration
 After installation you an either use a config flow to set-up a Somneo device or add:
@@ -57,7 +57,7 @@ cards:
         name: Week-ends
         show_state: true
 ```
-<img src="https://github.com/arnoN7/somneo/blob/master/lovelace1.jpg" alt="Example Lovelace Slider" width="80%"/>
+<img src="https://github.com/theneweinstein/somneo/blob/master/lovelace1.jpg" alt="Example Lovelace Slider" width="80%"/>
 
 ### Without slider-entity-row from HACS
 
@@ -99,4 +99,4 @@ cards:
         name: Week-ends
         show_state: true
 ```
-<img src="https://github.com/arnoN7/somneo/blob/master/lovelace2.jpg" alt="Example Lovelace" width="80%"/>
+<img src="https://github.com/theneweinstein/somneo/blob/master/lovelace2.jpg" alt="Example Lovelace" width="80%"/>
