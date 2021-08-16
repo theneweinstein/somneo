@@ -95,14 +95,20 @@ class SomneoDays(SelectEntity):
 
         self._attr_option = option
 
+        _LOGGER.debug(option)
+
         if option == WORKDAYS:
             self._data.somneo.set_workdays_alarm(True, self._alarm)
+            _LOGGER.debug('Optie is werkday')
         elif option == WEEKEND:
             self._data.somneo.set_weekend_alarm(True, self._alarm)
+            _LOGGER.debug('Optie is weekend')
         elif option == TOMORROW:
             self._data.somneo.set_days_alarm(0,self._alarm)
+            _LOGGER.debug('Optie is morgen')
         elif option == EVERYDAY:
             self._data.somneo.set_everyday_alarm(True, self._alarm)
+            _LOGGER.debug('Optie is elke dag')
 
     async def async_update(self):
         """Get the latest data and updates the states."""
