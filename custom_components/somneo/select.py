@@ -42,7 +42,7 @@ class SomneoDays(SelectEntity):
         self._serial = serial
         self._alarm_date = None
         self._device_info = device_info
-        self._attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY]
+        self._attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, UNKNOWN]
         self._attr_option = WORKDAYS
 
     @property
@@ -97,16 +97,16 @@ class SomneoDays(SelectEntity):
         self._attr_option = option
 
         if option == WORKDAYS:
-            self._data.somneo.set_workdays_alarm(True, self._alarm)
+            self._data.somneo.set_workdays_alarm(self._alarm)
             _LOGGER.debug('Optie is werkday')
         elif option == WEEKEND:
-            self._data.somneo.set_weekend_alarm(True, self._alarm)
+            self._data.somneo.set_weekend_alarm(self._alarm)
             _LOGGER.debug('Optie is weekend')
         elif option == TOMORROW:
-            self._data.somneo.set_days_alarm(0,self._alarm)
+            self._data.somneo.set_tomorrow_alarm(self._alarm)
             _LOGGER.debug('Optie is morgen')
         elif option == EVERYDAY:
-            self._data.somneo.set_everyday_alarm(True, self._alarm)
+            self._data.somneo.set_everyday_alarm(self._alarm)
             _LOGGER.debug('Optie is elke dag')
 
     async def async_update(self):
