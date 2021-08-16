@@ -42,7 +42,7 @@ class SomneoDays(SelectEntity):
         self._serial = serial
         self._alarm_date = None
         self._device_info = device_info
-        self._attr_options = [WORKDAYS, WEEKEND, TOMORROW]
+        self._attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY]
         self._attr_option = WORKDAYS
 
     @property
@@ -101,6 +101,9 @@ class SomneoDays(SelectEntity):
             self._data.somneo.set_weekend_alarm(True, self._alarm)
         elif option == TOMORROW:
             self._data.somneo.set_days_alarm(1,self._alarm)
+        elif option == EVERYDAY:
+            self._data.somneo.set_workdays_alarm(True, self._alarm)
+            self._data.somneo.set_weekend_alarm(True, self._alarm)
 
     async def async_update(self):
         """Get the latest data and updates the states."""
@@ -110,5 +113,7 @@ class SomneoDays(SelectEntity):
             self._attr_option = WORKDAYS
         elif self._data.somneo.is_weekend(self._alarm):
             self._attr_option = WEEKEND
+        elif self._data.somneo.is_weekend(self._alarm) and self._data.somneo.is_workday(self._alarm):
+            self._attr_option = EVERYDAY
         else:
             self._attr_option = TOMORROW

@@ -18,6 +18,7 @@ MINUTES = 'minutes'
 WORKDAYS = 'workdays'
 WEEKEND = 'weekend'
 TOMORROW = 'tomorrow'
+EVERYDAY = 'everyday'
 
 ALARMS_ICON = 'hass:alarm'
 HOURS_ICON = 'hass:counter'
