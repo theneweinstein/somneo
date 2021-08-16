@@ -90,7 +90,7 @@ class SomneoDays(SelectEntity):
         return self._attr_option
 
 
-    async def select_option(self, option: str):
+    def select_option(self, option: str):
         """Called when user adjust the option in the UI."""
 
         self._attr_option = option
