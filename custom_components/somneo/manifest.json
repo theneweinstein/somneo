@@ -1,11 +1,11 @@
 {
     "domain": "somneo",
     "name": "Philips Somneo",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "documentation": "https://github.com/theneweinstein/somneo",
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": [],
-    "requirements": ["pysomneo==0.2.1a2"],
+    "requirements": ["pysomneo==0.2.1a3"],
     "config_flow": true
 }
