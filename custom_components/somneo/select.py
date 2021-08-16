@@ -90,12 +90,11 @@ class SomneoDays(SelectEntity):
         return self._attr_option
 
 
-    def select_option(self, option: str):
+    def select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""
-
-        self._attr_option = option
-
         _LOGGER.debug(option)
+        
+        self._attr_option = option
 
         if option == WORKDAYS:
             self._data.somneo.set_workdays_alarm(True, self._alarm)
