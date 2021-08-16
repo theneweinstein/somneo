@@ -19,6 +19,7 @@ WORKDAYS = 'workdays'
 WEEKEND = 'weekend'
 TOMORROW = 'tomorrow'
 EVERYDAY = 'everyday'
+UNKNOWN = 'unknown'
 
 ALARMS_ICON = 'hass:alarm'
 HOURS_ICON = 'hass:counter'
