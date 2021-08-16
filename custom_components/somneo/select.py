@@ -109,11 +109,11 @@ class SomneoDays(SelectEntity):
         """Get the latest data and updates the states."""
         await self._data.update()
 
-        if self._data.somneo.is_workday(self._alarm):
+        if self._data.somneo.is_weekend(self._alarm) and self._data.somneo.is_workday(self._alarm):
+            self._attr_option = EVERYDAY
+        elif self._data.somneo.is_workday(self._alarm):
             self._attr_option = WORKDAYS
         elif self._data.somneo.is_weekend(self._alarm):
             self._attr_option = WEEKEND
-        elif self._data.somneo.is_weekend(self._alarm) and self._data.somneo.is_workday(self._alarm):
-            self._attr_option = EVERYDAY
         else:
             self._attr_option = TOMORROW
