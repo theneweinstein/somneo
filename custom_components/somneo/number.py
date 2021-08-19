@@ -106,4 +106,4 @@ class SomneoSnooze(NumberEntity):
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        self._attr_value = self.snoozetime
+        self._attr_value = self._data.somneo.snoozetime
