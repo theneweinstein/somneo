@@ -62,6 +62,7 @@ class SomneoTime(NumberEntity):
     def set_value(self, value: float):
         """Called when user adjust Hours / Minutes in the UI"""
         if self._alarm_date is not None:
+            self._attr_value = value
             if self._type == MINUTES:
                 _LOGGER.debug("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(value))
                 self._data.somneo.set_time_alarm(self._alarm, self._alarm_date.hour, value)
@@ -101,6 +102,7 @@ class SomneoSnooze(NumberEntity):
 
     def set_value(self, value: float):
         """Called when user adjust snooze time in the UI"""
+        self._attr_value = value
         self._data.somneo.set_snooze_time(int(value))
 
     async def async_update(self):
