@@ -42,7 +42,6 @@ class SomneoLight(LightEntity):
         self._attr_brightness = None
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_light'
-        self._attr_is_on = None
 
     def turn_on(self, **kwargs):
         """Instruct the light to turn on."""
