@@ -95,10 +95,10 @@ class SomneoToggle(SwitchEntity):
 
     def turn_on(self, **kwargs):
         """Called when user Turn On the switch from UI."""
-        self._data.somneo.toggle_alarm(True, self._alarm)
+        self._data.somneo.toggle_alarm(self._alarm, True)
         self._state = STATE_ON
 
     def turn_off(self, **kwargs):
         """Called when user Turn Off the switch from UI."""
-        self._data.somneo.toggle_alarm(False, self._alarm)
+        self._data.somneo.toggle_alarm(self._alarm, False)
         self._state = STATE_OFF

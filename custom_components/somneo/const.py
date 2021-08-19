@@ -27,6 +27,13 @@ MINUTES_ICON = 'hass:counter'
 WORKDAYS_ICON = 'hass:calendar-range'
 WEEKEND_ICON = 'hass:calendar-range'
 
+ATTR_ALARM = 'alarm'
+ATTR_CURVE = 'curve'
+ATTR_LEVEL = 'level'
+ATTR_DURATION = 'duration'
+ATTR_SOURCE = 'source'
+ATTR_CHANNEL = 'channel'
+
 UPDATE_TIME = timedelta(seconds=60)
 
 SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}

@@ -1,0 +1,152 @@
+# Service ID
+set_light_alarm:
+  # Service name as shown in UI
+  name: Set wake-up light
+  # Description of the service
+  description: Set the wake-up light of the alarm
+  # Different fields that your service accepts
+  fields:
+    # Key of the field
+    alarm_nr:
+      # Field name as shown in UI
+      name: Alarm number
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 0
+      # The default field value
+      default: 0
+      # Selector
+      selector:
+        number:
+          min: 0
+          max: 15
+          step: 1
+          mode: box
+    curve:
+      # Field name as shown in UI
+      name: Light curve
+      description: The light curve of the wake-up light.
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'sunny day'
+      # The default field value
+      default: 'sunny day'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'sunny day'
+            - 'island red'
+            - 'nordic white'
+    level:
+      # Field name as shown in UI
+      name: Light level
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 20
+      # The default field value
+      default: 20
+      # Selector
+      selector:
+        number:
+          min: 0
+          max: 25
+          step: 1
+    duration:
+      # Field name as shown in UI
+      name: Duration
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 30
+      # The default field value
+      default: 30
+      # Selector
+      selector:
+        number:
+          min: 5
+          max: 40
+          step: 1
+
+set_sound_alarm:
+  name: Set wake-up sound
+  description: Set the sound of the alarm
+  fields:
+    alarm_nr:
+      # Field name as shown in UI
+      name: Alarm number
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 0
+      # The default field value
+      default: 0
+      # Selector
+      selector:
+        number:
+          min: 0
+          max: 15
+          step: 1
+          mode: box
+    source:
+      # Field name as shown in UI
+      name: Source
+      description: Sound source to be used.
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'wake-up'
+      # The default field value
+      default: 'wake-up'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'wake-up'
+            - 'radio'
+            - 'off'
+    channel:
+      # Field name as shown in UI
+      name: Channel
+      description: Sound channel to be used (name for wake-up source and number for radio source.).
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'forest birds'
+      # The default field value
+      default: 'forest birds'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'forest birds'
+            - 'summer birds'
+            - 'buddha wakeup'
+            - 'morning alps'
+            - 'yoga harmony'
+            - 'nepal bowls'
+            - 'summer lake'
+            - 'ocean waves'
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+    level:
+      # Field name as shown in UI
+      name: Light level
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 12
+      # The default field value
+      default: 12
+      # Selector
+      selector:
+        number:
+          min: 1
+          max: 25
+          step: 1
