@@ -65,10 +65,10 @@ class SomneoTime(NumberEntity):
             self._attr_value = value
             if self._type == MINUTES:
                 _LOGGER.debug("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(value))
-                self._data.somneo.set_time_alarm(self._alarm, self._alarm_date.hour, value)
+                self._data.somneo.set_time_alarm(self._alarm, self._alarm_date.hour, int(value))
             elif self._type == HOURS:
                 _LOGGER.debug("Set Alarm Date " + str(value) + ":" + str(self._alarm_date.minute))
-                self._data.somneo.set_time_alarm(self._alarm, value, self._alarm_date.minute)
+                self._data.somneo.set_time_alarm(self._alarm, int(value), self._alarm_date.minute)
 
 
     async def async_update(self):
