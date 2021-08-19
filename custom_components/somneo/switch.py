@@ -34,7 +34,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SomneoToggle(SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
-    
 
     def __init__(self, name, data, device_info, serial, alarm):
         """Initialize the switches. """
