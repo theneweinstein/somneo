@@ -42,8 +42,7 @@ class SomneoToggle(SwitchEntity):
         self._alarm = alarm
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_' + alarm
-        self._attr_state = None
-        self._attr_is_on = self._attr_state
+        self._attr_is_on = None
 
     @property
     def device_state_attributes(self):
@@ -56,16 +55,16 @@ class SomneoToggle(SwitchEntity):
         """Get the latest data and updates the states of the switches."""
         await self._data.update()
         if self._data.somneo.alarms()[self._alarm]:
-            self._attr_state = STATE_ON
+            self._attr_is_on = STATE_ON
         else:
-            self._attr_state = STATE_OFF
+            self._attr_is_on = STATE_OFF
 
     def turn_on(self, **kwargs):
         """Called when user Turn On the switch from UI."""
         self._data.somneo.toggle_alarm(self._alarm, True)
-        self._attr_state = STATE_ON
+        self._attr_is_on = STATE_ON
 
     def turn_off(self, **kwargs):
         """Called when user Turn Off the switch from UI."""
         self._data.somneo.toggle_alarm(self._alarm, False)
-        self._attr_state = STATE_OFF
+        self._attr_is_on = STATE_OFF
