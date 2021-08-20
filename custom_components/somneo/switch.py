@@ -53,6 +53,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         'set_sound_alarm'
     )
 
+    platform.async_register_entity_service(
+        'remove_alarm',
+        {},
+        'remove_alarm'
+    )
+
+    platform.async_register_entity_service(
+        'add_alarm',
+        {},
+        'add_alarm'
+    )
+
 class SomneoToggle(SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
@@ -89,9 +101,17 @@ class SomneoToggle(SwitchEntity):
 
     # Define service-calls
     def set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
-
+        """Adjust the light settings of an alarm."""
         self._data.somneo.set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
 
     def set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
-
+        """Adjust the sound settings of an alarm."""
         self._data.somneo.set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
+
+    def remove_alarm(self):
+        """Function to remove alarm from list in wake-up app"""
+        self._data.someo.remove_alarm(self._alarm)
+
+    def add_alarm(self):
+        """Function to add alarm to list in wake-up app"""
+        self._data.someo.add_alarm(self._alarm)

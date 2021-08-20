@@ -54,3 +54,40 @@ title: Alarm work
 show_header_toggle: false
 ```
 <img src="https://github.com/theneweinstein/somneo/blob/master/lovelace2.jpg" alt="Example Lovelace" width="80%"/>
+
+# Services
+This component includes two services to adjust the wake-up light and sound settings. To adjust the light settings of an alarm you can call the following function:
+```
+service: somneo.set_light_alarm
+target:
+  entity_id: switch.somneo_alarm0
+data:
+  curve: sunny day
+  level: 20
+  duration: 30
+```
+The curve is either `sunny day`, `island red` or `nordic white`. Level should be between 0 and 25 and duration betweeen 4 and 40 minutes.
+
+To adjust the sound settings of an alarm you can call the following function:
+```
+service: somneo.set_sound_alarm
+target:
+  entity_id: switch.somneo_alarm0
+data:
+  source: sunny day
+  channel: 20
+  level: 30
+```
+The source is `wake-up` for the wake-up sounds, `radio` for the FM radio of `off` for no sound. If the wake-up sound is selected, channel is one of the following sounds: `forest birds`, `summer birds`, `morning alps`, `yoga harmony`, `nepal bowls`, `summer lake` or `ocean waves`. If the radio is selected, channel has a value 1 till 5 (formatted as a string). The level should be between 1 and 25.
+
+Furthermore, alarms can be added to or removed from the list in the Somneo app with:
+```
+service: somneo.add_alarm
+target:
+  entity_id: switch.somneo_alarm0
+```
+```
+service: somneo.remove_alarm
+target:
+  entity_id: switch.somneo_alarm0
+```

@@ -112,7 +112,7 @@ set_sound_alarm:
             - '5'
     level:
       # Field name as shown in UI
-      name: Light level
+      name: Sound level
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
