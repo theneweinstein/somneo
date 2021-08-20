@@ -33,7 +33,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     platform = entity_platform.async_get_current_platform()
 
-    platform.services.async_register_entity_service(
+    platform.async_register_entity_service(
         'set_light_alarm',
         {
             vol.Optional(ATTR_CURVE): cv.string, 
@@ -43,7 +43,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         'set_light_alarm'
     )
 
-    platform.services.async_register_entity_service(
+    platform.async_register_entity_service(
         'set_sound_alarm',
         {
             vol.Optional(ATTR_SOURCE): cv.string, 
