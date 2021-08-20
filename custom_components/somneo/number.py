@@ -33,7 +33,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(alarms, True)
     async_add_entities(snooze, True)
 
-
 class SomneoTime(NumberEntity):
     _attr_should_poll = True
     _attr_assumed_state = False
@@ -65,10 +64,10 @@ class SomneoTime(NumberEntity):
             self._attr_value = value
             if self._type == MINUTES:
                 _LOGGER.debug("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(value))
-                self._data.somneo.set_time_alarm(self._alarm, self._alarm_date.hour, int(value))
+                self._data.somneo.set_alarm(self._alarm, minute=int(value))
             elif self._type == HOURS:
                 _LOGGER.debug("Set Alarm Date " + str(value) + ":" + str(self._alarm_date.minute))
-                self._data.somneo.set_time_alarm(self._alarm, int(value), self._alarm_date.minute)
+                self._data.somneo.set_alarm(self._alarm, hour=int(value))
 
 
     async def async_update(self):

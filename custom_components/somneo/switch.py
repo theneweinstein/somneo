@@ -1,11 +1,11 @@
 """Platform for switch integration. (on/off alarms & on/off alarms on workdays and/or weekends"""
 import logging
 
-from homeassistant.const import STATE_OFF, STATE_ON
 try:
     from homeassistant.components.switch import SwitchEntity
 except ImportError:
     from homeassistant.components.switch import SwitchDevice as SwitchEntity
+from homeassistant.helpers import config_validation as cv, entity_platform, service
 
 from .const import *
 
@@ -31,6 +31,28 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     async_add_entities(alarms, True)
 
+    platform = entity_platform.async_get_current_platform()
+
+    platform.services.async_register_entity_service(
+        'set_light_alarm',
+        {
+            vol.Optional(ATTR_CURVE): cv.string, 
+            vol.Optional(ATTR_LEVEL): cv.positive_int, 
+            vol.Optional(ATTR_DURATION): cv.positive_int, 
+        },
+        'set_light_alarm'
+    )
+
+    platform.services.async_register_entity_service(
+        'set_sound_alarm',
+        {
+            vol.Optional(ATTR_SOURCE): cv.string, 
+            vol.Optional(ATTR_LEVEL): cv.positive_int, 
+            vol.Optional(ATTR_CHANNEL): cv.string, 
+        },
+        'set_sound_alarm'
+    )
+
 class SomneoToggle(SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
@@ -53,10 +75,7 @@ class SomneoToggle(SwitchEntity):
     async def async_update(self):
         """Get the latest data and updates the states of the switches."""
         await self._data.update()
-        if self._data.somneo.alarms()[self._alarm]:
-            self._attr_is_on = True
-        else:
-            self._attr_is_on = False
+        self._attr_is_on = self._data.somneo.alarms()[self._alarm]
 
     def turn_on(self, **kwargs):
         """Called when user Turn On the switch from UI."""
@@ -67,3 +86,12 @@ class SomneoToggle(SwitchEntity):
         """Called when user Turn Off the switch from UI."""
         self._data.somneo.toggle_alarm(self._alarm, False)
         self._attr_is_on = False
+
+    # Define service-calls
+    def set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
+
+        self._data.somneo.set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
+
+    def set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
+
+        self._data.somneo.set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
