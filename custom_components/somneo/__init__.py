@@ -47,30 +47,6 @@ async def async_setup_entry(hass, config_entry):
                 hass.config_entries.async_forward_entry_setup(config_entry, platform)
             )
 
-        # Define service-calls
-        def set_light_alarm(call):
-            alarm_nr = call.data.get(ATTR_ALARM)
-            curve = call.data.get(ATTR_CURVE)
-            level = call.data.get(ATTR_LEVEL)
-            duration = call.data.get(ATTR_DURATION)
-
-            hass.data[DOMAIN].somneo.set_light_alarm(alarm_nr, curve = curve, level = level, duration = duration)
-
-        def set_sound_alarm(call):
-            alarm_nr = call.data.get(ATTR_ALARM)
-            source = call.data.get(ATTR_SOURCE)
-            level = call.data.get(ATTR_LEVEL)
-            channel = call.data.get(ATTR_CHANNEL)
-
-            hass.data[DOMAIN].somneo.set_sound_alarm(alarm_nr, source = source, level = level, channel = channel)
-
-        hass.services.async_register(
-            DOMAIN, 'set_light_alarm', set_light_alarm
-        )
-        hass.services.async_register(
-            DOMAIN, 'set_sound_alarm', set_sound_alarm
-        )
-
         #### NOTHING BELOW THIS LINE ####
         # If Success:
         _LOGGER.info("Somneo has been set up!")
