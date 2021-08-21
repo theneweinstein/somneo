@@ -1,7 +1,9 @@
 """Platform for sensor integration."""
 import logging
 
-from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE
+from datetime import datetime
+
+from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE, DEVICE_CLASS_TIMESTAMP
 from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT, SensorEntity
 
 from .const import *
@@ -80,8 +82,9 @@ class SomneoNextAlarmSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_next_alarm'
         self._attr_state = None
+        self._attr_device_class = DEVICE_CLASS_TIMESTAMP
     
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        self._attr_state = self._data.somneo.next_alarm()
+        self._attr_state = datetime.fromisoformat(self._data.somneo.next_alarm()).astimezone() if self._data.somneo.next_alarm() else None
