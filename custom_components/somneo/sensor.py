@@ -40,9 +40,9 @@ class SomneoSensor(SensorEntity):
         """Initialize the sensor."""
         self._data = data
         self._attr_name = name + "_" + sensor_type
-        self._attr_unit_of_measurement = SENSORS[sensor_type]
+        self._attr_native_unit_of_measurement = SENSORS[sensor_type]
         self._type = sensor_type
-        self._attr_state = None
+        self._attr_native_value = None
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_' + sensor_type
 
@@ -64,13 +64,13 @@ class SomneoSensor(SensorEntity):
         """Get the latest data and updates the states."""
         await self._data.update()
         if self._type == "temperature":
-            self._attr_state = self._data.somneo.temperature()
+            self._attr_native_value = self._data.somneo.temperature()
         if self._type == "humidity":
-            self._attr_state = self._data.somneo.humidity()
+            self._attr_native_value = self._data.somneo.humidity()
         if self._type == "luminance":
-            self._attr_state = self._data.somneo.luminance()
+            self._attr_native_value = self._data.somneo.luminance()
         if self._type == "noise":
-            self._attr_state = self._data.somneo.noise()
+            self._attr_native_value = self._data.somneo.noise()
 
 
 class SomneoNextAlarmSensor(SensorEntity):
@@ -81,10 +81,10 @@ class SomneoNextAlarmSensor(SensorEntity):
         self._attr_name = name + "_next_alarm"
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_next_alarm'
-        self._attr_state = None
+        self._attr_native_value = None
         self._attr_device_class = DEVICE_CLASS_TIMESTAMP
     
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        self._attr_state = datetime.fromisoformat(self._data.somneo.next_alarm()).astimezone() if self._data.somneo.next_alarm() else None
+        self._attr_native_value = datetime.fromisoformat(self._data.somneo.next_alarm()).astimezone() if self._data.somneo.next_alarm() else None
