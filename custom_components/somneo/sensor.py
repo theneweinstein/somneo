@@ -1,8 +1,6 @@
 """Platform for sensor integration."""
 import logging
 
-from custom_components import smartsleep
-from homeassistant.helpers.entity import Entity
 from datetime import datetime
 from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE, DEVICE_CLASS_TIMESTAMP
 from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT, SensorEntity
