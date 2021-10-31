@@ -1,4 +1,4 @@
-""" Philips Somneo """
+""" Philips SmartSleep """
 import asyncio
 import datetime
 import logging
@@ -11,10 +11,7 @@ from homeassistant.helpers import discovery
 from homeassistant.util import Throttle
 from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.exceptions import PlatformNotReady
-
-
 from pysomneo import Somneo
-
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
