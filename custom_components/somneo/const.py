@@ -48,5 +48,5 @@ CONFIG_SCHEMA = vol.Schema({
 }, extra=vol.ALLOW_EXTRA)
 
 
-NOTIFICATION_ID = "somneosensor_notification"
-NOTIFICATION_TITLE = "SomneoSensor Setup"
+NOTIFICATION_ID = "smartsleepsensor_notification"
+NOTIFICATION_TITLE = "SmartSleepSensor Setup"
