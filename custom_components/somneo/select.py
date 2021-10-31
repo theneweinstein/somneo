@@ -16,7 +16,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
     }
@@ -48,21 +48,21 @@ class SomneoDays(SelectEntity):
     def select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""
         _LOGGER.debug(option)
-        
+
         self._attr_current_option = option
 
         if option == WORKDAYS:
             self._data.somneo.set_alarm_workdays(self._alarm)
-            _LOGGER.debug('Optie is werkday')
+            _LOGGER.debug('Option is workday')
         elif option == WEEKEND:
             self._data.somneo.set_alarm_weekend(self._alarm)
-            _LOGGER.debug('Optie is weekend')
+            _LOGGER.debug('Option is weekend')
         elif option == TOMORROW:
             self._data.somneo.set_alarm_tomorrow(self._alarm)
-            _LOGGER.debug('Optie is morgen')
+            _LOGGER.debug('Option is tomorrow')
         elif option == EVERYDAY:
             self._data.somneo.set_alarm_everyday(self._alarm)
-            _LOGGER.debug('Optie is elke dag')
+            _LOGGER.debug('Option is everyday')
 
     async def async_update(self):
         """Get the latest data and updates the states."""

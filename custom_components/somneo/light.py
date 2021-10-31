@@ -2,7 +2,6 @@
 import logging
 
 # Import the device class from the component that you want to support
-from custom_components import smartsleep
 from homeassistant.components.light import (LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
 
 from .const import *
@@ -11,14 +10,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo light from config_entry."""
+    """ Add SmartSleep light from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
     }

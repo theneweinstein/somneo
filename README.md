@@ -5,7 +5,7 @@ Home Assistant custom component for the Philips SmartSleep Connected Sleep and W
 You can install this custom component via HACS as a custom repository (https://hacs.xyz/docs/faq/custom_repositories/). Alternatively you can clone or copy the files into the smartsleep folder in the custom_components folder of HomeAssistant.
 
 # Configuration
-After installation you an either use a config flow to set-up a SmartSleep device or add:
+After installation you can either use a config flow to set-up a SmartSleep device or add:
 ```
 smartsleep:
   host: IP-ADDRESS (required)

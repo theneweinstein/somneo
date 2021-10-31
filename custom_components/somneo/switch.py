@@ -13,14 +13,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo from config_entry."""
+    """ Add SmartSleep from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
     }
@@ -36,9 +36,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     platform.async_register_entity_service(
         'set_light_alarm',
         {
-            vol.Optional(ATTR_CURVE): cv.string, 
-            vol.Optional(ATTR_LEVEL): cv.positive_int, 
-            vol.Optional(ATTR_DURATION): cv.positive_int, 
+            vol.Optional(ATTR_CURVE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_DURATION): cv.positive_int,
         },
         'set_light_alarm'
     )
@@ -46,9 +46,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     platform.async_register_entity_service(
         'set_sound_alarm',
         {
-            vol.Optional(ATTR_SOURCE): cv.string, 
-            vol.Optional(ATTR_LEVEL): cv.positive_int, 
-            vol.Optional(ATTR_CHANNEL): cv.string, 
+            vol.Optional(ATTR_SOURCE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_CHANNEL): cv.string,
         },
         'set_sound_alarm'
     )
