@@ -1,18 +1,11 @@
 {
-<<<<<<< HEAD:manifest.json
     "domain": "smartsleep",
-    "name": "Phillips SmartSleep",
+    "name": "Philips SmartSleep",
     "documentation": "https://github.com/wylek/smartsleep",
-=======
-    "domain": "somneo",
-    "name": "Philips Somneo",
     "version": "2.2.1",
-    "documentation": "https://github.com/theneweinstein/somneo",
-    "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
->>>>>>> 21f57cce8998c62ab56112246c02003b4b52a8d1:custom_components/somneo/manifest.json
+    "issue_tracker": "https://github.com/wylek/smartsleep/issues",
     "dependencies": [],
     "after_dependencies": [],
-    "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.2.0"],
+    "requirements": ["pysomneo>=2.2.0"],
     "config_flow": true
 }
