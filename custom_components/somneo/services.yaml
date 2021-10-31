@@ -1,0 +1,143 @@
+# Service ID
+set_light_alarm:
+  # Service name as shown in UI
+  name: Set wake-up light
+  # Description of the service
+  description: Set the wake-up light of the alarm
+  target:
+    entity:
+      integration: somneo
+      domain: switch
+  # Different fields that your service accepts
+  fields:
+    curve:
+      # Field name as shown in UI
+      name: Light curve
+      description: The light curve of the wake-up light.
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'sunny day'
+      # The default field value
+      default: 'sunny day'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'sunny day'
+            - 'island red'
+            - 'nordic white'
+    level:
+      # Field name as shown in UI
+      name: Light level
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 20
+      # The default field value
+      default: 20
+      # Selector
+      selector:
+        number:
+          min: 0
+          max: 25
+          step: 1
+    duration:
+      # Field name as shown in UI
+      name: Duration
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 30
+      # The default field value
+      default: 30
+      # Selector
+      selector:
+        number:
+          min: 5
+          max: 40
+          step: 1
+
+set_sound_alarm:
+  name: Set wake-up sound
+  description: Set the sound of the alarm
+  target:
+    entity:
+      integration: somneo
+      domain: switch
+  fields:
+    source:
+      # Field name as shown in UI
+      name: Source
+      description: Sound source to be used.
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'wake-up'
+      # The default field value
+      default: 'wake-up'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'wake-up'
+            - 'radio'
+            - 'off'
+    channel:
+      # Field name as shown in UI
+      name: Channel
+      description: Sound channel to be used (name for wake-up source and number for radio source.).
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 'forest birds'
+      # The default field value
+      default: 'forest birds'
+      # Selector
+      selector:
+        select:
+          options:
+            - 'forest birds'
+            - 'summer birds'
+            - 'buddha wakeup'
+            - 'morning alps'
+            - 'yoga harmony'
+            - 'nepal bowls'
+            - 'summer lake'
+            - 'ocean waves'
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+    level:
+      # Field name as shown in UI
+      name: Sound level
+      # Whether or not field is required (default = false)
+      required: true
+      # Example value that can be passed for this field
+      example: 12
+      # The default field value
+      default: 12
+      # Selector
+      selector:
+        number:
+          min: 1
+          max: 25
+          step: 1
+
+add_alarm:
+  name: Add an alarm
+  description: Add an alarm (make it visible in Somneo app)
+  target:
+    entity:
+      integration: somneo
+      domain: switch
+
+remove_alarm:
+  name: Remove an alarm
+  description: Remove an alarm (make it invisible in Somneo app) and reset its settings to default.
+  target:
+    entity:
+      integration: somneo
+      domain: switch

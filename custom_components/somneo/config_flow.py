@@ -28,7 +28,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if info is not None:
             if host_valid(info[CONF_HOST]):
-                return self.async_create_entry(title="Someo", data=info)
+                return self.async_create_entry(title="Somn  eo", data=info)
 
             errors[CONF_HOST] = "invalid_host"
 
