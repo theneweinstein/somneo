@@ -3,8 +3,7 @@ import logging
 
 from datetime import datetime
 
-from homeassistant.const import DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE, DEVICE_CLASS_TIMESTAMP
-from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT, SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, STATE_CLASS_MEASUREMENT, SensorEntity
 
 from .const import *
 
@@ -47,16 +46,16 @@ class SomneoSensor(SensorEntity):
         self._attr_unique_id = serial + '_' + sensor_type
 
     @property
-    def device_class(self):
+    def device_class(self) -> SensorDeviceClass:
         """Return the class of this device, from component DEVICE_CLASSES."""
         if self._type == "temperature":
-            return DEVICE_CLASS_TEMPERATURE
+            return SensorDeviceClass.TEMPERATURE
         if self._type == "humidity":
-            return DEVICE_CLASS_HUMIDITY
+            return SensorDeviceClass.HUMIDITY
         if self._type == "luminance":
-            return DEVICE_CLASS_ILLUMINANCE
+            return SensorDeviceClass.ILLUMINANCE
         if self._type == "pressure":
-            return DEVICE_CLASS_PRESSURE
+            return SensorDeviceClass.PRESSURE
         else:
             return None
     
@@ -82,7 +81,7 @@ class SomneoNextAlarmSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_next_alarm'
         self._attr_native_value = None
-        self._attr_device_class = DEVICE_CLASS_TIMESTAMP
+        self._attr_device_class = SensorDeviceClass.TIMESTAMP
     
     async def async_update(self):
         """Get the latest data and updates the states."""
