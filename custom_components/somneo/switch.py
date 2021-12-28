@@ -78,7 +78,7 @@ class SomneoToggle(SwitchEntity):
         self._attr_unique_id = serial + '_' + alarm
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         attr = {}
         attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
