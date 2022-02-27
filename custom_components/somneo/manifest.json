@@ -1,12 +1,12 @@
 {
     "domain": "somneo",
     "name": "Philips Somneo",
-    "version": "2.2.2",
+    "version": "2.2.3",
     "documentation": "https://github.com/theneweinstein/somneo",
     "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.2.0"],
+    "requirements": ["pysomneo==2.2.1"],
     "config_flow": true
 }
