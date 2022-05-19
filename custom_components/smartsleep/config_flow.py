@@ -15,7 +15,7 @@ def host_valid(host):
         disallowed = re.compile(r"[^a-zA-z\d\-]")
         return all(x and not disallowed.search(x) for x in host.split("."))
 
-class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class SmartSleepConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
     def __init__(self):
         """Initialize."""
@@ -28,7 +28,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if info is not None:
             if host_valid(info[CONF_HOST]):
-                return self.async_create_entry(title="Smartsleep", data=info)
+                return self.async_create_entry(title="SmartSleep", data=info)
 
             errors[CONF_HOST] = "invalid_host"
 
@@ -41,4 +41,4 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle configuration by yaml file."""
 
         if host_valid(import_data[CONF_HOST]):
-            return self.async_create_entry(title='Smartsleep', data=import_data)
+            return self.async_create_entry(title='SmartSleep', data=import_data)

@@ -12,9 +12,10 @@ from homeassistant.util import Throttle
 from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.exceptions import PlatformNotReady
 from pysomneo import Somneo
-from .const import *
+from .const import DOMAIN, CONF_HOST, CONF_NAME, PLATFORMS, NOTIFICATION_ID, NOTIFICATION_TITLE, UPDATE_TIME
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup(hass, config):
     """Set up the SmartSleep component from yaml."""
@@ -34,14 +35,16 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass, config_entry):
     """Setup the SmartSleep component."""
     try:
-
-        hass.data[DOMAIN] = SomneoData(hass, config_entry)
+        _LOGGER.info("SmartSleep setting up...")
+        _LOGGER.info("SmartSleep domain: {}".format(str(DOMAIN)))
+        hass.data[DOMAIN] = (hass, config_entry)
         await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
 
         for platform in PLATFORMS:
             hass.async_create_task(
-                hass.config_entries.async_forward_entry_setup(config_entry, platform)
+                hass.config_entries.async_forward_entry_setup(
+                    config_entry, platform)
             )
 
         #### NOTHING BELOW THIS LINE ####
@@ -49,10 +52,12 @@ async def async_setup_entry(hass, config_entry):
         _LOGGER.info("SmartSleep has been set up!")
         return True
     except requests.RequestException as ex:
-        _LOGGER.error('Error while initializing SmartSleep, exception: {}'.format(str(ex)))
+        _LOGGER.error(
+            'Error while initializing SmartSleep, exception: {}'.format(str(ex)))
         raise PlatformNotReady
     except Exception as ex:
-        _LOGGER.error('Error while initializing SmartSleep, exception: {}'.format(str(ex)))
+        _LOGGER.error(
+            'Error while initializing SmartSleep, exception: {}'.format(str(ex)))
         hass.components.persistent_notification.create(
             f'Error: {str(ex)}<br />Fix issue and restart',
             title=NOTIFICATION_TITLE,
@@ -60,18 +65,20 @@ async def async_setup_entry(hass, config_entry):
         # If Fail:
         return False
 
+
 async def async_unload_entry(hass, config_entry):
     """Uload the config entry and platforms."""
     hass.data.pop[DOMAIN]
 
     tasks = []
     for platform in PLATFORMS:
-        tasks.append(hass.config_entries.async_forward_entry_unload(config_entry, platform))
+        tasks.append(hass.config_entries.async_forward_entry_unload(
+            config_entry, platform))
 
     return all(await asyncio.gather(*tasks))
 
 
-class SomneoData:
+class SmartSleepData:
     """Handle for getting latest data from SmartSleep."""
 
     def __init__(self, hass, config_entry):
