@@ -2,39 +2,39 @@
 import logging
 
 from datetime import datetime
-
 from homeassistant.components.sensor import SensorDeviceClass, STATE_CLASS_MEASUREMENT, SensorEntity
-
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
-
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo sensors from config_entry."""
+    """ Add SmartSleep sensors from config_entry."""
     name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]    
+    data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    } 
+    }
 
     sensors = []
     for sensor in list(SENSORS):
-        sensors.append(SomneoSensor(name, data, device_info, dev_info['serial'], sensor))
-    sensors.append(SomneoNextAlarmSensor(name, data, device_info, dev_info['serial']))
+        sensors.append(SomneoSensor(
+            name, data, device_info, dev_info['serial'], sensor))
+    sensors.append(SomneoNextAlarmSensor(
+        name, data, device_info, dev_info['serial']))
 
     async_add_entities(sensors, True)
-    
+
 
 class SomneoSensor(SensorEntity):
-    
+
     _attr_state_class = STATE_CLASS_MEASUREMENT
 
     """Representation of a Sensor."""
+
     def __init__(self, name, data, device_info, serial, sensor_type):
         """Initialize the sensor."""
         self._data = data
@@ -58,7 +58,7 @@ class SomneoSensor(SensorEntity):
             return SensorDeviceClass.PRESSURE
         else:
             return None
-    
+
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
@@ -74,6 +74,7 @@ class SomneoSensor(SensorEntity):
 
 class SomneoNextAlarmSensor(SensorEntity):
     """Representation of a Sensor."""
+
     def __init__(self, name, data, device_info, serial):
         """Initialize the sensor."""
         self._data = data

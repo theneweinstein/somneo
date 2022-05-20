@@ -1,20 +1,13 @@
 """ Philips SmartSleep """
 import asyncio
-import datetime
-import logging
-import urllib3
-import requests
-import json
 import xml.etree.ElementTree as ET
 
 from homeassistant.helpers import discovery
 from homeassistant.util import Throttle
 from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.exceptions import PlatformNotReady
-
 from pysomneo import Somneo
-
-from .const import *
+from .const import DOMAIN, CONF_HOST, CONF_NAME, PLATFORMS, NOTIFICATION_ID, NOTIFICATION_TITLE, UPDATE_TIME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,8 +30,9 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass, config_entry):
     """Setup the SmartSleep component."""
     try:
-
-        hass.data[DOMAIN] = SomneoData(hass, config_entry)
+        _LOGGER.info("SmartSleep setting up...")
+        _LOGGER.info("SmartSleep domain: {}".format(str(DOMAIN)))
+        hass.data[DOMAIN] = (hass, config_entry)
         await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
 
@@ -79,7 +73,7 @@ async def async_unload_entry(hass, config_entry):
     return all(await asyncio.gather(*tasks))
 
 
-class SomneoData:
+class SmartSleepData:
     """Handle for getting latest data from SmartSleep."""
 
     def __init__(self, hass, config_entry):

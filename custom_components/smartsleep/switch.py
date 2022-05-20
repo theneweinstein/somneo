@@ -13,21 +13,22 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add Somneo from config_entry."""
+    """ Add SmartSleep from config_entry."""
     name = config_entry.data[CONF_NAME]
     data = hass.data[DOMAIN]
     dev_info = data.dev_info
 
     device_info = {
         "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
+        "name": 'SmartSleep',
         "manufacturer": dev_info['manufacturer'],
         "model": f"{dev_info['model']} {dev_info['modelnumber']}",
     }
 
     alarms = []
     for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoToggle(name, data, device_info, dev_info['serial'], alarm))
+        alarms.append(SomneoToggle(
+            name, data, device_info, dev_info['serial'], alarm))
 
     async_add_entities(alarms, True)
 
@@ -36,9 +37,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     platform.async_register_entity_service(
         'set_light_alarm',
         {
-            vol.Optional(ATTR_CURVE): cv.string, 
-            vol.Optional(ATTR_LEVEL): cv.positive_int, 
-            vol.Optional(ATTR_DURATION): cv.positive_int, 
+            vol.Optional(ATTR_CURVE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_DURATION): cv.positive_int,
         },
         'set_light_alarm'
     )
@@ -46,9 +47,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     platform.async_register_entity_service(
         'set_sound_alarm',
         {
-            vol.Optional(ATTR_SOURCE): cv.string, 
-            vol.Optional(ATTR_LEVEL): cv.positive_int, 
-            vol.Optional(ATTR_CHANNEL): cv.string, 
+            vol.Optional(ATTR_SOURCE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_CHANNEL): cv.string,
         },
         'set_sound_alarm'
     )
@@ -81,7 +82,8 @@ class SomneoToggle(SwitchEntity):
     def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         attr = {}
-        attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
+        attr['time'], attr['days'] = self._data.somneo.alarm_settings(
+            self._alarm)
         return attr
 
     async def async_update(self):
@@ -100,13 +102,15 @@ class SomneoToggle(SwitchEntity):
         self._attr_is_on = False
 
     # Define service-calls
-    def set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
+    def set_light_alarm(self, curve='sunny day', level=20, duration=30):
         """Adjust the light settings of an alarm."""
-        self._data.somneo.set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
+        self._data.somneo.set_light_alarm(
+            self._alarm, curve=curve, level=level, duration=duration)
 
-    def set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
+    def set_sound_alarm(self, source='wake-up', level=12, channel='forest birds'):
         """Adjust the sound settings of an alarm."""
-        self._data.somneo.set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
+        self._data.somneo.set_sound_alarm(
+            self._alarm, source=source, level=level, channel=channel)
 
     def remove_alarm(self):
         """Function to remove alarm from list in wake-up app"""

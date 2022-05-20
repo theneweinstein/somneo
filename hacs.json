@@ -1,7 +1,7 @@
 {
-    "name": "Philips Somneo",
-    "render_readme": true,
-    "domains": ["sensor","light","switch","select","number"],
-    "iot_class": "Local Polling",
-    "homeassistant": "2021.12"
-  }
+  "name": "Philips SmartSleep",
+  "render_readme": true,
+  "domains": ["sensor", "light", "switch", "select", "number"],
+  "iot_class": "Local Polling",
+  "homeassistant": "2022.5"
+}
