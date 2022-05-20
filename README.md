@@ -8,8 +8,6 @@ On your Home Assistant instance, go to /custom_components and clone this reposit
 
 You can install this custom component via HACS as a custom repository (https://hacs.xyz/docs/faq/custom_repositories/). Alternatively you can clone or copy the files into the somneo folder in the custom_components folder of HomeAssistant.
 
-> > > > > > > 1017504e31f2b5466b4a1c0be09f3a2931878037
-
 # Configuration
 
 After installation you an either use a config flow to set-up a SmartSleep device or add:
