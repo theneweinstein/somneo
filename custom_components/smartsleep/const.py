@@ -36,7 +36,8 @@ ATTR_CHANNEL = 'channel'
 
 UPDATE_TIME = timedelta(seconds=60)
 
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE,
+           'luminance': 'lux', 'noise': 'db', 'sunset_timer': None}
 
 PLATFORMS = ['light', 'sensor', 'switch', 'number', 'select']
 

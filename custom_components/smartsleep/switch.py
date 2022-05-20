@@ -66,7 +66,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         'add_alarm'
     )
 
-
 class SomneoToggle(SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True

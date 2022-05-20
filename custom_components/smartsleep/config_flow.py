@@ -15,6 +15,7 @@ def host_valid(host):
         disallowed = re.compile(r"[^a-zA-z\d\-]")
         return all(x and not disallowed.search(x) for x in host.split("."))
 
+      
 class SmartSleepConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
     def __init__(self):

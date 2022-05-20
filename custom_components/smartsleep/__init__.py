@@ -1,7 +1,5 @@
 """ Philips SmartSleep """
 import asyncio
-import logging
-import requests
 import xml.etree.ElementTree as ET
 
 from homeassistant.helpers import discovery

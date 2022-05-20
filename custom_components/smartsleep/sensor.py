@@ -3,12 +3,9 @@ import logging
 
 from datetime import datetime
 from homeassistant.components.sensor import SensorDeviceClass, STATE_CLASS_MEASUREMENT, SensorEntity
-
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
-
-
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """ Add SmartSleep sensors from config_entry."""
     name = config_entry.data[CONF_NAME]
@@ -48,6 +45,7 @@ class SomneoSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_' + sensor_type
 
+    @property
     def device_class(self) -> SensorDeviceClass:
         """Return the class of this device, from component DEVICE_CLASSES."""
         if self._type == "temperature":
@@ -84,10 +82,9 @@ class SomneoNextAlarmSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_unique_id = serial + '_next_alarm'
         self._attr_native_value = None
-        self._attr_device_class = SensorDeviceClass.DEVICE_CLASS_TIMESTAMP
-
+        self._attr_device_class = SensorDeviceClass.TIMESTAMP
+    
     async def async_update(self):
         """Get the latest data and updates the states."""
         await self._data.update()
-        self._attr_native_value = datetime.fromisoformat(self._data.somneo.next_alarm(
-        )).astimezone() if self._data.somneo.next_alarm() else None
+        self._attr_native_value = datetime.fromisoformat(self._data.somneo.next_alarm()).astimezone() if self._data.somneo.next_alarm() else None
