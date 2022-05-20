@@ -27,7 +27,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     alarms = []
     for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoToggle(name, data, device_info, dev_info['serial'], alarm))
+        alarms.append(SomneoToggle(
+            name, data, device_info, dev_info['serial'], alarm))
 
     async_add_entities(alarms, True)
 
@@ -65,6 +66,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         'add_alarm'
     )
 
+
 class SomneoToggle(SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
@@ -78,10 +80,11 @@ class SomneoToggle(SwitchEntity):
         self._attr_unique_id = serial + '_' + alarm
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         attr = {}
-        attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
+        attr['time'], attr['days'] = self._data.somneo.alarm_settings(
+            self._alarm)
         return attr
 
     async def async_update(self):
@@ -100,13 +103,15 @@ class SomneoToggle(SwitchEntity):
         self._attr_is_on = False
 
     # Define service-calls
-    def set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
+    def set_light_alarm(self, curve='sunny day', level=20, duration=30):
         """Adjust the light settings of an alarm."""
-        self._data.somneo.set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
+        self._data.somneo.set_light_alarm(
+            self._alarm, curve=curve, level=level, duration=duration)
 
-    def set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
+    def set_sound_alarm(self, source='wake-up', level=12, channel='forest birds'):
         """Adjust the sound settings of an alarm."""
-        self._data.somneo.set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
+        self._data.somneo.set_sound_alarm(
+            self._alarm, source=source, level=level, channel=channel)
 
     def remove_alarm(self):
         """Function to remove alarm from list in wake-up app"""

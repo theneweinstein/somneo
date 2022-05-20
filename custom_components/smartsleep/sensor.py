@@ -51,15 +51,15 @@ class SomneoSensor(SensorEntity):
     def device_class(self) -> SensorDeviceClass:
         """Return the class of this device, from component DEVICE_CLASSES."""
         if self._type == "temperature":
-             return SensorDeviceClass.TEMPERATURE
-         if self._type == "humidity":
-             return SensorDeviceClass.HUMIDITY
-         if self._type == "luminance":
-             return SensorDeviceClass.ILLUMINANCE
-         if self._type == "pressure":
-             return SensorDeviceClass.PRESSURE
-         else:
-             return None
+            return SensorDeviceClass.TEMPERATURE
+        if self._type == "humidity":
+            return SensorDeviceClass.HUMIDITY
+        if self._type == "luminance":
+            return SensorDeviceClass.ILLUMINANCE
+        if self._type == "pressure":
+            return SensorDeviceClass.PRESSURE
+        else:
+            return None
 
     async def async_update(self):
         """Get the latest data and updates the states."""
