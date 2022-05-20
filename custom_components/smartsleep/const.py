@@ -13,12 +13,33 @@ CONF_HOST = 'host'
 CONF_SENS = 'sensors'
 
 ALARMS = 'alarms'
+HOURS = 'hours'
+MINUTES = 'minutes'
+WORKDAYS = 'workdays'
+WEEKEND = 'weekend'
+TOMORROW = 'tomorrow'
+EVERYDAY = 'everyday'
+UNKNOWN = 'unknown'
+
+ALARMS_ICON = 'hass:alarm'
+HOURS_ICON = 'hass:counter'
+MINUTES_ICON = 'hass:counter'
+WORKDAYS_ICON = 'hass:calendar-range'
+WEEKEND_ICON = 'hass:calendar-range'
+
+ATTR_ALARM = 'alarm'
+ATTR_CURVE = 'curve'
+ATTR_LEVEL = 'level'
+ATTR_DURATION = 'duration'
+ATTR_SOURCE = 'source'
+ATTR_CHANNEL = 'channel'
 
 UPDATE_TIME = timedelta(seconds=60)
 
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db', 'sunset_timer': None}
+SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE,
+           'luminance': 'lux', 'noise': 'db', 'sunset_timer': None}
 
-PLATFORMS = ['light', 'binary_sensor', 'sensor', 'switch']
+PLATFORMS = ['light', 'sensor', 'switch', 'number', 'select']
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({

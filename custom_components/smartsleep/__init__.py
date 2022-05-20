@@ -18,6 +18,7 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
+
 async def async_setup(hass, config):
     """Set up the SmartSleep component from yaml."""
     if not hass.config_entries.async_entries(DOMAIN) and config.get(DOMAIN, {}):
@@ -43,19 +44,21 @@ async def async_setup_entry(hass, config_entry):
 
         for platform in PLATFORMS:
             hass.async_create_task(
-                hass.config_entries.async_forward_entry_setup(config_entry, platform)
+                hass.config_entries.async_forward_entry_setup(
+                    config_entry, platform)
             )
-
 
         #### NOTHING BELOW THIS LINE ####
         # If Success:
         _LOGGER.info("SmartSleep has been set up!")
         return True
     except requests.RequestException as ex:
-        _LOGGER.error('Error while initializing SmartSleep, exception: {}'.format(str(ex)))
+        _LOGGER.error(
+            'Error while initializing SmartSleep, exception: {}'.format(str(ex)))
         raise PlatformNotReady
     except Exception as ex:
-        _LOGGER.error('Error while initializing SmartSleep, exception: {}'.format(str(ex)))
+        _LOGGER.error(
+            'Error while initializing SmartSleep, exception: {}'.format(str(ex)))
         hass.components.persistent_notification.create(
             f'Error: {str(ex)}<br />Fix issue and restart',
             title=NOTIFICATION_TITLE,
@@ -63,13 +66,15 @@ async def async_setup_entry(hass, config_entry):
         # If Fail:
         return False
 
+
 async def async_unload_entry(hass, config_entry):
     """Uload the config entry and platforms."""
     hass.data.pop[DOMAIN]
 
     tasks = []
     for platform in PLATFORMS:
-        tasks.append(hass.config_entries.async_forward_entry_unload(config_entry, platform))
+        tasks.append(hass.config_entries.async_forward_entry_unload(
+            config_entry, platform))
 
     return all(await asyncio.gather(*tasks))
 
