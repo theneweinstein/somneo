@@ -1,1 +1,1 @@
-pysomneo>=0.1.12
+pysomneo>=2.2.1

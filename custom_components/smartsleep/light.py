@@ -3,7 +3,8 @@ import logging
 
 # Import the device class from the component that you want to support
 from custom_components import smartsleep
-from homeassistant.components.light import (LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
+from homeassistant.components.light import (
+    LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
 
 from .const import *
 
@@ -32,51 +33,21 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         ]
     )
 
+
 class SomneoLight(LightEntity):
     """Representation of an SmartSleep Light."""
 
+    _attr_should_poll = True
+    _attr_supported_features = SUPPORT_BRIGHTNESS
+
     def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""
-        self._name = name
+        self._attr_name = name
         self._data = data
-        self._state = None
-        self._brightness = None
-        self._device_info = device_info
-        self._serial = serial
-
-    @property
-    def name(self):
-        """Return the display name of this light."""
-        return self._name
-
-    @property
-    def brightness(self):
-        """Return the brightness of this light between 0..255."""
-        return self._brightness
-
-    @property
-    def is_on(self):
-        """Return true if light is on."""
-        return self._state
-
-    @property
-    def should_poll(self):
-        return True
-
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return SUPPORT_BRIGHTNESS
-
-    @property
-    def unique_id(self):
-        """Return the id of this light."""
-        return self._serial + "_light"
-
-    @property
-    def device_info(self):
-        """Return the device_info of the device."""
-        return self._device_info
+        self._attr_brightness = None
+        self._attr_device_info = device_info
+        self._attr_unique_id = serial + '_light'
+        self._attr_is_on = None
 
     def turn_on(self, **kwargs):
         """Instruct the light to turn on."""
@@ -86,77 +57,52 @@ class SomneoLight(LightEntity):
             brightness = None
 
         self._data.somneo.toggle_light(True, brightness)
-        self._state = True
+        self._attr_is_on = True
         self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs):
         """Instruct the light to turn off."""
         self._data.somneo.toggle_light(False)
-        self._state = False
+        self._attr_is_on = False
         self.schedule_update_ha_state()
 
     async def async_update(self):
         """Fetch new state data for this light."""
         await self._data.update()
-        self._state, self._brightness = self._data.somneo.light_status()
+        self._attr_is_on, self._attr_brightness = self._data.somneo.light_status()
+
 
 class SomneoNightLight(LightEntity):
     """Representation of a SmartSleep Light."""
 
+    _attr_should_poll = True
+    _attr_supported_features = 0
+
     def __init__(self, name, data, device_info, serial):
         """Initialize an SomneoLight."""
-        self._name = name + "_night"
+        self._attr_name = name + "_night"
         self._data = data
-        self._state = None
-        self._brightness = None
-        self._device_info = device_info
-        self._serial = serial
-
-    @property
-    def name(self):
-        """Return the display name of this light."""
-        return self._name
-
-    @property
-    def is_on(self):
-        """Return true if light is on."""
-        return self._state
-
-    @property
-    def should_poll(self):
-        return True
-
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return 0
-
-    @property
-    def unique_id(self):
-        """Return the id of this light."""
-        return self._serial + '_night'
-
-    @property
-    def device_info(self):
-        """Return the device_info of the device."""
-        return self._device_info
+        self._attr_is_on = None
+        self._attr_brightness = None
+        self._attr_device_info = device_info
+        self._attr_unique_id = serial + '_night'
 
     def turn_on(self, **kwargs):
         """Instruct the light to turn on."""
         self._data.somneo.toggle_night_light(True)
-        self._state = True
+        self._attr_is_on = True
         self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs):
         """Instruct the light to turn off."""
         self._data.somneo.toggle_night_light(False)
-        self._state = False
+        self._attr_is_on = False
         self.schedule_update_ha_state()
 
     async def async_update(self):
         """Fetch new state data for this light."""
         await self._data.update()
-        self._state = self._data.somneo.night_light_status()
+
 
 class SomneoSunset(LightEntity):
     """Representation of the SmartSleep's sunset (dusk) mode."""
