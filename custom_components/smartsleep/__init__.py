@@ -37,7 +37,7 @@ async def async_setup_entry(hass, config_entry):
     try:
         _LOGGER.info("SmartSleep setting up...")
         _LOGGER.info("SmartSleep domain: {}".format(str(DOMAIN)))
-        hass.data[DOMAIN] = (hass, config_entry)
+        hass.data[DOMAIN] = SmartSleepData(hass, config_entry)
         await hass.data[DOMAIN].get_device_info()
         await hass.data[DOMAIN].update()
 
