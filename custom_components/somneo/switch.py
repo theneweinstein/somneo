@@ -1,33 +1,40 @@
 """Platform for switch integration. (on/off alarms & on/off alarms on workdays and/or weekends"""
 import logging
+import voluptuous as vol
 
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 try:
     from homeassistant.components.switch import SwitchEntity
 except ImportError:
     from homeassistant.components.switch import SwitchDevice as SwitchEntity
-from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.helpers import config_validation as cv, entity_platform
 
-from .const import *
+from .const import ATTR_CHANNEL, DOMAIN, ATTR_LEVEL, ATTR_CURVE, ATTR_DURATION, ATTR_SOURCE, ALARMS_ICON
+from .entity import SomneoEntity
+
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, 
+    config_entry: ConfigEntry, 
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """ Add Somneo from config_entry."""
-    name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]
-    dev_info = data.dev_info
 
-    device_info = {
-        "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
-        "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    }
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    unique_id = config_entry.unique_id
+    assert unique_id is not None
+    name = config_entry.data[CONF_NAME]
+    device_info = config_entry.data['dev_info']  
 
     alarms = []
-    for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoToggle(name, data, device_info, dev_info['serial'], alarm))
+    for alarm in list(coordinator.alarms):
+        alarms.append(SomneoToggle(coordinator, unique_id, name, device_info, alarm))
 
     async_add_entities(alarms, True)
 
@@ -65,53 +72,48 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         'add_alarm'
     )
 
-class SomneoToggle(SwitchEntity):
+class SomneoToggle(SomneoEntity, SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
 
-    def __init__(self, name, data, device_info, serial, alarm):
+    def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches. """
-        self._data = data
-        self._attr_name = name + "_" + alarm
+        super().__init__(coordinator, unique_id, name, device_info)
+
+        self._attr_name = alarm.capitalize()
         self._alarm = alarm
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + '_' + alarm
+
+    @property
+    def is_on(self):
+        """Return the state of the device."""
+        self.coordinator.alarms[self._alarm]
 
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
-        attr = {}
-        attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
-        return attr
-
-    async def async_update(self):
-        """Get the latest data and updates the states of the switches."""
-        await self._data.update()
-        self._attr_is_on = self._data.somneo.alarms()[self._alarm]
+        return self.coordinator.async_get_alarm_attributes(self._alarm)
 
     def turn_on(self, **kwargs):
         """Called when user Turn On the switch from UI."""
-        self._data.somneo.toggle_alarm(self._alarm, True)
-        self._attr_is_on = True
+        self.coordinator.async_toggle_alarm(self._alarm, True)
 
     def turn_off(self, **kwargs):
         """Called when user Turn Off the switch from UI."""
-        self._data.somneo.toggle_alarm(self._alarm, False)
-        self._attr_is_on = False
+        self.coordinator.async_toggle_alarm(self._alarm, False)
 
     # Define service-calls
     def set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
         """Adjust the light settings of an alarm."""
-        self._data.somneo.set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
+        self.coordinator.async_set_light_alarm(self._alarm, curve = curve, level = level, duration = duration)
 
     def set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
         """Adjust the sound settings of an alarm."""
-        self._data.somneo.set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
+        self.coordinator.async_set_sound_alarm(self._alarm, source = source, level = level, channel = channel)
 
     def remove_alarm(self):
         """Function to remove alarm from list in wake-up app"""
-        self._data.someo.remove_alarm(self._alarm)
+        self.coordinator.async_remove_alarm(self._alarm)
 
     def add_alarm(self):
         """Function to add alarm to list in wake-up app"""
-        self._data.someo.add_alarm(self._alarm)
+        self.coordinator.async_add_alarm(self._alarm)

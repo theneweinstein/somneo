@@ -3,9 +3,9 @@
       "step": {
         "user": {
           "title": "Philips Somneo",
-          "description": "Installeer Philips Somneo integratie.",
+          "description": "Installeer de Philips Somneo integratie.",
           "data": {
-            "host": "IP-adres",
+            "host": "Host",
             "name" : "Naam"
           }
         }

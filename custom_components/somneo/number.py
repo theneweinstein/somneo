@@ -1,53 +1,53 @@
 """Platform for number entity to catch hour/minute of alarms."""
 import logging
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.number import NumberEntity
-from datetime import datetime
+from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import *
+from .const import DOMAIN, HOURS, MINUTES, HOURS_ICON, MINUTES_ICON
+from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, 
+    config_entry: ConfigEntry, 
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """ Add Somneo from config_entry."""
-    name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]
-    dev_info = data.dev_info
 
-    device_info = {
-        "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'Somneo',
-        "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    }
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    unique_id = config_entry.unique_id
+    assert unique_id is not None
+    name = config_entry.data[CONF_NAME]
+    device_info = config_entry.data['dev_info']  
 
     alarms = []
     # Add hour & min number_entity for each alarms
-    for alarm in list(data.somneo.alarms()):
-        alarms.append(SomneoTime(name, data, device_info, dev_info['serial'], alarm, HOURS))
-        alarms.append(SomneoTime(name, data, device_info, dev_info['serial'], alarm, MINUTES))
+    for alarm in list(coordinator.alarms):
+        alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, HOURS))
+        alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, MINUTES))
     
-    snooze = [SomneoSnooze(name, data, device_info, dev_info['serial'])]
+    snooze = [SomneoSnooze(coordinator, unique_id, name, device_info)]
 
     async_add_entities(alarms, True)
     async_add_entities(snooze, True)
 
-class SomneoTime(NumberEntity):
+class SomneoTime(SomneoEntity, NumberEntity):
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True
+    _attr_native_step = 1
 
-    def __init__(self, name, data, device_info, serial, alarm, type):
+    def __init__(self, coordinator, unique_id, name, dev_info, alarm, type):
         """Initialize number entities."""
-        self._data = data
-        self._attr_name = name + "_" + alarm + "_" + type
-        self._alarm = alarm
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + type + self._alarm
-        self._attr_native_value = 5.0
-        self._type = type
-        self._alarm_date = None
+        super().__init__(coordinator, unique_id, name, dev_info)
+
+        self._attr_name = alarm.capitalize() + "_" + type
         if type == HOURS:
             self._attr_native_min_value = 0
             self._attr_native_max_value = 23
@@ -56,55 +56,36 @@ class SomneoTime(NumberEntity):
             self._attr_native_min_value = 0
             self._attr_native_max_value = 59
             self._attr_icon = MINUTES_ICON
-        self._attr_native_step = 1
+
+        self._alarm = alarm
+        self._type = type
+
+    @property
+    def native_value(self):
+        return self.coordinator.async_get_alarm(self._alarm, self._type)
 
     def set_native_value(self, value: float):
         """Called when user adjust Hours / Minutes in the UI"""
-        if self._alarm_date is not None:
-            self._attr_native_value = value
-            if self._type == MINUTES:
-                _LOGGER.debug("Set Alarm Date " + str(self._alarm_date.hour) + ":" + str(value))
-                self._data.somneo.set_alarm(self._alarm, minute=int(value))
-            elif self._type == HOURS:
-                _LOGGER.debug("Set Alarm Date " + str(value) + ":" + str(self._alarm_date.minute))
-                self._data.somneo.set_alarm(self._alarm, hour=int(value))
+        if self._type == MINUTES:
+            self.coordinator.async_set_alarm(self._alarm, minutes = int(value))
+        elif self._type == HOURS:
+            self.coordinator.async_set_alarm(self._alarm, hours = int(value))
 
 
-    async def async_update(self):
-        """Get the latest data and updates the states."""
-        await self._data.update()
-        attr = {}
-        attr['time'], attr['days'] = self._data.somneo.alarm_settings(self._alarm)
-        self._alarm_date = datetime.strptime(attr['time'],'%H:%M:%S')
-        if self._type == HOURS:
-            self._attr_native_value = self._alarm_date.hour
-        elif self._type == MINUTES:
-            self._attr_native_value = self._alarm_date.minute
-
-class SomneoSnooze(NumberEntity):
+class SomneoSnooze(SomneoEntity, NumberEntity):
     _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
+    _attr_name = 'Snooze time'
     _attr_native_min_value = 1
     _attr_native_max_value = 20
     _attr_native_step = 1
     _attr_icon = 'hass:alarm-snooze'
 
-
-    def __init__(self, name, data, device_info, serial):
-        """Initialize number entities."""
-        self._data = data
-        self._attr_name = name + '_snooze_time'
-        self._attr_unique_id = serial + '_snooze_time'
-        self._attr_native_value = 9.0
-        self._attr_device_info = device_info
+    @property
+    def native_value(self):
+        return self.coordinator.async_get_snooze_time()
 
     def set_native_value(self, value: float):
         """Called when user adjust snooze time in the UI"""
-        self._attr_native_value = value
-        self._data.somneo.set_snooze_time(int(value))
-
-    async def async_update(self):
-        """Get the latest data and updates the states."""
-        await self._data.update()
-        self._attr_native_value = self._data.somneo.snoozetime
+        self.coordinator.async_set_snooze_time(int(value))

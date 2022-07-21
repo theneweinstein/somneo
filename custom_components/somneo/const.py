@@ -1,55 +1,41 @@
-import voluptuous as vol
-from datetime import timedelta
 
-from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (TEMP_CELSIUS, PERCENTAGE)
-DOMAIN = 'somneo'
-VERSION = "0.3"
+from typing import Final
 
-DEFAULT_NAME = "Somneo"
+DOMAIN: Final = 'somneo'
+VERSION: Final = "0.3"
 
-CONF_NAME = 'name'
-CONF_HOST = 'host'
-CONF_SENS = 'sensors'
+DEFAULT_NAME: Final = "Somneo"
 
-ALARMS = 'alarms'
-HOURS = 'hours'
-MINUTES = 'minutes'
-WORKDAYS = 'workdays'
-WEEKEND = 'weekend'
-TOMORROW = 'tomorrow'
-EVERYDAY = 'everyday'
-UNKNOWN = 'unknown'
+CONF_SENS: Final = 'sensors'
 
-ALARMS_ICON = 'hass:alarm'
-HOURS_ICON = 'hass:counter'
-MINUTES_ICON = 'hass:counter'
-WORKDAYS_ICON = 'hass:calendar-range'
-WEEKEND_ICON = 'hass:calendar-range'
+ALARMS: Final = 'alarms'
+HOURS: Final = 'hours'
+MINUTES: Final = 'minutes'
+WORKDAYS: Final = 'workdays'
+WEEKEND: Final = 'weekend'
+TOMORROW: Final = 'tomorrow'
+EVERYDAY: Final = 'everyday'
+UNKNOWN: Final = 'unknown'
 
-ATTR_ALARM = 'alarm'
-ATTR_CURVE = 'curve'
-ATTR_LEVEL = 'level'
-ATTR_DURATION = 'duration'
-ATTR_SOURCE = 'source'
-ATTR_CHANNEL = 'channel'
+ALARMS_ICON: Final = 'hass:alarm'
+HOURS_ICON: Final = 'hass:counter'
+MINUTES_ICON: Final = 'hass:counter'
+WORKDAYS_ICON: Final = 'hass:calendar-range'
+WEEKEND_ICON: Final = 'hass:calendar-range'
 
-UPDATE_TIME = timedelta(seconds=60)
-
-SENSORS = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
-
-PLATFORMS = ['light', 'sensor', 'switch', 'number', 'select']
-
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema({
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Required(CONF_HOST): cv.string,
-    })
-}, extra=vol.ALLOW_EXTRA)
+ATTR_ALARM: Final = 'alarm'
+ATTR_CURVE: Final = 'curve'
+ATTR_LEVEL: Final = 'level'
+ATTR_DURATION: Final = 'duration'
+ATTR_SOURCE: Final = 'source'
+ATTR_CHANNEL: Final = 'channel'
 
 
-NOTIFICATION_ID = "somneosensor_notification"
-NOTIFICATION_TITLE = "SomneoSensor Setup"
+SENSORS: Final = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+
+NOTIFICATION_ID: Final = "somneosensor_notification"
+NOTIFICATION_TITLE: Final = "SomneoSensor Setup"
 
 
 

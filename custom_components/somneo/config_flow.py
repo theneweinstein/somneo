@@ -1,10 +1,15 @@
-from homeassistant import config_entries
 import ipaddress
 import re
+from typing import Any
 import voluptuous as vol
-from .const import DOMAIN, CONF_HOST, CONF_NAME, DEFAULT_NAME
 
-import pysomneo
+from pysomneo import Somneo
+
+from homeassistant import config_entries, exceptions
+from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.data_entry_flow import FlowResult
+
+from .const import DOMAIN, DEFAULT_NAME
 
 def host_valid(host):
     """Return True if hostname or IP address is valid."""
@@ -17,28 +22,46 @@ def host_valid(host):
 
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize."""
-        self.host = None
-        self.name = None
+        self.somneo: Somneo | None = None
+        self.host: str | None = None
+        self.name: str = DEFAULT_NAME
+        self.dev_info: dict | None = None
 
-    async def async_step_user(self, info):
-        """Hanlde the initial step."""
-        errors = {}
+    async def init_device(self) -> None:
+        """Initialize Somneo device."""
+        assert self.somneo is not None
+        self.dev_info = await self._hass.async_add_executor_job(self.somneo.get_device_info) 
 
-        if info is not None:
-            if host_valid(info[CONF_HOST]):
-                return self.async_create_entry(title="Somn  eo", data=info)
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle the initial step."""
+        errors: dict[str, str] = {}
 
-            errors[CONF_HOST] = "invalid_host"
+        if user_input is not None:
+            if host_valid(user_input[CONF_HOST]):
+                try:
+                    self.host = user_input[CONF_HOST]
+                    self.name = user_input[CONF_NAME]
+                    self.somneo = Somneo(self.host)
+                    await self.init_device()
+                except Exception as ex:
+                    errors["base"] = str(ex)
+                else:
+                    user_input['dev_info'] = self.dev_info
+                    return self.async_create_entry(title=self.name, data=user_input)
 
         return self.async_show_form(
             step_id="user", 
-            data_schema=vol.Schema({vol.Required(CONF_HOST): str, vol.Optional(CONF_NAME, default=DEFAULT_NAME): str})
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_HOST): str, 
+                    vol.Optional(CONF_NAME, default=DEFAULT_NAME): str
+                }
+            )
         )
 
-    async def async_step_import(self, import_data=None):
-        """Handle configuration by yaml file."""
-
-        if host_valid(import_data[CONF_HOST]):
-            return self.async_create_entry(title='Somneo', data=import_data)
+class CannotConnect(exceptions.HomeAssistantError):
+    """Error to indicate we cannot connect."""
