@@ -1,5 +1,6 @@
 """Platform for light integration."""
 import logging
+from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.light import (LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
@@ -28,8 +29,8 @@ async def async_setup_entry(
 
     async_add_entities(
         [
-            SomneoLight(coordinator, unique_id, name, device_info),
-            SomneoNightLight(coordinator, unique_id, name, device_info),
+            SomneoLight(coordinator, unique_id, name, device_info, 'light'),
+            SomneoNightLight(coordinator, unique_id, name, device_info, 'nightlight'),
         ]
     )
 
@@ -47,16 +48,16 @@ class SomneoLight(SomneoEntity, LightEntity):
 
     @property
     def is_on(self) -> bool | None:
-        """Return the state of the device."""
+        """Return True if light is on."""
         return self.coordinator.light_is_on
 
-    def turn_on(self, **kwargs: Any) -> None:
+    async def turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
-        self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
+        await self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
 
-    def turn_off(self, **kwargs: Any) -> None:
+    async def turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        self.coordinator.async_turn_off_light()
+        await self.coordinator.async_turn_off_light()
 
 class SomneoNightLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Night light."""
@@ -67,13 +68,13 @@ class SomneoNightLight(SomneoEntity, LightEntity):
 
     @property
     def is_on(self) -> bool | None:
-        """Return the state of the device."""
+        """Return True if light is on."""
         return self.coordinator.nightlight_is_on
 
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        self.coordinator.async_turn_on_nightlight()
+        await self.coordinator.async_turn_on_nightlight()
 
-    def turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        self.coordinator.async_turn_off_nightlight()
+        await self.coordinator.async_turn_off_nightlight()

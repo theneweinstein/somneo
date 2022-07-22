@@ -1,4 +1,6 @@
 """Platform for sensor integration."""
+from datetime import datetime
+from decimal import Decimal
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -28,7 +30,7 @@ async def async_setup_entry(
     sensors = []
     for sensor in list(SENSORS):
         sensors.append(SomneoSensor(coordinator, unique_id, name, device_info, sensor))
-    sensors.append(SomneoNextAlarmSensor(coordinator, unique_id, name, device_info))
+    sensors.append(SomneoNextAlarmSensor(coordinator, unique_id, name, device_info, 'next'))
 
     async_add_entities(sensors, True)
     
@@ -40,16 +42,23 @@ class SomneoSensor(SomneoEntity, SensorEntity):
     """Representation of a Sensor."""
     def __init__(self, coordinator, unique_id, name, dev_info, sensor_type):
         """Initialize the sensor."""
-        super().__init__(coordinator, unique_id, name, dev_info)
+        super().__init__(coordinator, unique_id, name, dev_info, sensor_type)
 
         self._attr_name = sensor_type.capitalize()
         self._attr_native_unit_of_measurement = SENSORS[sensor_type]
         self._type = sensor_type
 
     @property
-    def native_value(self):
+    def native_value(self) -> Decimal:
         """Returns the native value of this device."""
-        return self.coordinator.async_get_sensor(self._type)
+        if self._type == "temperature":
+            return self.coordinator.temperature
+        if self._type == "humidity":
+            return self.coordinator.humidity
+        if self._type == "luminance":
+            return self.coordinator.luminance
+        if self._type == "noise":
+            return self.coordinator.noise
 
     @property
     def device_class(self) -> SensorDeviceClass:
@@ -60,8 +69,6 @@ class SomneoSensor(SomneoEntity, SensorEntity):
             return SensorDeviceClass.HUMIDITY
         if self._type == "luminance":
             return SensorDeviceClass.ILLUMINANCE
-        if self._type == "pressure":
-            return SensorDeviceClass.PRESSURE
         else:
             return None
 
@@ -72,6 +79,6 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
-    def native_value(self):
+    def native_value(self) -> datetime:
         """Returns the native value of this device."""
-        return self.coordinator.async_get_next_alarm()
+        return self.coordinator.next_alarm

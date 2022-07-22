@@ -1,14 +1,24 @@
 {
-    "config": {
-      "step": {
-        "user": {
-          "title": "Philips Somneo",
-          "description": "Set up the Philips Somneo integration.",
-          "data": {
-            "host": "Host",
-            "name" : "Name"
-          }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Philips Somneo",
+        "description": "Set up the Philips Somneo integration.",
+        "data": {
+          "host": "Host",
+          "name" : "Name"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options for Somneo",
+        "data": {
+          "host": "Host"
         }
       }
     }
   }
+}

@@ -1,71 +1,56 @@
-""" Philips Somneo """
-from datetime import timedelta
+""" Support for Philips Somneo devices."""
+from __future__ import annotations
+
+from datetime import timedelta, datetime
 import logging
-import requests
-from typing import Final
-import datetime
+import asyncio
 
 from pysomneo import Somneo
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, NOTIFICATION_ID, NOTIFICATION_TITLE, UNKNOWN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, HOURS, MINUTES
+from .const import DOMAIN, UNKNOWN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: Final[list[Platform]] = [Platform.LIGHT, Platform.NUMBER, Platform.SELECT, Platform.SENSOR, Platform.SWITCH]
-SCAN_INTERVAL: Final = timedelta(seconds=60)
+PLATFORMS = [Platform.LIGHT, Platform.NUMBER, Platform.SELECT, Platform.SENSOR, Platform.SWITCH]
+SCAN_INTERVAL = timedelta(seconds=60)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup the Somneo component."""
-    try:
-        host = config_entry.data[CONF_HOST]
-        
-        coordinator = SomneoCoordinator(hass, host)
-        config_entry.async_on_unload(config_entry.add_update_listener(update_listener))
-        
-        await coordinator.async_config_entry_first_refresh()
+    host = entry.data[CONF_HOST]
+    
+    coordinator = SomneoCoordinator(hass, host)
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+    
+    await coordinator.async_config_entry_first_refresh()
 
-        hass.data.setdefault(DOMAIN, {})
-        hass.data[DOMAIN][config_entry.entry_id] = coordinator
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][entry.entry_id] = coordinator
 
-        await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    #await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
-        #### NOTHING BELOW THIS LINE ####
-        # If Success:
-        _LOGGER.info("Somneo has been set up!")
-        return True
-    except requests.RequestException as ex:
-        _LOGGER.error('Error while initializing Somneo, exception: {}'.format(str(ex)))
-        raise PlatformNotReady
-    except Exception as ex:
-        _LOGGER.error('Error while initializing Somneo, exception: {}'.format(str(ex)))
-        hass.components.persistent_notification.create(
-            f'Error: {str(ex)}<br />Fix issue and restart',
-            title=NOTIFICATION_TITLE,
-            notification_id=NOTIFICATION_ID)
-        # If Fail:
-        return False
+    return True
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(
-        config_entry, PLATFORMS
+        entry, PLATFORMS
     )
 
     if unload_ok:
-        hass.data[DOMAIN].pop(config_entry.entry_id)
+        hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
 
-async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
-    await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 class SomneoCoordinator(DataUpdateCoordinator[None]):
@@ -81,7 +66,17 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         self.light_is_on: bool = False
         self.brightness: float | None = None
         self.nightlight_is_on: bool = False
-        self.alarms: list | None = None
+        self.alarms: list = []
+        self.alarms_hour: dict = {}
+        self.alarms_minute: dict = {}
+        self.alarms_day: dict = {}
+        self.next_alarm: datetime | None = None
+        self.snooze_time: int | None = None
+        self.temperature: float | None = None
+        self.humidity: float | None = None
+        self.luminance: float | None = None
+        self.noise: float | None = None
+        self.state_lock = asyncio.Lock()
 
         super().__init__(
             hass,
@@ -93,7 +88,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             ),
         )
     
-    def update_somneo(self) -> None:
+    def _update_somneo(self) -> None:
         """Update Somneo info."""
         self.somneo.update()
 
@@ -101,12 +96,37 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         self.nightlight_is_on = self.somneo.night_light_status()
         self.alarms = self.somneo.alarms()
 
+        for alarm in self.alarms:
+            attr = {}
+            attr['time'], attr['days'] = self.somneo.alarm_settings(alarm)
+            alarm_datetime = datetime.strptime(attr['time'],'%H:%M:%S')
+            self.alarms_hour[alarm] = alarm_datetime.hour
+            self.alarms_minute[alarm] = alarm_datetime.minute
+            if self.somneo.is_everyday(alarm):
+                self.alarms_day[alarm] = EVERYDAY
+            elif self.somneo.is_workday(alarm):
+                self.alarms_day[alarm] = WORKDAYS
+            elif self.somneo.is_weekend(alarm):
+                self.alarms_day[alarm] = WEEKEND
+            elif self.somneo.is_tomorrow(alarm):
+                self.alarms_day[alarm] = TOMORROW
+            else:
+                self.alarms_day[alarm] = UNKNOWN
+
+        self.snooze_time = self.somneo.snoozetime
+        self.next_alarm = datetime.fromisoformat(self.somneo.next_alarm()).astimezone() if self.somneo.next_alarm() else None
+
+        self.temperature = self.somneo.temperature()
+        self.humidity = self.somneo.humidity()
+        self.luminance = self.somneo.luminance()
+        self.noise = self.somneo.noise()
+
     async def _async_update_data(self) -> None:
         """Fetch the latest data."""
         if self.state_lock.locked():
             return
 
-        await self.hass.async_add_executor_job(self.update_somneo)
+        await self.hass.async_add_executor_job(self._update_somneo)
 
     async def async_turn_on_light(self, brightness) -> None:
         """Turn the device on."""
@@ -120,7 +140,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.hass.async_add_executor_job(self.somneo.toggle_light, False)
             await self.async_request_refresh()
 
-    async def async_turn_on_nightlight(self, brightness) -> None:
+    async def async_turn_on_nightlight(self) -> None:
         """Turn the device on."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_night_light, True)
@@ -132,58 +152,30 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.hass.async_add_executor_job(self.somneo.toggle_night_light, False)
             await self.async_request_refresh()
 
-    async def async_toggle_alarm(self, alarm, state: bool) -> None:
+    async def async_toggle_alarm(self, alarm: str, state: bool) -> None:
         """Toggle alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_alarm, alarm, state)
             await self.async_request_refresh()
+
+    def set_alarm(self, alarm: str, hour: int | None, minute: int | None) -> None:
+        """Set alarm time."""
+        self.somneo.set_alarm(alarm, hour = hour, minute = minute)
         
-    async def async_set_alarm(self, alarm, hours: int | None = None, minutes: int | None = None):
+    async def async_set_alarm(self, alarm: str, hours: int | None = None, minutes: int | None = None):
+        """Set alarm time."""
         async with self.state_lock:
-            if minutes != None:
-                await self.hass.async_add_executor_job(self.somneo.set_alarm, alarm, minute=int(minutes))
-            elif hours != None:
-                await self.hass.async_add_executor_job(self.somneo.set_alarm, alarm, minute=int(hours))
+            await self.hass.async_add_executor_job(self.set_alarm, alarm, hours, minutes)
             await self.async_request_refresh()
 
-    async def async_get_alarm(self, alarm, type):
-        async with self.state_lock:
-            attr = await self.async_get_alarm_attributes(alarm)
-            alarm_datetime = datetime.strptime(attr['time'],'%H:%M:%S')
-            if type == HOURS:
-                return alarm_datetime.hour
-            elif type == MINUTES:
-                return alarm_datetime.minute
-
-    async def async_get_alarm_attributes(self, alarm):
-        async with self.state_lock:
-            attr = {}
-            attr['time'], attr['days'] = await self.hass.async_add_executor_job(self.somneo.alarm_settings, alarm)
-            return attr
-
     async def async_set_snooze_time(self, time):
+        """Set snooze time."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.set_snooze_time, int(time))
             await self.async_request_refresh()
 
-    async def async_get_snooze_time(self):
-        async with self.state_lock:
-            return await self.hass.async_add_executor_job(self.somneo.snoozetime)
-
-    async def async_get_alarm_day(self, alarm):
-        async with self.state_lock:
-            if await self.hass.async_add_executor_job(self.somneo.is_everyday, alarm):
-                return EVERYDAY
-            elif await self.hass.async_add_executor_job(self.somneo.is_workday, alarm):
-                return WORKDAYS
-            elif await self.hass.async_add_executor_job(self.somneo.is_weekend, alarm):
-                return WEEKEND
-            elif await self.hass.async_add_executor_job(self.somneo.is_tomorrow, alarm):
-                return TOMORROW
-            else:
-                return UNKNOWN
-
     async def async_set_alarm_day(self, alarm, day):
+        """Set the day of the alarm."""
         async with self.state_lock:
             if day == WORKDAYS:
                 await self.hass.async_add_executor_job(self.somneo.set_alarm_workdays, alarm)
@@ -200,50 +192,53 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
 
             await self.async_request_refresh()
 
-    async def async_get_next_alarm(self):
-        async with self.state_lock:
-            next_alarm = await self.hass.async_add_executor_job(self.somneo.next_alarm)
-            return await datetime.fromisoformat(next_alarm).astimezone() if next_alarm else None
-
-    async def async_set_light_alarm(self, curve = 'sunny day', level = 20, duration = 30):
+    def set_light_alarm(self, alarm: str, curve: str, level: int, duration: int) -> None:
         """Adjust the light settings of an alarm."""
-        async with self.state_lock:
-            await self.hass.async_add_executor_job(
-                self.somneo.set_light_alarm,
-                self._alarm,
+        self.somneo.set_light_alarm(
+                alarm,
                 curve = curve, 
                 level = level, 
                 duration = duration
                 )
 
-    async def async_set_sound_alarm(self, source = 'wake-up', level = 12, channel = 'forest birds'):
+    async def async_set_light_alarm(self, alarm: str, curve: str = 'sunny day', level: int = 20, duration: int = 30):
+        """Adjust the light settings of an alarm."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(
+                self.somneo.set_light_alarm,
+                alarm,
+                curve, 
+                level, 
+                duration
+                )
+
+    def set_sound_alarm(self, alarm: str, source: str, level: int, channel: str):
+        """Adjust the sound settings of an alarm."""
+        self.somneo.set_sound_alarm(
+            alarm, 
+            source = source, 
+            level = level, 
+            channel = channel
+            )
+
+    async def async_set_sound_alarm(self, alarm: str, source = 'wake-up', level = 12, channel = 'forest birds'):
         """Adjust the sound settings of an alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.set_sound_alarm,
-                self._alarm, 
-                source = source, 
-                level = level, 
-                channel = channel
+                alarm, 
+                source, 
+                level, 
+                channel
                 )
 
-    async def async_remove_alarm(self):
+    async def async_remove_alarm(self, alarm: str):
         """Function to remove alarm from list in wake-up app"""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(self.someo.remove_alarm,self._alarm)
+            await self.hass.async_add_executor_job(self.somneo.remove_alarm, alarm)
 
-    async def async_add_alarm(self):
+    async def async_add_alarm(self, alarm: str):
         """Function to add alarm to list in wake-up app"""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(self.someo.add_alarm,self._alarm)
+            await self.hass.async_add_executor_job(self.somneo.add_alarm, alarm)
 
-    async def async_get_sensor(self, sensor):
-        async with self.state_lock:
-            if sensor == "temperature":
-                return await self.hass.async_add_executor_job(self.somneo.temperature)
-            if sensor == "humidity":
-                return await self.hass.async_add_executor_job(self.somneo.humidity)
-            if sensor == "luminance":
-                return await self.hass.async_add_executor_job(self.somneo.luminance)
-            if sensor == "noise":
-                return await self.hass.async_add_executor_job(self.somneo.noise)

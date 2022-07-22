@@ -32,7 +32,7 @@ async def async_setup_entry(
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, HOURS))
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, MINUTES))
     
-    snooze = [SomneoSnooze(coordinator, unique_id, name, device_info)]
+    snooze = [SomneoSnooze(coordinator, unique_id, name, device_info, 'snooze')]
 
     async_add_entities(alarms, True)
     async_add_entities(snooze, True)
@@ -45,9 +45,9 @@ class SomneoTime(SomneoEntity, NumberEntity):
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm, type):
         """Initialize number entities."""
-        super().__init__(coordinator, unique_id, name, dev_info)
+        super().__init__(coordinator, unique_id, name, dev_info, alarm + '_' + type)
 
-        self._attr_name = alarm.capitalize() + "_" + type
+        self._attr_name = alarm.capitalize() + " " + type
         if type == HOURS:
             self._attr_native_min_value = 0
             self._attr_native_max_value = 23
@@ -61,15 +61,18 @@ class SomneoTime(SomneoEntity, NumberEntity):
         self._type = type
 
     @property
-    def native_value(self):
-        return self.coordinator.async_get_alarm(self._alarm, self._type)
+    def native_value(self) -> int:
+        if self._type == MINUTES:
+            return self.coordinator.alarms_minute[self._alarm]
+        elif self._type == HOURS:
+            return self.coordinator.alarms_hour[self._alarm]
 
-    def set_native_value(self, value: float):
+    async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust Hours / Minutes in the UI"""
         if self._type == MINUTES:
-            self.coordinator.async_set_alarm(self._alarm, minutes = int(value))
+            await self.coordinator.async_set_alarm(self._alarm, minutes = int(value))
         elif self._type == HOURS:
-            self.coordinator.async_set_alarm(self._alarm, hours = int(value))
+            await self.coordinator.async_set_alarm(self._alarm, hours = int(value))
 
 
 class SomneoSnooze(SomneoEntity, NumberEntity):
@@ -83,9 +86,9 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
     _attr_icon = 'hass:alarm-snooze'
 
     @property
-    def native_value(self):
-        return self.coordinator.async_get_snooze_time()
+    def native_value(self) -> int:
+        return self.coordinator.snooze_time
 
-    def set_native_value(self, value: float):
+    async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust snooze time in the UI"""
-        self.coordinator.async_set_snooze_time(int(value))
+        await self.coordinator.async_set_snooze_time(int(value))

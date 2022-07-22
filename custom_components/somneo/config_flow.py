@@ -1,24 +1,28 @@
+from __future__ import annotations
+
 import ipaddress
 import re
 from typing import Any
 import voluptuous as vol
+from contextlib import suppress
 
 from pysomneo import Somneo
 
 from homeassistant import config_entries, exceptions
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN, DEFAULT_NAME
 
-def host_valid(host):
+def host_valid(host) -> bool:
     """Return True if hostname or IP address is valid."""
-    try:
-        if ipaddress.ip_address(host).version == (4 or 6):
+    with suppress(ValueError):
+        if ipaddress.ip_address(host).version in [4, 6]:
             return True
-    except ValueError:
-        disallowed = re.compile(r"[^a-zA-z\d\-]")
-        return all(x and not disallowed.search(x) for x in host.split("."))
+    disallowed = re.compile(r"[^a-zA-Z\d\-]")
+    return all(x and not disallowed.search(x) for x in host.split("."))
 
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
@@ -32,7 +36,16 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def init_device(self) -> None:
         """Initialize Somneo device."""
         assert self.somneo is not None
-        self.dev_info = await self._hass.async_add_executor_job(self.somneo.get_device_info) 
+        self.dev_info = await self.hass.async_add_executor_job(self.somneo.get_device_info) 
+
+        await self.async_set_unique_id(self.dev_info['serial'].lower())
+        self._abort_if_unique_id_configured()
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> SomneoOptionsFlow:
+        """Somneo options callback."""
+        return SomneoOptionsFlow(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -62,6 +75,31 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
         )
+
+class SomneoOptionsFlow(config_entries.OptionsFlow):
+    """Config flow options for Somneo."""
+
+    def __init__(self, entry: ConfigEntry) -> None:
+        """Initialze the Somneo options flow."""
+        self.entry = entry
+        self.host = entry.data[CONF_HOST]
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init", 
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_HOST, default=self.host): str, 
+                }
+            )
+        )        
+
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""

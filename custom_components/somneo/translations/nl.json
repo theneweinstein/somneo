@@ -1,14 +1,24 @@
 {
-    "config": {
-      "step": {
-        "user": {
-          "title": "Philips Somneo",
-          "description": "Installeer de Philips Somneo integratie.",
-          "data": {
-            "host": "Host",
-            "name" : "Naam"
-          }
+  "config": {
+    "step": {
+      "user": {
+        "title": "Philips Somneo",
+        "description": "Installeer de Philips Somneo integratie.",
+        "data": {
+          "host": "IP-adres",
+          "name" : "Naam"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties voor Somneo",
+        "data": {
+          "host": "IP-adres"
         }
       }
     }
   }
+}

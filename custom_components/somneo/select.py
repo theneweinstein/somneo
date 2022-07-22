@@ -43,17 +43,17 @@ class SomneoDays(SomneoEntity, SelectEntity):
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
-        super().__init__(coordinator, unique_id, name, dev_info)
+        super().__init__(coordinator, unique_id, name, dev_info, alarm)
 
-        self._attr_name = alarm.capitalize() + "_days"
+        self._attr_name = alarm.capitalize() + " days"
         self._alarm = alarm
 
     @property
-    def current_option(self):
+    def current_option(self) -> str | None:
         """Current selected option."""
-        return self.coordinator.async_get_alarm_day(self._alarm)
+        return self.coordinator.alarms_day[self._alarm]
 
 
-    def select_option(self, option: str) -> None:
+    async def async_select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""
-        self.coordinator.async_set_alarm_day(self._alarm, option)
+        await self.coordinator.async_set_alarm_day(self._alarm, option)
