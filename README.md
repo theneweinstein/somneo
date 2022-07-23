@@ -5,13 +5,7 @@ Home Assistant custom component for Philips Someo. This integration let's you co
 You can install this custom component via HACS as a custom repository (https://hacs.xyz/docs/faq/custom_repositories/). Alternatively you can clone or copy the files into the somneo folder in the custom_components folder of HomeAssistant.
 
 # Configuration
-After installation you an either use a config flow to set-up a Somneo device or add:
-```
-somneo:
-  host: IP-ADDRESS (required)
-  name: NAME (optional)
-```
-to your ```configuration.yaml```.
+Go to: https://my.home-assistant.io/redirect/config_flow_start/?domain=somneo
 
 # Alarm Configuration
 ### With slider-entity-row from HACS`
