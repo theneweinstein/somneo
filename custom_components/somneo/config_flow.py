@@ -9,9 +9,7 @@ from contextlib import suppress
 from pysomneo import Somneo
 
 from homeassistant import config_entries, exceptions
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
-from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN, DEFAULT_NAME
@@ -41,12 +39,6 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(self.dev_info['serial'].lower())
         self._abort_if_unique_id_configured()
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> SomneoOptionsFlow:
-        """Somneo options callback."""
-        return SomneoOptionsFlow(config_entry)
-
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
@@ -74,32 +66,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str
                 }
             )
-        )
-
-class SomneoOptionsFlow(config_entries.OptionsFlow):
-    """Config flow options for Somneo."""
-
-    def __init__(self, entry: ConfigEntry) -> None:
-        """Initialze the Somneo options flow."""
-        self.entry = entry
-        self.host = entry.data[CONF_HOST]
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Manage the options."""
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
-
-        return self.async_show_form(
-            step_id="init", 
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_HOST, default=self.host): str, 
-                }
-            )
-        )        
-
+        )   
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""
