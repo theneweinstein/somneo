@@ -15,7 +15,7 @@ MINUTES: Final = 'minutes'
 WORKDAYS: Final = 'workdays'
 WEEKEND: Final = 'weekend'
 TOMORROW: Final = 'tomorrow'
-EVERYDAY: Final = 'everyday'
+EVERYDAY: Final = 'daily'
 UNKNOWN: Final = 'unknown'
 
 ALARMS_ICON: Final = 'hass:alarm'

@@ -28,7 +28,7 @@ async def async_setup_entry(
 
     alarms = []
     # Add hour & min number_entity for each alarms
-    for alarm in list(coordinator.alarms):
+    for alarm in list(coordinator.data['alarms']):
         alarms.append(SomneoDays(coordinator, unique_id, name, device_info, alarm))
 
     async_add_entities(alarms, True)
@@ -51,7 +51,7 @@ class SomneoDays(SomneoEntity, SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Current selected option."""
-        return self.coordinator.alarms_day[self._alarm]
+        return self.coordinator.data['alarms_day'][self._alarm]
 
 
     async def async_select_option(self, option: str) -> None:

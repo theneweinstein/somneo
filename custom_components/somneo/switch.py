@@ -31,7 +31,7 @@ async def async_setup_entry(
     device_info = config_entry.data['dev_info']  
 
     alarms = []
-    for alarm in list(coordinator.alarms):
+    for alarm in list(coordinator.data['alarms']):
         alarms.append(SomneoToggle(coordinator, unique_id, name, device_info, alarm))
 
     async_add_entities(alarms, True)
@@ -84,14 +84,14 @@ class SomneoToggle(SomneoEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return the state of the device."""
-        return self.coordinator.alarms[self._alarm]
+        return self.coordinator.data['alarms'][self._alarm]
 
     @property
     def extra_state_attributes(self) -> dict:
         """Return the state attributes of the sensor."""
-        return {'hour': self.coordinator.alarms_hour[self._alarm],
-            'minute': self.coordinator.alarms_minute[self._alarm],
-            'day': self.coordinator.alarms_day[self._alarm]}
+        return {'hour': self.coordinator.data['alarms_hour'][self._alarm],
+            'minute': self.coordinator.data['alarms_minute'][self._alarm],
+            'day': self.coordinator.data['alarms_day'][self._alarm]}
         
     async def async_turn_on(self, **kwargs: Any):
         """Called when user Turn On the switch from UI."""

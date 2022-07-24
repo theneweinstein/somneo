@@ -52,13 +52,13 @@ class SomneoSensor(SomneoEntity, SensorEntity):
     def native_value(self) -> Decimal:
         """Returns the native value of this device."""
         if self._type == "temperature":
-            return self.coordinator.temperature
+            return self.coordinator.data['temperature']
         if self._type == "humidity":
-            return self.coordinator.humidity
+            return self.coordinator.data['humidity']
         if self._type == "luminance":
-            return self.coordinator.luminance
+            return self.coordinator.data['luminance']
         if self._type == "noise":
-            return self.coordinator.noise
+            return self.coordinator.data['noise']
 
     @property
     def device_class(self) -> SensorDeviceClass:
@@ -81,4 +81,4 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
     @property
     def native_value(self) -> datetime:
         """Returns the native value of this device."""
-        return self.coordinator.next_alarm
+        return self.coordinator.data['next_alarm']

@@ -63,19 +63,6 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     ) -> None:
         """Initialize Somneo client."""
         self.somneo = Somneo(host)
-        self.light_is_on: bool = False
-        self.brightness: float | None = None
-        self.nightlight_is_on: bool = False
-        self.alarms: list = []
-        self.alarms_hour: dict = {}
-        self.alarms_minute: dict = {}
-        self.alarms_day: dict = {}
-        self.next_alarm: datetime | None = None
-        self.snooze_time: int | None = None
-        self.temperature: float | None = None
-        self.humidity: float | None = None
-        self.luminance: float | None = None
-        self.noise: float | None = None
         self.state_lock = asyncio.Lock()
 
         super().__init__(
@@ -83,50 +70,18 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             _LOGGER,
             name=DOMAIN,
             update_interval=SCAN_INTERVAL,
+            update_method=self._async_update,
             request_refresh_debouncer=Debouncer(
                 hass, _LOGGER, cooldown=1.0, immediate=False
             ),
         )
-    
-    def _update_somneo(self) -> None:
-        """Update Somneo info."""
-        self.somneo.update()
 
-        self.light_is_on, self.brightness = self.somneo.light_status()
-        self.nightlight_is_on = self.somneo.night_light_status()
-        self.alarms = self.somneo.alarms()
-
-        for alarm in self.alarms:
-            attr = {}
-            attr['time'], attr['days'] = self.somneo.alarm_settings(alarm)
-            alarm_datetime = datetime.strptime(attr['time'],'%H:%M:%S')
-            self.alarms_hour[alarm] = alarm_datetime.hour
-            self.alarms_minute[alarm] = alarm_datetime.minute
-            if self.somneo.is_everyday(alarm):
-                self.alarms_day[alarm] = EVERYDAY
-            elif self.somneo.is_workday(alarm):
-                self.alarms_day[alarm] = WORKDAYS
-            elif self.somneo.is_weekend(alarm):
-                self.alarms_day[alarm] = WEEKEND
-            elif self.somneo.is_tomorrow(alarm):
-                self.alarms_day[alarm] = TOMORROW
-            else:
-                self.alarms_day[alarm] = UNKNOWN
-
-        self.snooze_time = self.somneo.snoozetime
-        self.next_alarm = datetime.fromisoformat(self.somneo.next_alarm()).astimezone() if self.somneo.next_alarm() else None
-
-        self.temperature = self.somneo.temperature()
-        self.humidity = self.somneo.humidity()
-        self.luminance = self.somneo.luminance()
-        self.noise = self.somneo.noise()
-
-    async def _async_update_data(self) -> None:
+    async def _async_update(self):
         """Fetch the latest data."""
         if self.state_lock.locked():
             return
 
-        await self.hass.async_add_executor_job(self._update_somneo)
+        return await self.hass.async_add_executor_job(self.somneo.fetch_data)
 
     async def async_turn_on_light(self, brightness) -> None:
         """Turn the device on."""

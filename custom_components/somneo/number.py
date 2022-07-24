@@ -28,7 +28,7 @@ async def async_setup_entry(
 
     alarms = []
     # Add hour & min number_entity for each alarms
-    for alarm in list(coordinator.alarms):
+    for alarm in list(coordinator.data['alarms']):
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, HOURS))
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, MINUTES))
     
@@ -63,9 +63,9 @@ class SomneoTime(SomneoEntity, NumberEntity):
     @property
     def native_value(self) -> int:
         if self._type == MINUTES:
-            return self.coordinator.alarms_minute[self._alarm]
+            return self.coordinator.data['alarms_minute'][self._alarm]
         elif self._type == HOURS:
-            return self.coordinator.alarms_hour[self._alarm]
+            return self.coordinator.data['alarms_hour'][self._alarm]
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust Hours / Minutes in the UI"""
@@ -87,7 +87,7 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
 
     @property
     def native_value(self) -> int:
-        return self.coordinator.snooze_time
+        return self.coordinator.data['snooze_time']
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust snooze time in the UI"""

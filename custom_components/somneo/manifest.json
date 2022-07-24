@@ -7,7 +7,7 @@
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.2.1"],
+    "requirements": ["pysomneo==2.3.0"],
     "config_flow": true,
     "iot_class": "local_polling",
     "loggers": ["bravia_tv"]

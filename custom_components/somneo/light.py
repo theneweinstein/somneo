@@ -44,12 +44,12 @@ class SomneoLight(SomneoEntity, LightEntity):
     @property
     def brightness(self) -> int | None:
         """Return the brightness of this light between 0..255."""
-        return self.coordinator.brightness
+        return self.coordinator.data['light_brightness']
 
     @property
     def is_on(self) -> bool | None:
         """Return True if light is on."""
-        return self.coordinator.light_is_on
+        return self.coordinator.data['light_is_on']
 
     async def turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
@@ -69,7 +69,7 @@ class SomneoNightLight(SomneoEntity, LightEntity):
     @property
     def is_on(self) -> bool | None:
         """Return True if light is on."""
-        return self.coordinator.nightlight_is_on
+        return self.coordinator.data['nightlight_is_on']
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
