@@ -51,11 +51,11 @@ class SomneoLight(SomneoEntity, LightEntity):
         """Return True if light is on."""
         return self.coordinator.data['light_is_on']
 
-    async def turn_on(self, **kwargs: Any) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
         await self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
 
-    async def turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
         await self.coordinator.async_turn_off_light()
 
