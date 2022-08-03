@@ -3,5 +3,5 @@
     "render_readme": true,
     "domains": ["sensor","light","switch","select","number"],
     "iot_class": "Local Polling",
-    "homeassistant": "2022.7.0"
+    "homeassistant": "2022.8.0"
   }
