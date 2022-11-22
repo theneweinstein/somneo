@@ -65,7 +65,8 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_HOST): str, 
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str
                 }
-            )
+            ),
+            errors=errors
         )   
 
 class CannotConnect(exceptions.HomeAssistantError):
