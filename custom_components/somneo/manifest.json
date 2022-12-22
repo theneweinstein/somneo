@@ -1,13 +1,13 @@
 {
     "domain": "somneo",
     "name": "Philips Somneo",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "documentation": "https://github.com/theneweinstein/somneo",
     "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.3.2"],
+    "requirements": ["pysomneo==2.3.3"],
     "config_flow": true,
     "iot_class": "local_polling",
     "loggers": ["bravia_tv"]
