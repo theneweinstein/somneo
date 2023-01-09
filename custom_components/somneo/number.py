@@ -7,7 +7,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, HOURS, MINUTES, HOURS_ICON, MINUTES_ICON
+from .const import DOMAIN, HOURS, MINUTES, HOURS_ICON, MINUTES_ICON, PW_DELTA
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,6 +31,7 @@ async def async_setup_entry(
     for alarm in list(coordinator.data['alarms']):
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, HOURS))
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, MINUTES))
+        alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm, PW_DELTA))
     
     snooze = [SomneoSnooze(coordinator, unique_id, name, device_info, 'snooze')]
 
@@ -56,6 +57,10 @@ class SomneoTime(SomneoEntity, NumberEntity):
             self._attr_native_min_value = 0
             self._attr_native_max_value = 59
             self._attr_icon = MINUTES_ICON
+        elif type == PW_DELTA:
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 59
+            self._attr_icon = MINUTES_ICON
 
         self._alarm = alarm
         self._type = type
@@ -66,6 +71,8 @@ class SomneoTime(SomneoEntity, NumberEntity):
             return self.coordinator.data['alarms_minute'][self._alarm]
         elif self._type == HOURS:
             return self.coordinator.data['alarms_hour'][self._alarm]
+        elif self._type == PW_DELTA:
+            return self.coordinator.data['powerwake_delta'][self._alarm]
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust Hours / Minutes in the UI"""
@@ -73,6 +80,8 @@ class SomneoTime(SomneoEntity, NumberEntity):
             await self.coordinator.async_set_alarm(self._alarm, minutes = int(value))
         elif self._type == HOURS:
             await self.coordinator.async_set_alarm(self._alarm, hours = int(value))
+        elif self._type == PW_DELTA:
+            await self.coordinator.async_set_powerwake(self._alarm, delta = int(value))
 
 
 class SomneoSnooze(SomneoEntity, NumberEntity):

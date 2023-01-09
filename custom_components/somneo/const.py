@@ -9,6 +9,8 @@ DEFAULT_NAME: Final = "Somneo"
 
 CONF_SENS: Final = 'sensors'
 
+ALARM: Final = 'alarm'
+PW: Final = 'powerwake'
 ALARMS: Final = 'alarms'
 HOURS: Final = 'hours'
 MINUTES: Final = 'minutes'
@@ -17,8 +19,10 @@ WEEKEND: Final = 'weekend'
 TOMORROW: Final = 'tomorrow'
 EVERYDAY: Final = 'daily'
 UNKNOWN: Final = 'unknown'
+PW_DELTA: Final = 'powerwake_delta'
 
 ALARMS_ICON: Final = 'hass:alarm'
+PW_ICON: Final = 'hass:alarm-plus'
 HOURS_ICON: Final = 'hass:counter'
 MINUTES_ICON: Final = 'hass:counter'
 WORKDAYS_ICON: Final = 'hass:calendar-range'

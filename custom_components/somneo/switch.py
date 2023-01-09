@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers import config_validation as cv, entity_platform
 
-from .const import ATTR_CHANNEL, DOMAIN, ATTR_LEVEL, ATTR_CURVE, ATTR_DURATION, ATTR_SOURCE, ALARMS_ICON
+from .const import ATTR_CHANNEL, DOMAIN, ATTR_LEVEL, ATTR_CURVE, ATTR_DURATION, ATTR_SOURCE, ALARMS_ICON, PW_ICON
 from .entity import SomneoEntity
 
 
@@ -31,10 +31,13 @@ async def async_setup_entry(
     device_info = config_entry.data['dev_info']  
 
     alarms = []
+    pw = []
     for alarm in list(coordinator.data['alarms']):
-        alarms.append(SomneoToggle(coordinator, unique_id, name, device_info, alarm))
+        alarms.append(SomneoAlarmToggle(coordinator, unique_id, name, device_info, alarm))
+        pw.append(SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm))   
 
     async_add_entities(alarms, True)
+    async_add_entities(pw, True)
 
     platform = entity_platform.async_get_current_platform()
 
@@ -70,7 +73,7 @@ async def async_setup_entry(
         'add_alarm'
     )
 
-class SomneoToggle(SomneoEntity, SwitchEntity):
+class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
 
@@ -91,16 +94,16 @@ class SomneoToggle(SomneoEntity, SwitchEntity):
         """Return the state attributes of the sensor."""
         return {'hour': self.coordinator.data['alarms_hour'][self._alarm],
             'minute': self.coordinator.data['alarms_minute'][self._alarm],
-            'day': self.coordinator.data['alarms_day'][self._alarm]}
+            'day': self.coordinator.data['alarms_day'][self._alarm],
+            'powerwake': self.coordinator.data['powerwake'][self._alarm],
+            'powerwake_delta': self.coordinator.data['powerwake_delta'][self._alarm]}
         
     async def async_turn_on(self, **kwargs: Any):
         """Called when user Turn On the switch from UI."""
-        _LOGGER.debug('Alarm on (main)')
         await self.coordinator.async_toggle_alarm(self._alarm, True)
 
     async def async_turn_off(self, **kwargs: Any):
         """Called when user Turn Off the switch from UI."""
-        _LOGGER.debug('Alarm off (main)')
         await self.coordinator.async_toggle_alarm(self._alarm, False)
 
     # Define service-calls
@@ -119,3 +122,32 @@ class SomneoToggle(SomneoEntity, SwitchEntity):
     async def add_alarm(self):
         """Function to add alarm to list in wake-up app"""
         await self.coordinator.async_add_alarm(self._alarm)
+
+class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
+    _attr_icon = PW_ICON
+    _attr_should_poll = True
+
+    def __init__(self, coordinator, unique_id, name, device_info, alarm):
+        """Initialize the switches. """
+        super().__init__(coordinator, unique_id, name, device_info, alarm + '_PW')
+
+        self._attr_name = alarm.capitalize() + 'powerwake'
+        self._alarm = alarm
+
+    @property
+    def is_on(self) -> bool:
+        """Return the state of the device."""
+        return self.coordinator.data['powerwake'][self._alarm]
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        """Return the state attributes of the sensor."""
+        return {'powerwake_delta': self.coordinator.data['powerwake_delta'][self._alarm]}
+        
+    async def async_turn_on(self, **kwargs: Any):
+        """Called when user Turn On the switch from UI."""
+        await self.coordinator.async_toggle_powerwake(self._alarm, True)
+
+    async def async_turn_off(self, **kwargs: Any):
+        """Called when user Turn Off the switch from UI."""
+        await self.coordinator.async_toggle_powerwake(self._alarm, False)

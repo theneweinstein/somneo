@@ -112,6 +112,11 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.hass.async_add_executor_job(self.somneo.toggle_alarm, alarm, state)
             await self.async_request_refresh()
 
+    async def async_toggle_powerwake(self, alarm: str, state: bool):
+        """Toggle powerwake (default 10 minutes)"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.set_powerwake(alarm, onoff=state, delta=10))
+
     def set_alarm(self, alarm: str, hour: int | None, minute: int | None) -> None:
         """Set alarm time."""
         self.somneo.set_alarm(alarm, hour = hour, minute = minute)
@@ -121,6 +126,11 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.set_alarm, alarm, hours, minutes)
             await self.async_request_refresh()
+
+    async def async_set_powerwake(self, alarm: str, delta: int = 0):
+        """Set powerwake time"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.set_powerwake(alarm, onoff=bool(delta), delta=delta))
 
     async def async_set_snooze_time(self, time):
         """Set snooze time."""
