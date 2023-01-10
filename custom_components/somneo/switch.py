@@ -131,7 +131,7 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
         """Initialize the switches. """
         super().__init__(coordinator, unique_id, name, device_info, alarm + '_PW')
 
-        self._attr_name = alarm.capitalize() + 'powerwake'
+        self._attr_name = alarm.capitalize() + ' powerwake'
         self._alarm = alarm
 
     @property
