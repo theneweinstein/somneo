@@ -36,7 +36,7 @@ ATTR_SOURCE: Final = 'source'
 ATTR_CHANNEL: Final = 'channel'
 
 
-SENSORS: Final = {'temperature': UnitOfTemperature.CELCIUS, 'humidity': PERCENTAGE, 'luminance': LIGHT_LUX, 'noise': UnitOfSoundPressure.DECIBEL}
+SENSORS: Final = {'temperature': UnitOfTemperature.CELSIUS, 'humidity': PERCENTAGE, 'luminance': LIGHT_LUX, 'noise': UnitOfSoundPressure.DECIBEL}
 
 NOTIFICATION_ID: Final = "somneosensor_notification"
 NOTIFICATION_TITLE: Final = "SomneoSensor Setup"

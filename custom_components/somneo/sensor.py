@@ -69,6 +69,8 @@ class SomneoSensor(SomneoEntity, SensorEntity):
             return SensorDeviceClass.HUMIDITY
         if self._type == "luminance":
             return SensorDeviceClass.ILLUMINANCE
+        if self._type == "noise":
+            return SensorDeviceClass.SOUND_PRESSURE
         else:
             return None
 
