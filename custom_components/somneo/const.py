@@ -1,5 +1,5 @@
 
-from homeassistant.const import (TEMP_CELSIUS, PERCENTAGE)
+from homeassistant.const import (UnitOfTemperature, PERCENTAGE, LIGHT_LUX, UnitOfSoundPressure)
 from typing import Final
 
 DOMAIN: Final = 'somneo'
@@ -36,7 +36,7 @@ ATTR_SOURCE: Final = 'source'
 ATTR_CHANNEL: Final = 'channel'
 
 
-SENSORS: Final = {'temperature': TEMP_CELSIUS, 'humidity': PERCENTAGE, 'luminance': 'lux', 'noise': 'db'}
+SENSORS: Final = {'temperature': UnitOfTemperature.CELCIUS, 'humidity': PERCENTAGE, 'luminance': LIGHT_LUX, 'noise': UnitOfSoundPressure.DECIBEL}
 
 NOTIFICATION_ID: Final = "somneosensor_notification"
 NOTIFICATION_TITLE: Final = "SomneoSensor Setup"
