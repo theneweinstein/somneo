@@ -70,7 +70,8 @@ target:
 data:
   source: wake-up
   channel: forest birds
-  level: 12
+  level: 10
+
 ```
 The source is `wake-up` for the wake-up sounds, `radio` for the FM radio of `off` for no sound. If the wake-up sound is selected, channel is one of the following sounds: `forest birds`, `summer birds`, `morning alps`, `yoga harmony`, `nepal bowls`, `summer lake` or `ocean waves`. If the radio is selected, channel has a value 1 till 5 (formatted as a string). The level should be between 1 and 25.
 

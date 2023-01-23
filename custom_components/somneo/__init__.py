@@ -175,7 +175,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         """Adjust the light settings of an alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                self.somneo.set_light_alarm,
+                self.set_light_alarm,
                 alarm,
                 curve, 
                 level, 
@@ -195,7 +195,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         """Adjust the sound settings of an alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                self.somneo.set_sound_alarm,
+                self.set_sound_alarm,
                 alarm, 
                 source, 
                 level, 
