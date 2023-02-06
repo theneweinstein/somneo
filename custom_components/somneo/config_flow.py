@@ -12,7 +12,7 @@ from homeassistant import config_entries, exceptions
 from homeassistant.const import CONF_HOST, CONF_NAME
 from homeassistant.data_entry_flow import FlowResult
 
-from .const import DOMAIN, DEFAULT_NAME
+from .const import DOMAIN, DEFAULT_NAME, CONF_SESSION
 
 def host_valid(host) -> bool:
     """Return True if hostname or IP address is valid."""
@@ -24,17 +24,21 @@ def host_valid(host) -> bool:
 
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
+
+    VERSION = 2
+
     def __init__(self) -> None:
         """Initialize."""
         self.somneo: Somneo | None = None
         self.host: str | None = None
+        self.use_session: bool = True
         self.name: str = DEFAULT_NAME
         self.dev_info: dict | None = None
 
     async def init_device(self) -> None:
         """Initialize Somneo device."""
         assert self.somneo is not None
-        self.dev_info = await self.hass.async_add_executor_job(self.somneo.get_device_info) 
+        self.dev_info = await self.hass.async_add_executor_job(self.somneo.get_device_info)
 
         await self.async_set_unique_id(self.dev_info['serial'].lower())
         self._abort_if_unique_id_configured()
@@ -50,6 +54,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     self.host = user_input[CONF_HOST]
                     self.name = user_input[CONF_NAME]
+                    self.use_session = user_input[CONF_SESSION]
                     self.somneo = Somneo(self.host)
                     await self.init_device()
                 except Exception as ex:
@@ -59,15 +64,16 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     return self.async_create_entry(title=self.name, data=user_input)
 
         return self.async_show_form(
-            step_id="user", 
+            step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_HOST): str, 
-                    vol.Optional(CONF_NAME, default=DEFAULT_NAME): str
+                    vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+                    vol.Required(CONF_HOST): str,
+                    vol.Required(CONF_SESSION, default=True): bool,
                 }
             ),
             errors=errors
-        )   
+        )
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""

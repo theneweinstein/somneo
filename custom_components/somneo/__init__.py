@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, UNKNOWN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY
+from .const import DOMAIN, UNKNOWN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup the Somneo component."""
     host = entry.data[CONF_HOST]
     
-    coordinator = SomneoCoordinator(hass, host)
+    coordinator = SomneoCoordinator(hass, host, use_session=entry.data.get(CONF_SESSION, True))
     entry.async_on_unload(entry.add_update_listener(update_listener))
     
     await coordinator.async_config_entry_first_refresh()
@@ -59,9 +59,10 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         self,
         hass: HomeAssistant,
         host: str,
+        use_session: bool,
     ) -> None:
         """Initialize Somneo client."""
-        self.somneo = Somneo(host)
+        self.somneo = Somneo(host, use_session=use_session)
         self.state_lock = asyncio.Lock()
 
         super().__init__(

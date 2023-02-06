@@ -6,7 +6,8 @@
         "description": "Installeer de Philips Somneo integratie.",
         "data": {
           "host": "IP-adres",
-          "name" : "Naam"
+          "name" : "Naam",
+          "session": "Hergebruik TLS verbindingen"
         }
       }
     }

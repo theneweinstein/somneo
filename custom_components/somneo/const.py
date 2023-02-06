@@ -8,6 +8,7 @@ VERSION: Final = "0.3"
 DEFAULT_NAME: Final = "Somneo"
 
 CONF_SENS: Final = 'sensors'
+CONF_SESSION: Final = 'session'
 
 ALARM: Final = 'alarm'
 PW: Final = 'powerwake'
