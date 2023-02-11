@@ -6,7 +6,8 @@
         "description": "Set up the Philips Somneo integration.",
         "data": {
           "host": "Host",
-          "name" : "Name"
+          "name" : "Name",
+          "session": "Reuse TLS connections"
         }
       }
     }
