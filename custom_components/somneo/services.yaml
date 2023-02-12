@@ -6,7 +6,7 @@ set_light_alarm:
   description: Set the wake-up light of the alarm
   target:
     entity:
-      integration: somneo
+      integration: smartsleep
       domain: switch
   # Different fields that your service accepts
   fields:
@@ -63,7 +63,7 @@ set_sound_alarm:
   description: Set the sound of the alarm
   target:
     entity:
-      integration: somneo
+      integration: smartsleep
       domain: switch
   fields:
     source:
@@ -131,7 +131,7 @@ add_alarm:
   description: Add an alarm (make it visible in Somneo app)
   target:
     entity:
-      integration: somneo
+      integration: smartsleep
       domain: switch
 
 remove_alarm:
@@ -139,5 +139,5 @@ remove_alarm:
   description: Remove an alarm (make it invisible in Somneo app) and reset its settings to default.
   target:
     entity:
-      integration: somneo
+      integration: smartsleep
       domain: switch

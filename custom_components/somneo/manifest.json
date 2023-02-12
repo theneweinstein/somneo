@@ -1,14 +1,12 @@
 {
-    "domain": "somneo",
-    "name": "Philips Somneo",
-    "version": "3.1.4",
-    "documentation": "https://github.com/theneweinstein/somneo",
-    "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
-    "dependencies": [],
-    "after_dependencies": [],
-    "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.5.1"],
-    "config_flow": true,
-    "iot_class": "local_polling",
-    "loggers": ["somneo"]
+  "domain": "smartsleep",
+  "name": "Philips SmartSleep",
+  "documentation": "https://github.com/wylek/smartsleep",
+  "version": "2.2.7.1",
+  "issue_tracker": "https://github.com/wylek/smartsleep/issues",
+  "dependencies": [],
+  "after_dependencies": [],
+  "requirements": ["pysomneo>=2.2.1"],
+  "codeowners": [],
+  "config_flow": true
 }
