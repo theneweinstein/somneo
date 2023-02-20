@@ -58,7 +58,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     if config_entry.version == 1:
 
         new = {**config_entry.data}
-        new.append({'use_session': True})
+        new.update({'use_session': True})
 
         config_entry.version = 2
         hass.config_entries.async_update_entry(config_entry, data=new)
