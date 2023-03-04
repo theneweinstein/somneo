@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ipaddress
 import re
+import logging
 from typing import Any
 import voluptuous as vol
 from contextlib import suppress
@@ -9,10 +10,14 @@ from contextlib import suppress
 from pysomneo import Somneo
 
 from homeassistant import config_entries, exceptions
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN, DEFAULT_NAME, CONF_SESSION
+
+_LOGGER = logging.getLogger(__name__)
 
 def host_valid(host) -> bool:
     """Return True if hostname or IP address is valid."""
@@ -25,13 +30,12 @@ def host_valid(host) -> bool:
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
 
-    VERSION = 2
+    VERSION = 3
 
     def __init__(self) -> None:
         """Initialize."""
         self.somneo: Somneo | None = None
         self.host: str | None = None
-        self.use_session: bool = True
         self.name: str = DEFAULT_NAME
         self.dev_info: dict | None = None
 
@@ -42,6 +46,12 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         await self.async_set_unique_id(self.dev_info['serial'].lower())
         self._abort_if_unique_id_configured()
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> SomneoOptionsFlow:
+        """Thermosmart options callback."""
+        return SomneoOptionsFlow(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -54,7 +64,6 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     self.host = user_input[CONF_HOST]
                     self.name = user_input[CONF_NAME]
-                    self.use_session = user_input[CONF_SESSION]
                     self.somneo = Somneo(self.host)
                     await self.init_device()
                 except Exception as ex:
@@ -69,10 +78,39 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
                     vol.Required(CONF_HOST): str,
-                    vol.Required(CONF_SESSION, default=True): bool,
                 }
             ),
             errors=errors
+        )
+
+class SomneoOptionsFlow(config_entries.OptionsFlow):
+    """Config flow options for Somneo"""
+
+    def __init__(self, entry: ConfigEntry) -> None:
+        """Initialze the Somneo options flow."""
+        self.entry = entry
+        self.use_session = entry.options.get(CONF_SESSION, True)
+        _LOGGER.debug(self.use_session)
+
+    async def async_step_init(self, _user_input=None):
+        """Manage the options."""
+        return await self.async_step_user()
+    
+    async def async_step_user(
+            self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        if user_input is not None:
+            data = user_input
+            data[CONF_SESSION] = self.use_session
+            return self.async_create_entry(title = "Somneo", data = data)
+        
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(CONF_SESSION, default = True): bool,
+                }
+            )
         )
 
 class CannotConnect(exceptions.HomeAssistantError):

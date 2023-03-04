@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup the Somneo component."""
     host = entry.data[CONF_HOST]
     
-    coordinator = SomneoCoordinator(hass, host, use_session=entry.data.get(CONF_SESSION, True))
+    coordinator = SomneoCoordinator(hass, host, use_session=entry.options.get(CONF_SESSION))
     entry.async_on_unload(entry.add_update_listener(update_listener))
     
     await coordinator.async_config_entry_first_refresh()
@@ -61,6 +61,14 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
         new.update({'use_session': True})
 
         config_entry.version = 2
+        hass.config_entries.async_update_entry(config_entry, data=new)
+
+    if config_entry.version == 2:
+        new = {**config_entry.data}
+        use_session = new.pop('use_session')
+        new.update({'options': {'use_session': use_session}})
+
+        config_entry.version = 3
         hass.config_entries.async_update_entry(config_entry, data=new)
 
     _LOGGER.info("Migration to version %s successful", config_entry.version)
