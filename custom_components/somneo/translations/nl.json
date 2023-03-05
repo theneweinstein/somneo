@@ -3,21 +3,19 @@
     "step": {
       "user": {
         "title": "Philips Somneo",
-        "description": "Installeer de Philips Somneo integratie.",
         "data": {
           "host": "IP-adres",
-          "name" : "Naam",
-          "session": "Hergebruik TLS verbindingen"
+          "name" : "Naam"
         }
       }
     }
   },
   "options": {
     "step": {
-      "init": {
-        "title": "Opties voor Somneo",
+      "user": {
+        "title": "Opties voor Philips Somneo",
         "data": {
-          "host": "IP-adres"
+          "session": "Hergebruik TLS verbindingen."
         }
       }
     }

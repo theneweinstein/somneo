@@ -89,8 +89,7 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
     def __init__(self, entry: ConfigEntry) -> None:
         """Initialze the Somneo options flow."""
         self.entry = entry
-        self.use_session = entry.options.get(CONF_SESSION, True)
-        _LOGGER.debug(self.use_session)
+        self.use_session = self.entry.options.get(CONF_SESSION, True)
 
     async def async_step_init(self, _user_input=None):
         """Manage the options."""
@@ -100,15 +99,13 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
             self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         if user_input is not None:
-            data = user_input
-            data[CONF_SESSION] = self.use_session
-            return self.async_create_entry(title = "Somneo", data = data)
+            return self.async_create_entry(title = "Somneo", data = user_input)
         
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_SESSION, default = True): bool,
+                    vol.Optional(CONF_SESSION, default = self.use_session): bool,
                 }
             )
         )

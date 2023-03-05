@@ -3,21 +3,19 @@
     "step": {
       "user": {
         "title": "Philips Somneo",
-        "description": "Set up the Philips Somneo integration.",
         "data": {
           "host": "Host",
-          "name" : "Name",
-          "session": "Reuse TLS connections"
+          "name" : "Name"
         }
       }
     }
   },
   "options": {
     "step": {
-      "init": {
-        "title": "Options for Somneo",
+      "user": {
+        "title": "Options for Philips Somneo",
         "data": {
-          "host": "Host"
+          "session": "Reuse TLS connections."
         }
       }
     }

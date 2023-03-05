@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup the Somneo component."""
     host = entry.data[CONF_HOST]
     
-    coordinator = SomneoCoordinator(hass, host, use_session=entry.options.get(CONF_SESSION))
+    coordinator = SomneoCoordinator(hass, host, use_session=entry.options.get(CONF_SESSION, True))
     entry.async_on_unload(entry.add_update_listener(update_listener))
     
     await coordinator.async_config_entry_first_refresh()
