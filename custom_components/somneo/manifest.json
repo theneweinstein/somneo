@@ -7,7 +7,7 @@
     "dependencies": [],
     "after_dependencies": [],
     "codeowners": ["@theneweinstein"],
-    "requirements": ["pysomneo==2.5.1"],
+    "requirements": ["pysomneo==2.5.2"],
     "config_flow": true,
     "iot_class": "local_polling",
     "loggers": ["somneo"]
