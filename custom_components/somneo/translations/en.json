@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Philips Somneo",
+        "data": {
+          "host": "Host",
+          "name" : "Name"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Options for Philips Somneo",
+        "data": {
+          "session": "Reuse TLS connections."
+        }
+      }
+    }
+  }
+}

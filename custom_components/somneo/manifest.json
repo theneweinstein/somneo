@@ -1,0 +1,14 @@
+{
+    "domain": "somneo",
+    "name": "Philips Somneo",
+    "version": "3.1.7",
+    "documentation": "https://github.com/theneweinstein/somneo",
+    "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
+    "dependencies": [],
+    "after_dependencies": [],
+    "codeowners": ["@theneweinstein"],
+    "requirements": ["pysomneo==2.5.2"],
+    "config_flow": true,
+    "iot_class": "local_polling",
+    "loggers": ["somneo"]
+}

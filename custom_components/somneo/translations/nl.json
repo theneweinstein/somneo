@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Philips Somneo",
+        "data": {
+          "host": "IP-adres",
+          "name" : "Naam"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opties voor Philips Somneo",
+        "data": {
+          "session": "Hergebruik TLS verbindingen."
+        }
+      }
+    }
+  }
+}
