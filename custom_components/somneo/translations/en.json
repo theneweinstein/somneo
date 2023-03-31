@@ -196,141 +196,420 @@
       "alarm0": {
         "name": "Alarm0",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm1": {
         "name": "Alarm1",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm2": {
         "name": "Alarm2",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm3": {
         "name": "Alarm3",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm4": {
         "name": "Alarm4",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm5": {
-        "name": "Alarm5",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm6": {
         "name": "Alarm6",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm7": {
         "name": "Alarm7",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm8": {
         "name": "Alarm8",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm9": {
         "name": "Alarm9",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm10": {
         "name": "Alarm10",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm11": {
         "name": "Alarm11",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm12": {
         "name": "Alarm12",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm13": {
         "name": "Alarm13",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm14": {
@@ -346,60 +625,160 @@
       "alarm15": {
         "name": "Alarm15",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm0_powerwake": {
-        "name": "Alarm0 PowerWake"
+        "name": "Alarm0 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm1_powerwake": {
-        "name": "Alarm1 PowerWake"
+        "name": "Alarm1 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm2_powerwake": {
-        "name": "Alarm2 PowerWake"
+        "name": "Alarm2 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm3_powerwake": {
-        "name": "Alarm3 PowerWake"
+        "name": "Alarm3 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm4_powerwake": {
-        "name": "Alarm4 PowerWake"
+        "name": "Alarm4 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm5_powerwake": {
-        "name": "Alarm5 PowerWake"
+        "name": "Alarm5 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm6_powerwake": {
-        "name": "Alarm6 PowerWake"
+        "name": "Alarm6 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm7_powerwake": {
-        "name": "Alarm7 PowerWake"
+        "name": "Alarm7 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm8_powerwake": {
-        "name": "Alarm8 PowerWake"
+        "name": "Alarm8 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm9_powerwake": {
-        "name": "Alarm9 PowerWake"
+        "name": "Alarm9 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm10_powerwake": {
-        "name": "Alarm10 PowerWake"
+        "name": "Alarm10 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm11_powerwake": {
-        "name": "Alarm11 PowerWake"
+        "name": "Alarm11 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm12_powerwake": {
-        "name": "Alarm12 PowerWake"
+        "name": "Alarm12 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm13_powerwake": {
-        "name": "Alarm13 PowerWake"
+        "name": "Alarm13 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm14_powerwake": {
-        "name": "Alarm14 PowerWake"
+        "name": "Alarm14 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       },
       "alarm15_powerwake": {
-        "name": "Alarm15 PowerWake"
+        "name": "Alarm15 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
+        }
       }
     },
     "number": {

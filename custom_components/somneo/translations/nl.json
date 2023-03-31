@@ -196,210 +196,610 @@
       "alarm0": {
         "name": "Alarm0",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm1": {
         "name": "Alarm1",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm2": {
         "name": "Alarm2",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm3": {
         "name": "Alarm3",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm4": {
         "name": "Alarm4",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm5": {
         "name": "Alarm5",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm6": {
         "name": "Alarm6",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm7": {
         "name": "Alarm7",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm8": {
         "name": "Alarm8",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm9": {
         "name": "Alarm9",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm10": {
         "name": "Alarm10",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm11": {
         "name": "Alarm11",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm12": {
         "name": "Alarm12",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm13": {
         "name": "Alarm13",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm14": {
         "name": "Alarm14",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm15": {
         "name": "Alarm15",
         "state_attributes": {
-          "hour": "Uur",
-          "minute": "Minuut",
-          "day": "Dag",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake vertraging"
+          "hour": {
+            "name": "Uur"
+          },
+          "minute": {
+            "name": "Minuut"
+          },
+          "day": {
+            "name": "Dag",
+            "state": {
+              "workdays": "Doordeweeks",
+              "daily": "Dagelijks",
+              "weekend": "Weekend",
+              "tomorrow": "Morgen"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Uit",
+              "true": "Aan"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
         }
       },
       "alarm0_powerwake": {
-        "name": "Alarm0 PowerWake"
+        "name": "Alarm0 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm1_powerwake": {
-        "name": "Alarm1 PowerWake"
+        "name": "Alarm1 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm2_powerwake": {
-        "name": "Alarm2 PowerWake"
+        "name": "Alarm2 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm3_powerwake": {
-        "name": "Alarm3 PowerWake"
+        "name": "Alarm3 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm4_powerwake": {
-        "name": "Alarm4 PowerWake"
+        "name": "Alarm4 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm5_powerwake": {
-        "name": "Alarm5 PowerWake"
+        "name": "Alarm5 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm6_powerwake": {
-        "name": "Alarm6 PowerWake"
+        "name": "Alarm6 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm7_powerwake": {
-        "name": "Alarm7 PowerWake"
+        "name": "Alarm7 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm8_powerwake": {
-        "name": "Alarm8 PowerWake"
+        "name": "Alarm8 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm9_powerwake": {
-        "name": "Alarm9 PowerWake"
+        "name": "Alarm9 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm10_powerwake": {
-        "name": "Alarm10 PowerWake"
+        "name": "Alarm10 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm11_powerwake": {
-        "name": "Alarm11 PowerWake"
+        "name": "Alarm11 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm12_powerwake": {
-        "name": "Alarm12 PowerWake"
+        "name": "Alarm12 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm13_powerwake": {
-        "name": "Alarm13 PowerWake"
+        "name": "Alarm13 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm14_powerwake": {
-        "name": "Alarm14 PowerWake"
+        "name": "Alarm14 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       },
       "alarm15_powerwake": {
-        "name": "Alarm15 PowerWake"
+        "name": "Alarm15 PowerWake",
+        "state_attributes": {
+          "powerwake_delta": {
+            "name": "PowerWake vertraging"
+          }
+        }
       }
     },
     "number": {

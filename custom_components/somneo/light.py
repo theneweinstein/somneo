@@ -9,7 +9,7 @@ from homeassistant.components.light import (
     SUPPORT_BRIGHTNESS,
 )
 from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -46,15 +46,11 @@ class SomneoLight(SomneoEntity, LightEntity):
     _attr_supported_features = SUPPORT_BRIGHTNESS
     _attr_translation_key = "normal_light"
 
-    @property
-    def brightness(self) -> int | None:
-        """Return the brightness of this light between 0..255."""
-        return self.coordinator.data["light_brightness"]
-
-    @property
-    def is_on(self) -> bool | None:
-        """Return True if light is on."""
-        return self.coordinator.data["light_is_on"]
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["light_is_on"]
+        self._attr_brightness = self.coordinator.data["light_brightness"]
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
@@ -72,10 +68,10 @@ class SomneoNightLight(SomneoEntity, LightEntity):
     _attr_supported_features = 0
     _attr_translation_key = "night_light"
 
-    @property
-    def is_on(self) -> bool | None:
-        """Return True if light is on."""
-        return self.coordinator.data["nightlight_is_on"]
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["nightlight_is_on"]
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""

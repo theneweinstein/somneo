@@ -3,7 +3,7 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.select import SelectEntity
 
@@ -50,10 +50,10 @@ class SomneoDays(SomneoEntity, SelectEntity):
         self._attr_translation_key = alarm + "_days"
         self._alarm = alarm
 
-    @property
-    def current_option(self) -> str | None:
-        """Current selected option."""
-        return self.coordinator.data["alarms_day"][self._alarm]
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_current_option = self.coordinator.data["alarms_day"][self._alarm]
+        self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""

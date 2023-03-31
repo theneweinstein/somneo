@@ -5,7 +5,7 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers import config_validation as cv, entity_platform
@@ -90,21 +90,18 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
         self._attr_translation_key = alarm
         self._alarm = alarm
 
-    @property
-    def is_on(self) -> bool:
-        """Return the state of the device."""
-        return self.coordinator.data["alarms"][self._alarm]
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]
 
-    @property
-    def extra_state_attributes(self) -> dict:
-        """Return the state attributes of the sensor."""
-        return {
+        self._attr_extra_state_attributes = {
             "hour": self.coordinator.data["alarms_hour"][self._alarm],
             "minute": self.coordinator.data["alarms_minute"][self._alarm],
             "day": self.coordinator.data["alarms_day"][self._alarm],
             "powerwake": self.coordinator.data["powerwake"][self._alarm],
             "powerwake_delta": self.coordinator.data["powerwake_delta"][self._alarm],
         }
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
         """Called when user Turn On the switch from UI."""
@@ -151,17 +148,13 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
         self._attr_translation_key = alarm + "_powerwake"
         self._alarm = alarm
 
-    @property
-    def is_on(self) -> bool:
-        """Return the state of the device."""
-        return self.coordinator.data["powerwake"][self._alarm]
-
-    @property
-    def extra_state_attributes(self) -> dict:
-        """Return the state attributes of the sensor."""
-        return {
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]
+        self._attr_extra_state_attributes = {
             "powerwake_delta": self.coordinator.data["powerwake_delta"][self._alarm]
         }
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
         """Called when user Turn On the switch from UI."""

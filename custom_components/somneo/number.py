@@ -4,7 +4,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.number import NumberEntity
 from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, HOURS, MINUTES, HOURS_ICON, MINUTES_ICON, PW_DELTA
@@ -73,14 +73,19 @@ class SomneoTime(SomneoEntity, NumberEntity):
         self._alarm = alarm
         self._type = type
 
-    @property
-    def native_value(self) -> int:
+    @callback
+    def _handle_coordinator_update(self) -> None:
         if self._type == MINUTES:
-            return self.coordinator.data["alarms_minute"][self._alarm]
+            self._attr_native_value = self.coordinator.data["alarms_minute"][
+                self._alarm
+            ]
         elif self._type == HOURS:
-            return self.coordinator.data["alarms_hour"][self._alarm]
+            self._attr_native_value = self.coordinator.data["alarms_hour"][self._alarm]
         elif self._type == PW_DELTA:
-            return self.coordinator.data["powerwake_delta"][self._alarm]
+            self._attr_native_value = self.coordinator.data["powerwake_delta"][
+                self._alarm
+            ]
+        self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust Hours / Minutes in the UI"""
@@ -103,9 +108,10 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
     _attr_icon = "hass:alarm-snooze"
     _attr_has_entity_name = True
 
-    @property
-    def native_value(self) -> int:
-        return self.coordinator.data["snooze_time"]
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_native_value = self.coordinator.data["snooze_time"]
+        self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust snooze time in the UI"""
