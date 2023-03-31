@@ -22,10 +22,11 @@ class SomneoEntity(CoordinatorEntity[SomneoCoordinator]):
         """Initialize the entity."""
         super().__init__(coordinator)
 
-        self._attr_unique_id = unique_id + '_' + identifier
+        self._attr_unique_id = unique_id + "_" + identifier
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, unique_id)},
-            manufacturer=dev_info['manufacturer'],
+            manufacturer=dev_info["manufacturer"],
             model=f"{dev_info['model']} {dev_info['modelnumber']}",
             name=name,
         )
+        self._attr_has_entity_name = True
