@@ -49,8 +49,8 @@ async def async_setup_entry(
             SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
         )
 
-    async_add_entities(alarms, True)
-    async_add_entities(pw, True)
+    async_add_entities(alarms, update_before_add=True)
+    async_add_entities(pw, update_before_add=True)
 
     platform = entity_platform.async_get_current_platform()
 

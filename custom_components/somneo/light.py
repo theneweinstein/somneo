@@ -35,7 +35,8 @@ async def async_setup_entry(
         [
             SomneoLight(coordinator, unique_id, name, device_info, "light"),
             SomneoNightLight(coordinator, unique_id, name, device_info, "nightlight"),
-        ]
+        ],
+        update_before_add=True,
     )
 
 

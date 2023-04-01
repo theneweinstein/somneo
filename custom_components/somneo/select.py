@@ -32,7 +32,7 @@ async def async_setup_entry(
     for alarm in list(coordinator.data["alarms"]):
         alarms.append(SomneoDays(coordinator, unique_id, name, device_info, alarm))
 
-    async_add_entities(alarms, True)
+    async_add_entities(alarms, update_before_add=True)
 
 
 class SomneoDays(SomneoEntity, SelectEntity):

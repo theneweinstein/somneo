@@ -41,8 +41,8 @@ async def async_setup_entry(
 
     snooze = [SomneoSnooze(coordinator, unique_id, name, device_info, "snooze")]
 
-    async_add_entities(alarms, True)
-    async_add_entities(snooze, True)
+    async_add_entities(alarms, update_before_add=True)
+    async_add_entities(snooze, update_before_add=True)
 
 
 class SomneoTime(SomneoEntity, NumberEntity):

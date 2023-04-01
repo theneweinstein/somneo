@@ -39,7 +39,7 @@ async def async_setup_entry(
         SomneoNextAlarmSensor(coordinator, unique_id, name, device_info, "next")
     )
 
-    async_add_entities(sensors, True)
+    async_add_entities(sensors, update_before_add=True)
 
 
 class SomneoSensor(SomneoEntity, SensorEntity):
