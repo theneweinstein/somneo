@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Philips Somneo",
+        "title": "Set-up Philips Somneo",
         "data": {
           "host": "Host",
           "name": "Name"
@@ -615,11 +615,31 @@
       "alarm14": {
         "name": "Alarm14",
         "state_attributes": {
-          "hour": "Hour",
-          "minute": "Minute",
-          "day": "Day",
-          "powerwake": "PowerWake",
-          "powerwake_delta": "PowerWake delay"
+          "hour": {
+            "name": "Hour"
+          },
+          "minute": {
+            "name": "Minute"
+          },
+          "day": {
+            "name": "Day",
+            "state": {
+              "workdays": "Workdays",
+              "daily": "Daily",
+              "weekend": "Weekend",
+              "tomorrow": "Tomorrow"
+            }
+          },
+          "powerwake": {
+            "name": "PowerWake",
+            "state": {
+              "false": "Off",
+              "true": "On"
+            }
+          },
+          "powerwake_delta": {
+            "name": "PowerWake delay"
+          }
         }
       },
       "alarm15": {
