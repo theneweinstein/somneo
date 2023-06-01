@@ -30,6 +30,7 @@ set_light_alarm:
     level:
       # Field name as shown in UI
       name: Light level
+      description: The light brightness level for the alarm
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -45,6 +46,7 @@ set_light_alarm:
     duration:
       # Field name as shown in UI
       name: Duration
+      description: The duration of the light alarm
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -113,6 +115,7 @@ set_sound_alarm:
     level:
       # Field name as shown in UI
       name: Sound level
+      description: The sound volume level
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field

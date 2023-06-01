@@ -1,12 +1,16 @@
 {
   "domain": "smartsleep",
   "name": "Philips SmartSleep",
-  "documentation": "https://github.com/wylek/smartsleep",
-  "version": "2.2.8.1",
-  "issue_tracker": "https://github.com/wylek/smartsleep/issues",
-  "dependencies": [],
   "after_dependencies": [],
-  "requirements": ["pysomneo>=2.2.1"],
   "codeowners": [],
-  "config_flow": true
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/wylek/smartsleep",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/wylek/smartsleep/issues",
+  "loggers": [
+    "smartsleep" 
+  ],
+  "requirements": ["pysomneo>=2.2.1"],
+  "version": "3.2.0.1"
 }
