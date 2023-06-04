@@ -1,7 +1,7 @@
 """ Support for Philips Somneo devices."""
 from __future__ import annotations
 
-from datetime import timedelta, datetime
+from datetime import timedelta
 import logging
 import asyncio
 
@@ -23,6 +23,7 @@ PLATFORMS = [
     Platform.SELECT,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.TIME,
 ]
 SCAN_INTERVAL = timedelta(seconds=60)
 

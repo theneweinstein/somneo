@@ -803,102 +803,6 @@
       }
     },
     "number": {
-      "alarm0_hours": {
-        "name": "Alarm0 uur"
-      },
-      "alarm1_hours": {
-        "name": "Alarm1 uur"
-      },
-      "alarm2_hours": {
-        "name": "Alarm2 uur"
-      },
-      "alarm3_hours": {
-        "name": "Alarm3 uur"
-      },
-      "alarm4_hours": {
-        "name": "Alarm4 uur"
-      },
-      "alarm5_hours": {
-        "name": "Alarm5 uur"
-      },
-      "alarm6_hours": {
-        "name": "Alarm6 uur"
-      },
-      "alarm7_hours": {
-        "name": "Alarm7 uur"
-      },
-      "alarm8_hours": {
-        "name": "Alarm8 uur"
-      },
-      "alarm9_hours": {
-        "name": "Alarm9 uur"
-      },
-      "alarm10_hours": {
-        "name": "Alarm10 uur"
-      },
-      "alarm11_hours": {
-        "name": "Alarm11 uur"
-      },
-      "alarm12_hours": {
-        "name": "Alarm12 uur"
-      },
-      "alarm13_hours": {
-        "name": "Alarm13 uur"
-      },
-      "alarm14_hours": {
-        "name": "Alarm14 uur"
-      },
-      "alarm15_hours": {
-        "name": "Alarm15 uur"
-      },
-      "alarm0_minutes": {
-        "name": "Alarm0 minuut"
-      },
-      "alarm1_minutes": {
-        "name": "Alarm1 minuut"
-      },
-      "alarm2_minutes": {
-        "name": "Alarm2 minuut"
-      },
-      "alarm3_minutes": {
-        "name": "Alarm3 minuut"
-      },
-      "alarm4_minutes": {
-        "name": "Alarm4 minuut"
-      },
-      "alarm5_minutes": {
-        "name": "Alarm5 minuut"
-      },
-      "alarm6_minutes": {
-        "name": "Alarm6 minuut"
-      },
-      "alarm7_minutes": {
-        "name": "Alarm7 minuut"
-      },
-      "alarm8_minutes": {
-        "name": "Alarm8 minuut"
-      },
-      "alarm9_minutes": {
-        "name": "Alarm9 minuut"
-      },
-      "alarm10_minutes": {
-        "name": "Alarm10 minuut"
-      },
-      "alarm11_minutes": {
-        "name": "Alarm11 minuut"
-      },
-      "alarm12_minutes": {
-        "name": "Alarm12 minuut"
-      },
-      "alarm13_minutes": {
-        "name": "Alarm13 minuut"
-      },
-      "alarm14_minutes": {
-        "name": "Alarm14 minuut"
-      },
-      "alarm15_minutes": {
-        "name": "Alarm15 minuut"
-      },
       "alarm0_powerwake_delta": {
         "name": "Alarm0 PowerWake vertraging"
       },
@@ -949,6 +853,56 @@
       },
       "snooze_time": {
         "name": "Snooze tijd"
+      }
+    },
+    "time": {
+      "alarm0_time": {
+        "name": "Alarm0 tijd"
+      },
+      "alarm1_time": {
+        "name": "Alarm1 tijd"
+      },
+      "alarm2_time": {
+        "name": "Alarm2 tijd"
+      },
+      "alarm3_time": {
+        "name": "Alarm3 tijd"
+      },
+      "alarm4_time": {
+        "name": "Alarm4 tijd"
+      },
+      "alarm5_time": {
+        "name": "Alarm5 tijd"
+      },
+      "alarm6_time": {
+        "name": "Alarm6 tijd"
+      },
+      "alarm7_time": {
+        "name": "Alarm7 tijd"
+      },
+      "alarm8_time": {
+        "name": "Alarm8 tijd"
+      },
+      "alarm9_time": {
+        "name": "Alarm9 tijd"
+      },
+      "alarm10_time": {
+        "name": "Alarm10 tijd"
+      },
+      "alarm11_time": {
+        "name": "Alarm11 tijd"
+      },
+      "alarm12_time": {
+        "name": "Alarm12 tijd"
+      },
+      "alarm13_time": {
+        "name": "Alarm13 tijd"
+      },
+      "alarm14_time": {
+        "name": "Alarm14 tijd"
+      },
+      "alarm15_time": {
+        "name": "Alarm15 tijd"
       }
     }
   }
