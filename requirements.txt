@@ -1,5 +1,4 @@
-pysomneo>=2.2.1
 colorlog>=6.7.0
-homeassistant>=2023.4.1
+homeassistant>=2023.6.0b4
 pip>=8.0.3
 ruff>=0.0.259
