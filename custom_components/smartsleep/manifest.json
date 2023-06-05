@@ -2,7 +2,7 @@
   "domain": "smartsleep",
   "name": "Philips SmartSleep",
   "after_dependencies": [],
-    "codeowners": [],
+  "codeowners": [],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/wylek/smartsleep",
@@ -11,6 +11,6 @@
   "loggers": [
     "smartsleep" 
   ],
-  "requirements": ["pysomneo>=2.5.2"],
-  "version": "4.0.0.1"
+  "requirements": ["pysomneo>=2.2.1"],
+  "version": "3.2.0.1"
 }
