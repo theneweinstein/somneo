@@ -1,109 +1,94 @@
 """Platform for light integration."""
 import logging
+from typing import Any
 
-# Import the device class from the component that you want to support
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.light import (
-    LightEntity, ATTR_BRIGHTNESS, SUPPORT_BRIGHTNESS)
-from .const import *
+    LightEntity,
+    ATTR_BRIGHTNESS,
+    SUPPORT_BRIGHTNESS,
+)
+from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+from .const import DOMAIN
+from .entity import SmartSleepEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add SmartSleep light from config_entry."""
-    name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]
-    dev_info = data.dev_info
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Add SmartSleep light from config_entry."""
 
-    device_info = {
-        "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'SmartSleep',
-        "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    }
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    unique_id = config_entry.unique_id
+    assert unique_id is not None
+    name = config_entry.data[CONF_NAME]
+    device_info = config_entry.data["dev_info"]
 
     async_add_entities(
         [
-            SomneoLight(name, data, device_info, dev_info['serial']),
-            SomneoNightLight(name, data, device_info, dev_info['serial']),
-            SomneoSunset(name, data, device_info, dev_info['serial'])
-        ]
+            SmartSleepLight(coordinator, unique_id, name, device_info, "light"),
+            SmartSleepNightLight(coordinator, unique_id, name, device_info, "nightlight"),
+            SmartSleepSunset(coordinator, unique_id, name, device_info, "sunset")
+        ],
+        update_before_add=True,
     )
 
 
-class SomneoLight(LightEntity):
+class SmartSleepLight(SmartSleepEntity, LightEntity):
     """Representation of an SmartSleep Light."""
 
     _attr_should_poll = True
     _attr_supported_features = SUPPORT_BRIGHTNESS
+    _attr_translation_key = "normal_light"
 
-    def __init__(self, name, data, device_info, serial):
-        """Initialize an SomneoLight."""
-        self._attr_name = name
-        self._data = data
-        self._attr_brightness = None
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + '_light'
-        self._attr_is_on = None
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["light_is_on"]
+        self._attr_brightness = self.coordinator.data["light_brightness"]
+        self.async_write_ha_state()
 
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
-        if ATTR_BRIGHTNESS in kwargs:
-            brightness = kwargs[ATTR_BRIGHTNESS]
-        else:
-            brightness = None
+        await self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
 
-        self._data.somneo.toggle_light(True, brightness)
-        self._attr_is_on = True
-        self.schedule_update_ha_state()
-
-    def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        self._data.somneo.toggle_light(False)
-        self._attr_is_on = False
-        self.schedule_update_ha_state()
-
-    async def async_update(self):
-        """Fetch new state data for this light."""
-        await self._data.update()
-        self._attr_is_on, self._attr_brightness = self._data.somneo.light_status()
+        await self.coordinator.async_turn_off_light()
 
 
-class SomneoNightLight(LightEntity):
-    """Representation of a SmartSleep Light."""
+class SmartSleepNightLight(SmartSleepEntity, LightEntity):
+    """Representation of an SmartSleep Night light."""
 
     _attr_should_poll = True
     _attr_supported_features = 0
+    _attr_translation_key = "night_light"
 
-    def __init__(self, name, data, device_info, serial):
-        """Initialize an SomneoLight."""
-        self._attr_name = name + "_night"
-        self._data = data
-        self._attr_is_on = None
-        self._attr_brightness = None
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + '_night'
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["nightlight_is_on"]
+        self.async_write_ha_state()
 
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        self._data.somneo.toggle_night_light(True)
-        self._attr_is_on = True
-        self.schedule_update_ha_state()
+        await self.coordinator.async_turn_on_nightlight()
 
-    def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        self._data.somneo.toggle_night_light(False)
-        self._attr_is_on = False
-        self.schedule_update_ha_state()
+        await self.coordinator.async_turn_off_nightlight()
 
-    async def async_update(self):
-        """Fetch new state data for this light."""
-        await self._data.update()
-        self._attr_is_on = self._data.somneo.night_light_status()
-
-
-class SomneoSunset(LightEntity):
+class SmartSleepSunset(SmartSleepEntity, LightEntity):
     """Representation of the SmartSleep's sunset (dusk) mode."""
+    
+    _attr_should_poll = True
+    _attr_supported_features = SUPPORT_BRIGHTNESS
+    _attr_translation_key = "sunset"
 
     def __init__(self, name, data, device_info, serial):
         """Initialize a Sunset mode entity."""
@@ -115,57 +100,16 @@ class SomneoSunset(LightEntity):
         self._device_info = device_info
         self._serial = serial
 
-    @property
-    def name(self):
-        """Return the display name of this light."""
-        return self._name
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["light_is_on"]
+        self._attr_brightness = self.coordinator.data["light_brightness"]
+        self.async_write_ha_state()
 
-    @property
-    def brightness(self):
-        """Return the brightness of the light setting in sunset mode, between 0..255."""
-        return self._brightness
-
-    @property
-    def is_on(self):
-        """Return true if light is on."""
-        return self._state
-
-    @property
-    def should_poll(self):
-        return True
-
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return SUPPORT_BRIGHTNESS
-
-    @property
-    def unique_id(self):
-        """Return the id of this light."""
-        return self._serial
-
-    @property
-    def device_info(self):
-        """Return the device_info of the device."""
-        return self._device_info
-
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the sunset mode to turn on."""
-        if ATTR_BRIGHTNESS in kwargs:
-            brightness = kwargs[ATTR_BRIGHTNESS]
-        else:
-            brightness = None
-        self._data.somneo.toggle_sunset(True, brightness)
-        self._state = True
-        self.schedule_update_ha_state()
+        await self.coordinator.async_turn_on_sunset(kwargs.get(ATTR_BRIGHTNESS))
 
-    def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the sunset mode to turn off."""
-        self._data.somneo.toggle_sunset(False)
-        self._state = False
-        self.schedule_update_ha_state()
-
-    async def async_update(self):
-        """Fetch new state data for sunset mode."""
-        await self._data.update()
-        self._state, self._brightness = self._data.somneo.sunset_status()
+        await self.coordinator.async_turn_off_sunset()

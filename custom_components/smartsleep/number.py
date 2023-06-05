@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, PW_ICON, SNOOZE_ICON
-from .entity import SomneoEntity
+from .entity import SmartSleepEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Add Somneo from config_entry."""
+    """Add SmartSleep from config_entry."""
 
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
@@ -29,15 +29,15 @@ async def async_setup_entry(
     alarms = []
     # Add all PowerWake deltas
     for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoPowerWake(coordinator, unique_id, name, device_info, alarm))
+        alarms.append(SmartSleepPowerWake(coordinator, unique_id, name, device_info, alarm))
 
-    snooze = [SomneoSnooze(coordinator, unique_id, name, device_info, "snooze")]
+    snooze = [SmartSleepSnooze(coordinator, unique_id, name, device_info, "snooze")]
 
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(snooze, update_before_add=True)
 
 
-class SomneoPowerWake(SomneoEntity, NumberEntity):
+class SmartSleepPowerWake(SmartSleepEntity, NumberEntity):
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True
@@ -68,7 +68,7 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
         await self.coordinator.async_set_powerwake(self._alarm, delta=int(value))
 
 
-class SomneoSnooze(SomneoEntity, NumberEntity):
+class SmartSleepSnooze(SmartSleepEntity, NumberEntity):
     _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False

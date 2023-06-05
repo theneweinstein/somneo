@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, TIME_ICON
-from .entity import SomneoEntity
+from .entity import SmartSleepEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Add Somneo from config_entry."""
+    """Add SmartSleep from config_entry."""
 
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
@@ -30,12 +30,12 @@ async def async_setup_entry(
     alarms = []
     # Add hour & min number_entity for each alarms
     for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm))
+        alarms.append(SmartSleepTime(coordinator, unique_id, name, device_info, alarm))
 
     async_add_entities(alarms, update_before_add=True)
 
 
-class SomneoTime(SomneoEntity, TimeEntity):
+class SmartSleepTime(SmartSleepEntity, TimeEntity):
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True

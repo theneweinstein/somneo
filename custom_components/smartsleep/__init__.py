@@ -29,10 +29,10 @@ SCAN_INTERVAL = timedelta(seconds=60)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Setup the Somneo component."""
+    """Setup the SmartSleep component."""
     host = entry.data[CONF_HOST]
 
-    coordinator = SomneoCoordinator(
+    coordinator = SmartSleepCoordinator(
         hass, host, use_session=entry.options.get(CONF_SESSION, True)
     )
     entry.async_on_unload(entry.add_update_listener(update_listener))
@@ -86,7 +86,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     return True
 
 
-class SomneoCoordinator(DataUpdateCoordinator[None]):
+class SmartSleepCoordinator(DataUpdateCoordinator[None]):
     """Representation of a SmartSleep Coordinator."""
 
     def __init__(
@@ -138,13 +138,27 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_turn_off_nightlight(self) -> None:
-        """Turn the device on."""
+        """Turn the device off."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.toggle_night_light, False
             )
             await self.async_request_refresh()
 
+    async def async_turn_on_sunset(self, brightness: int) -> None:
+        """Turn the sunset mode on."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.toggle_sunset, True, brightness)
+            await self.async_request_refresh()
+
+    async def async_turn_off_sunset(self) -> None:
+        """Turn the sunset mode off."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(
+                self.somneo.toggle_sunset, False
+            )
+            await self.async_request_refresh()
+    
     async def async_toggle_alarm(self, alarm: str, state: bool) -> None:
         """Toggle alarm."""
         async with self.state_lock:

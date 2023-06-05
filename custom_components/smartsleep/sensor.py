@@ -1,49 +1,71 @@
 """Platform for sensor integration."""
+from datetime import datetime
+from decimal import Decimal
 import logging
 
-from datetime import datetime
-from homeassistant.components.sensor import SensorDeviceClass, STATE_CLASS_MEASUREMENT, SensorEntity
-from .const import *
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    STATE_CLASS_MEASUREMENT,
+    SensorEntity,
+)
+
+from .const import DOMAIN, SENSORS
+from .entity import SmartSleepEntity
 
 _LOGGER = logging.getLogger(__name__)
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """ Add SmartSleep sensors from config_entry."""
-    name = config_entry.data[CONF_NAME]
-    data = hass.data[DOMAIN]
-    dev_info = data.dev_info
 
-    device_info = {
-        "identifiers": {(DOMAIN, dev_info['serial'])},
-        "name": 'SmartSleep',
-        "manufacturer": dev_info['manufacturer'],
-        "model": f"{dev_info['model']} {dev_info['modelnumber']}",
-    }
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Add SmartSleep from config_entry."""
+
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    unique_id = config_entry.unique_id
+    assert unique_id is not None
+    name = config_entry.data[CONF_NAME]
+    device_info = config_entry.data["dev_info"]
 
     sensors = []
     for sensor in list(SENSORS):
-        sensors.append(SomneoSensor(
-            name, data, device_info, dev_info['serial'], sensor))
-    sensors.append(SomneoNextAlarmSensor(
-        name, data, device_info, dev_info['serial']))
+        sensors.append(SmartSleepSensor(coordinator, unique_id, name, device_info, sensor))
+    sensors.append(
+        SmartSleepNextAlarmSensor(coordinator, unique_id, name, device_info, "next")
+    )
 
-    async_add_entities(sensors, True)
+    async_add_entities(sensors, update_before_add=True)
 
 
-class SomneoSensor(SensorEntity):
-
+class SmartSleepSensor(SmartSleepEntity, SensorEntity):
     _attr_state_class = STATE_CLASS_MEASUREMENT
 
     """Representation of a Sensor."""
 
-    def __init__(self, name, data, device_info, serial, sensor_type):
+    def __init__(self, coordinator, unique_id, name, dev_info, sensor_type):
         """Initialize the sensor."""
-        self._data = data
-        self._attr_name = name + "_" + sensor_type
+        super().__init__(coordinator, unique_id, name, dev_info, sensor_type)
+
+        self._attr_translation_key = sensor_type
         self._attr_native_unit_of_measurement = SENSORS[sensor_type]
         self._type = sensor_type
-        self._attr_native_value = None
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + '_' + sensor_type
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        if self._type == "temperature":
+            self._attr_native_value = self.coordinator.data["temperature"]
+        if self._type == "humidity":
+            self._attr_native_value = self.coordinator.data["humidity"]
+        if self._type == "luminance":
+            self._attr_native_value = self.coordinator.data["luminance"]
+        if self._type == "noise":
+            self._attr_native_value = self.coordinator.data["noise"]
+        self.async_write_ha_state()
 
     @property
     def device_class(self) -> SensorDeviceClass:
@@ -54,37 +76,17 @@ class SomneoSensor(SensorEntity):
             return SensorDeviceClass.HUMIDITY
         if self._type == "luminance":
             return SensorDeviceClass.ILLUMINANCE
-        if self._type == "pressure":
-            return SensorDeviceClass.PRESSURE
+        if self._type == "noise":
+            return SensorDeviceClass.SOUND_PRESSURE
         else:
             return None
 
-    async def async_update(self):
-        """Get the latest data and updates the states."""
-        await self._data.update()
-        if self._type == "temperature":
-            self._attr_native_value = self._data.somneo.temperature()
-        if self._type == "humidity":
-            self._attr_native_value = self._data.somneo.humidity()
-        if self._type == "luminance":
-            self._attr_native_value = self._data.somneo.luminance()
-        if self._type == "noise":
-            self._attr_native_value = self._data.somneo.noise()
 
+class SmartSleepNextAlarmSensor(SmartSleepEntity, SensorEntity):
+    _attr_translation_key = "next_alarm"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
 
-class SomneoNextAlarmSensor(SensorEntity):
-    """Representation of a Sensor."""
-
-    def __init__(self, name, data, device_info, serial):
-        """Initialize the sensor."""
-        self._data = data
-        self._attr_name = name + "_next_alarm"
-        self._attr_device_info = device_info
-        self._attr_unique_id = serial + '_next_alarm'
-        self._attr_native_value = None
-        self._attr_device_class = SensorDeviceClass.TIMESTAMP
-    
-    async def async_update(self):
-        """Get the latest data and updates the states."""
-        await self._data.update()
-        self._attr_native_value = datetime.fromisoformat(self._data.somneo.next_alarm()).astimezone() if self._data.somneo.next_alarm() else None
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_native_value = self.coordinator.data["next_alarm"]
+        self.async_write_ha_state()
