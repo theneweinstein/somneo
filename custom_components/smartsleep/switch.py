@@ -20,9 +20,10 @@ from .const import (
     ALARMS_ICON,
     PW_ICON,
 )
-from .entity import SomneoEntity
+from .entity import SmartSleepEntity
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -41,10 +42,10 @@ async def async_setup_entry(
     pw = []
     for alarm in list(coordinator.data["alarms"]):
         alarms.append(
-            SomneoAlarmToggle(coordinator, unique_id, name, device_info, alarm)
+            SmartSleepAlarmToggle(coordinator, unique_id, name, device_info, alarm)
         )
         pw.append(
-            SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
+            SmartSleepPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
         )
 
     async_add_entities(alarms, update_before_add=True)
@@ -77,7 +78,7 @@ async def async_setup_entry(
     platform.async_register_entity_service("add_alarm", {}, "add_alarm")
 
 
-class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
+class SmartSleepAlarmToggle(SmartSleepEntity, SwitchEntity):
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
 
@@ -125,7 +126,7 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
         await self.coordinator.async_set_sound_alarm(
             self._alarm, source=source, level=level, channel=channel
         )
-    
+
     async def remove_alarm(self):
         """Function to remove alarm from list in wake-up app"""
         await self.coordinator.async_remove_alarm(self._alarm)
@@ -135,7 +136,7 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
         await self.coordinator.async_add_alarm(self._alarm)
 
 
-class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
+class SmartSleepPowerWakeToggle(SmartSleepEntity, SwitchEntity):
     _attr_icon = PW_ICON
     _attr_should_poll = True
 

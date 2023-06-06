@@ -1,19 +1,19 @@
-"""A entity class for Somneo integration."""
+"""A entity class for SmartSleep integration."""
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from . import SomneoCoordinator
+from . import SmartSleepCoordinator
 from .const import DOMAIN
 
 
-class SomneoEntity(CoordinatorEntity[SomneoCoordinator]):
-    """Somneo entity class."""
+class SmartSleepEntity(CoordinatorEntity[SmartSleepCoordinator]):
+    """SmartSleep entity class."""
 
     _attr_has_entity_name = True
 
     def __init__(
         self,
-        coordinator: SomneoCoordinator,
+        coordinator: SmartSleepCoordinator,
         unique_id: str,
         name: str,
         dev_info: dict,

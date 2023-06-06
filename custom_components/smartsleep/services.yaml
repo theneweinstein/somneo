@@ -13,7 +13,7 @@ set_light_alarm:
     curve:
       # Field name as shown in UI
       name: Light curve
-      description: The light curve of the wake-up light.
+      description: The light curve used for the wake-up sequence.
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -30,7 +30,7 @@ set_light_alarm:
     level:
       # Field name as shown in UI
       name: Light level
-      description: The light brightness level for the alarm
+      description: The light level used for the wake-up sequence.
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -46,7 +46,7 @@ set_light_alarm:
     duration:
       # Field name as shown in UI
       name: Duration
-      description: The duration of the light alarm
+      description: The duration of the wake-up sequence.
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -115,7 +115,7 @@ set_sound_alarm:
     level:
       # Field name as shown in UI
       name: Sound level
-      description: The sound volume level
+      description: The sound level of the alarm.
       # Whether or not field is required (default = false)
       required: true
       # Example value that can be passed for this field
@@ -131,7 +131,7 @@ set_sound_alarm:
 
 add_alarm:
   name: Add an alarm
-  description: Add an alarm (make it visible in Somneo app)
+  description: Add an alarm (make it visible in SmartSleep app).
   target:
     entity:
       integration: smartsleep
@@ -139,7 +139,7 @@ add_alarm:
 
 remove_alarm:
   name: Remove an alarm
-  description: Remove an alarm (make it invisible in Somneo app) and reset its settings to default.
+  description: Remove an alarm (make it invisible in SmartSleep app) and reset its settings to default.
   target:
     entity:
       integration: smartsleep

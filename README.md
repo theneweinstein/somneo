@@ -4,7 +4,7 @@ Home Assistant custom component for the Philips SmartSleep Connected Sleep and W
 
 ## Original Component
 
-This is a custom fork of the original Somneo component from @theneweinstein, which utilizes a custom fork of the pysomneo library (also from @theneweinstein). This features rebranding of Somneo to SmartSleep and some additional (minor) features.
+This fork of the original Somneo component from @theneweinstein rebrands Somneo to SmartSleep and add some additional, minor features (such as sunset mode).
 
 ## Installation
 
