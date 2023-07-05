@@ -103,3 +103,15 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         self._attr_native_value = self.coordinator.data["alarm_status"]
         self.async_write_ha_state()
+
+    @property
+    def icon(self):
+        if self._attr_native_value == 'off':
+            return 'mdi:alarm-off'
+        if self._attr_native_value == 'on':
+            return 'mdi:alarm'
+        if self._attr_native_value == 'snooze':
+            return 'mdi:alarm-snooze'
+        if self._attr_native_value == 'wake-up':
+            return 'mdi:weather-sunset-up'
+
