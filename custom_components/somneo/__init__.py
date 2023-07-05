@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, UNKNOWN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION
+from .const import DOMAIN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +24,7 @@ PLATFORMS = [
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.TIME,
+    Platform.BUTTON,
 ]
 SCAN_INTERVAL = timedelta(seconds=60)
 
@@ -150,6 +151,22 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.toggle_alarm, alarm, state
+            )
+            await self.async_request_refresh()
+
+    async def async_dismiss_alarm(self) -> None:
+        """Toggle alarm."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(
+                self.somneo.dismiss_alarm
+            )
+            await self.async_request_refresh()
+
+    async def async_snooze_alarm(self) -> None:
+        """Toggle alarm."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(
+                self.somneo.snooze_alarm
             )
             await self.async_request_refresh()
 
