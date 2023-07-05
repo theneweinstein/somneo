@@ -94,13 +94,14 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(self, _user_input=None):
         """Manage the options."""
         return await self.async_step_user()
-    
+
     async def async_step_user(
             self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
+        """Process user input."""
         if user_input is not None:
             return self.async_create_entry(title = "Somneo", data = user_input)
-        
+
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(

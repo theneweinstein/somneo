@@ -44,6 +44,24 @@
       },
       "next_alarm": {
         "name": "Volgende alarm"
+      },
+      "alarm_status": {
+        "name": "Alarm status",
+        "state": {
+          "off": "Uit",
+          "snooze": "Sluimeren",
+          "wake-up": "Wake-up",
+          "on": "Aan",
+          "unknown": "Onbekend"
+        }
+      }
+    },
+    "button": {
+      "alarm_dismiss": {
+        "name": "Negeren"
+      },
+      "alarm_snooze": {
+        "name": "Sluimeren"
       }
     },
     "select": {
@@ -852,7 +870,7 @@
         "name": "Alarm15 PowerWake vertraging"
       },
       "snooze_time": {
-        "name": "Snooze tijd"
+        "name": "Sluimertijd"
       }
     },
     "time": {

@@ -38,6 +38,9 @@ async def async_setup_entry(
     sensors.append(
         SomneoNextAlarmSensor(coordinator, unique_id, name, device_info, "next")
     )
+    sensors.append(
+        SomneoAlarmStatus(coordinator, unique_id, name, device_info, "alarm_status")
+    )
 
     async_add_entities(sensors, update_before_add=True)
 
@@ -89,4 +92,14 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         self._attr_native_value = self.coordinator.data["next_alarm"]
+        self.async_write_ha_state()
+
+
+class SomneoAlarmStatus(SomneoEntity, SensorEntity):
+    """Sensor entity that provides the current status of the alarm."""
+    _attr_translation_key = "alarm_status"
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_native_value = self.coordinator.data["alarm_status"]
         self.async_write_ha_state()

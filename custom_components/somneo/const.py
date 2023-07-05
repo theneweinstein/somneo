@@ -1,10 +1,11 @@
+from typing import Final
+
 from homeassistant.const import (
     UnitOfTemperature,
     PERCENTAGE,
     LIGHT_LUX,
     UnitOfSoundPressure,
 )
-from typing import Final
 
 DOMAIN: Final = "somneo"
 VERSION: Final = "0.3"
@@ -27,6 +28,7 @@ UNKNOWN: Final = "unknown"
 PW_DELTA: Final = "powerwake_delta"
 
 ALARMS_ICON: Final = "hass:alarm"
+DISMISS_ICON: Final = "hass:alarm-off"
 PW_ICON: Final = "hass:alarm-plus"
 TIME_ICON: Final = "hass:clock-digital"
 SNOOZE_ICON: Final = "hass:alarm-snooze"

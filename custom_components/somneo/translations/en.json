@@ -44,6 +44,24 @@
       },
       "next_alarm": {
         "name": "Next alarm"
+      },
+      "alarm_status": {
+        "name": "Alarm status",
+        "state": {
+          "off": "Off",
+          "snooze": "Snooze",
+          "wake-up": "Wake-up",
+          "on": "On",
+          "unknown": "Unknown"
+        }
+      }
+    },
+    "button": {
+      "alarm_dismiss": {
+        "name": "Dismiss"
+      },
+      "alarm_snooze": {
+        "name": "Snooze"
       }
     },
     "select": {
