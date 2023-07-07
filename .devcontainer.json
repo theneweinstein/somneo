@@ -1,10 +1,16 @@
 {
     "name": "ludeeus/integration_blueprint",
-    "image": "mcr.microsoft.com/vscode/devcontainers/python:0-3.11-bullseye",
+    "image": "mcr.microsoft.com/vscode/devcontainers/python:0-3.11",
     "postCreateCommand": "scripts/setup",
-    "appPort": [
-        "9123:8123"
-    ],
+    //"forwardPorts": [
+    //    8123
+    //],
+    //"portsAttributes": {
+    //    "8123": {
+    //        "label": "Home Assistant",
+    //        "onAutoForward": "notify"
+    //    }
+    //},
     "customizations": {
         "vscode": {
             "extensions": [
@@ -29,6 +35,8 @@
             }
         }
     },
+    "runArgs": ["--network=host"],
+    "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/rust:1": {}
     }
