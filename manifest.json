@@ -1,0 +1,25 @@
+{
+    "domain": "somneo",
+    "name": "Philips Somneo",
+    "after_dependencies": [],
+    "codeowners": [
+        "@theneweinstein"
+    ],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/theneweinstein/somneo",
+    "iot_class": "local_polling",
+    "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
+    "loggers": [
+        "somneo"
+    ],
+    "requirements": [
+        "pysomneo==2.6.0"
+    ],
+    "version": "5.0.1",
+    "ssdp": [
+        {
+          "nt": "urn:philips-com:device:DiProduct:1"
+        }
+      ]
+}
