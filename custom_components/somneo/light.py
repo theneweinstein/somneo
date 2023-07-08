@@ -5,8 +5,8 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.light import (
     LightEntity,
+    ColorMode,
     ATTR_BRIGHTNESS,
-    SUPPORT_BRIGHTNESS,
 )
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
@@ -44,7 +44,7 @@ class SomneoLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Light."""
 
     _attr_should_poll = True
-    _attr_supported_features = SUPPORT_BRIGHTNESS
+    _attr_supported_color_modes = ColorMode.BRIGHTNESS
     _attr_translation_key = "normal_light"
 
     @callback
@@ -66,7 +66,6 @@ class SomneoNightLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Night light."""
 
     _attr_should_poll = True
-    _attr_supported_features = 0
     _attr_translation_key = "night_light"
 
     @callback
