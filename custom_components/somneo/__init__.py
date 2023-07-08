@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION
+from .const import DOMAIN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION, SOURCES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -273,3 +273,27 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         """Function to add alarm to list in wake-up app"""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.add_alarm, alarm)
+
+    async def async_player_turn_on(self):
+        """Turn on the audio player"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.toggle_player, True)
+            await self.async_request_refresh()
+
+    async def async_player_turn_off(self):
+        """Turn off the audio player"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.toggle_player, False)
+            await self.async_request_refresh()
+
+    async def async_set_volume_player(self, volume: float):
+        """Set the volume of the audio player"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.set_volume_player, volume)
+            await self.async_request_refresh()
+
+    async def async_set_source_player(self, source: str):
+        """Set the volume of the audio player"""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(self.somneo.set_source_player, SOURCES[source])
+            await self.async_request_refresh()

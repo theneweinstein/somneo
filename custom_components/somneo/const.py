@@ -7,6 +7,8 @@ from homeassistant.const import (
     UnitOfSoundPressure,
 )
 
+from pysomneo import SOURCES
+
 DOMAIN: Final = "somneo"
 VERSION: Final = "0.3"
 
