@@ -1,4 +1,4 @@
-"""Platform for switch integration. (on/off alarms & on/off alarms on workdays and/or weekends"""
+"""Switch entities for Somneo."""
 import logging
 from typing import Any
 import voluptuous as vol
@@ -40,17 +40,17 @@ async def async_setup_entry(
     device_info = config_entry.data["dev_info"]
 
     alarms = []
-    pw = []
+    pwrwk = []
     for alarm in list(coordinator.data["alarms"]):
         alarms.append(
             SomneoAlarmToggle(coordinator, unique_id, name, device_info, alarm)
         )
-        pw.append(
+        pwrwk.append(
             SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
         )
 
     async_add_entities(alarms, update_before_add=True)
-    async_add_entities(pw, update_before_add=True)
+    async_add_entities(pwrwk, update_before_add=True)
 
     platform = entity_platform.async_get_current_platform()
 
@@ -80,6 +80,8 @@ async def async_setup_entry(
 
 
 class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
+    """Representation of a alarm switch."""
+
     _attr_icon = ALARMS_ICON
     _attr_should_poll = True
 
@@ -87,6 +89,7 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
         """Initialize the switches."""
         super().__init__(coordinator, unique_id, name, device_info, alarm)
 
+        self._attr_name = None
         self._attr_translation_key = alarm
         self._alarm = alarm
 
@@ -138,6 +141,8 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
 
 
 class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
+    """Representation of a Powerwake switch."""
+
     _attr_icon = PW_ICON
     _attr_should_poll = True
 

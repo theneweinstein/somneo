@@ -1,4 +1,4 @@
-"""Platform for light integration."""
+"""Light entities for Somneo."""
 import logging
 from typing import Any
 

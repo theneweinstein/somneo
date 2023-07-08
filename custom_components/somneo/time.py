@@ -1,4 +1,4 @@
-"""Platform for number entity to catch hour/minute of alarms."""
+"""Time entities for Somneo."""
 import logging
 from datetime import time
 
@@ -36,6 +36,8 @@ async def async_setup_entry(
 
 
 class SomneoTime(SomneoEntity, TimeEntity):
+    """Representation of a alarm time."""
+
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True

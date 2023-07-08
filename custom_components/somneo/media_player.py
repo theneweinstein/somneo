@@ -1,19 +1,20 @@
-"""Platform for media_player integration."""
+"""Media player entities for Somneo."""
 import logging
-from typing import Any
+
+from pysomneo import SOURCES
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.media_player import (
     MediaPlayerEntity,
     MediaPlayerEntityFeature,
     MediaPlayerDeviceClass,
-    MediaPlayerState
+    MediaPlayerState,
 )
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, SOURCES
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,9 +34,7 @@ async def async_setup_entry(
     device_info = config_entry.data["dev_info"]
 
     async_add_entities(
-        [
-            SomneoMediaPlayer(coordinator, unique_id, name, device_info, "player")
-        ],
+        [SomneoMediaPlayer(coordinator, unique_id, name, device_info, "player")],
         update_before_add=True,
     )
 
@@ -55,7 +54,11 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_state = MediaPlayerState.ON if self.coordinator.data["player"]["state"] else MediaPlayerState.OFF
+        self._attr_state = (
+            MediaPlayerState.ON
+            if self.coordinator.data["player"]["state"]
+            else MediaPlayerState.OFF
+        )
         self._attr_volume_level = self.coordinator.data["player"]["volume"]
         self._attr_source = self.coordinator.data["player"]["source"]
         self._attr_source_list = list(SOURCES.keys())
@@ -72,5 +75,5 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
     async def async_set_volume_level(self, volume: float) -> None:
         await self.coordinator.async_set_volume_player(volume)
 
-    async def async_select_source(self,source: str) -> None:
+    async def async_select_source(self, source: str) -> None:
         await self.coordinator.async_set_source_player(source)

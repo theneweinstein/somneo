@@ -1,4 +1,4 @@
-"""Platform for number entity to catch hour/minute of alarms."""
+"""Number entities for Somneo."""
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -38,6 +38,8 @@ async def async_setup_entry(
 
 
 class SomneoPowerWake(SomneoEntity, NumberEntity):
+    """Representation of a Powerwake number."""
+
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True
@@ -69,6 +71,8 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
 
 
 class SomneoSnooze(SomneoEntity, NumberEntity):
+    """Representation of a snooze time."""
+
     _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False

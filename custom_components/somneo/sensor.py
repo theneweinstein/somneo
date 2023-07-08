@@ -1,6 +1,4 @@
-"""Platform for sensor integration."""
-from datetime import datetime
-from decimal import Decimal
+"""Sensor entities for Somneo."""
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -46,9 +44,9 @@ async def async_setup_entry(
 
 
 class SomneoSensor(SomneoEntity, SensorEntity):
-    _attr_state_class = STATE_CLASS_MEASUREMENT
-
     """Representation of a Sensor."""
+
+    _attr_state_class = STATE_CLASS_MEASUREMENT
 
     def __init__(self, coordinator, unique_id, name, dev_info, sensor_type):
         """Initialize the sensor."""
@@ -86,6 +84,8 @@ class SomneoSensor(SomneoEntity, SensorEntity):
 
 
 class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
+    """Representation of a Next alarm sensor."""
+
     _attr_translation_key = "next_alarm"
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
@@ -97,6 +97,7 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
 
 class SomneoAlarmStatus(SomneoEntity, SensorEntity):
     """Sensor entity that provides the current status of the alarm."""
+
     _attr_translation_key = "alarm_status"
 
     @callback
@@ -106,12 +107,11 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
 
     @property
     def icon(self):
-        if self._attr_native_value == 'off':
-            return 'mdi:alarm-off'
-        if self._attr_native_value == 'on':
-            return 'mdi:alarm'
-        if self._attr_native_value == 'snooze':
-            return 'mdi:alarm-snooze'
-        if self._attr_native_value == 'wake-up':
-            return 'mdi:weather-sunset-up'
-
+        if self._attr_native_value == "off":
+            return "mdi:alarm-off"
+        if self._attr_native_value == "on":
+            return "mdi:alarm"
+        if self._attr_native_value == "snooze":
+            return "mdi:alarm-snooze"
+        if self._attr_native_value == "wake-up":
+            return "mdi:weather-sunset-up"

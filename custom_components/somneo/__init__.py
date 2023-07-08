@@ -120,7 +120,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         return await self.hass.async_add_executor_job(self.somneo.fetch_data)
 
     async def async_turn_on_light(self, brightness) -> None:
-        """Turn the device on."""
+        """Turn the main light on."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.toggle_light, True, brightness
@@ -128,19 +128,19 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_turn_off_light(self) -> None:
-        """Turn the device on."""
+        """Turn the maing light off."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_light, False)
             await self.async_request_refresh()
 
     async def async_turn_on_nightlight(self) -> None:
-        """Turn the device on."""
+        """Turn the night light on."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_night_light, True)
             await self.async_request_refresh()
 
     async def async_turn_off_nightlight(self) -> None:
-        """Turn the device on."""
+        """Turn the night light off."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.toggle_night_light, False
@@ -156,23 +156,23 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_dismiss_alarm(self) -> None:
-        """Toggle alarm."""
+        """Dismiss alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.dismiss_alarm)
             await self.async_request_refresh()
 
     async def async_snooze_alarm(self) -> None:
-        """Toggle alarm."""
+        """Snooze alarm."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.snooze_alarm)
             await self.async_request_refresh()
 
     def set_powerwake(self, alarm: str, state: bool, delta: int):
-        """Toggle powerwake (default 10 minutes)"""
+        """Toggle powerwake (default 10 minutes)."""
         self.somneo.set_powerwake(alarm, onoff=state, delta=delta)
 
     async def async_toggle_powerwake(self, alarm: str, state: bool):
-        """Toggle powerwake (default 10 minutes)"""
+        """Toggle powerwake (default 10 minutes)."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.set_powerwake, alarm, state, 10)
             await self.async_request_refresh()
@@ -192,7 +192,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_set_powerwake(self, alarm: str, delta: int = 0):
-        """Set powerwake time"""
+        """Set powerwake time."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.set_powerwake, alarm, bool(delta), delta
@@ -262,29 +262,29 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             )
 
     async def async_remove_alarm(self, alarm: str):
-        """Function to remove alarm from list in wake-up app"""
+        """Function to remove alarm from list in Somneo app."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.remove_alarm, alarm)
 
     async def async_add_alarm(self, alarm: str):
-        """Function to add alarm to list in wake-up app"""
+        """Function to add alarm to list in Somneo app."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.add_alarm, alarm)
 
     async def async_player_turn_on(self):
-        """Turn on the audio player"""
+        """Turn on the audio player."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_player, True)
             await self.async_request_refresh()
 
     async def async_player_turn_off(self):
-        """Turn off the audio player"""
+        """Turn off the audio player."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.toggle_player, False)
             await self.async_request_refresh()
 
     async def async_set_volume_player(self, volume: float):
-        """Set the volume of the audio player"""
+        """Set the volume of the audio player."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.set_volume_player, volume
@@ -292,7 +292,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_set_source_player(self, source: str):
-        """Set the volume of the audio player"""
+        """Set the volume of the audio player."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 self.somneo.set_source_player, SOURCES[source]

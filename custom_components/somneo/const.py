@@ -1,3 +1,4 @@
+"""Constants for the Somneo integration."""
 from typing import Final
 
 from homeassistant.const import (
@@ -6,8 +7,6 @@ from homeassistant.const import (
     LIGHT_LUX,
     UnitOfSoundPressure,
 )
-
-from pysomneo import SOURCES
 
 DOMAIN: Final = "somneo"
 VERSION: Final = "0.3"
