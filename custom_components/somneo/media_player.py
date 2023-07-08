@@ -6,7 +6,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.media_player import (
     MediaPlayerEntity,
     MediaPlayerEntityFeature,
-    MediaPlayerDeviceClass
+    MediaPlayerDeviceClass,
+    MediaPlayerState
 )
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
@@ -54,10 +55,10 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_state = self.coordinator.data["player"]["state"]
+        self._attr_state = MediaPlayerState.ON if self.coordinator.data["player"]["state"] else MediaPlayerState.OFF
         self._attr_volume_level = self.coordinator.data["player"]["volume"]
         self._attr_source = self.coordinator.data["player"]["source"]
-        self._attr_source_list = SOURCES
+        self._attr_source_list = list(SOURCES.keys())
         self.async_write_ha_state()
 
     async def async_turn_on(self) -> None:
@@ -66,7 +67,7 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
 
     async def async_turn_off(self) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_player_turn_off
+        await self.coordinator.async_player_turn_off()
 
     async def async_set_volume_level(self, volume: float) -> None:
         await self.coordinator.async_set_volume_player(volume)

@@ -21,6 +21,11 @@
     }
   },
   "entity": {
+    "media_player": {
+      "player": {
+        "name": "Audio player"
+      }
+    },
     "light": {
       "normal_light": {
         "name": "Light"

@@ -21,6 +21,11 @@
     }
   },
   "entity": {
+    "media_player": {
+      "player": {
+        "name": "Audiospeler"
+      }
+    },
     "light": {
       "normal_light": {
         "name": "Lamp"

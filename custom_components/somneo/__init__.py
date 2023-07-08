@@ -25,6 +25,7 @@ PLATFORMS = [
     Platform.SWITCH,
     Platform.TIME,
     Platform.BUTTON,
+    Platform.MEDIA_PLAYER,
 ]
 SCAN_INTERVAL = timedelta(seconds=60)
 
@@ -157,17 +158,13 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def async_dismiss_alarm(self) -> None:
         """Toggle alarm."""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(
-                self.somneo.dismiss_alarm
-            )
+            await self.hass.async_add_executor_job(self.somneo.dismiss_alarm)
             await self.async_request_refresh()
 
     async def async_snooze_alarm(self) -> None:
         """Toggle alarm."""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(
-                self.somneo.snooze_alarm
-            )
+            await self.hass.async_add_executor_job(self.somneo.snooze_alarm)
             await self.async_request_refresh()
 
     def set_powerwake(self, alarm: str, state: bool, delta: int):
@@ -289,11 +286,15 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def async_set_volume_player(self, volume: float):
         """Set the volume of the audio player"""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(self.somneo.set_volume_player, volume)
+            await self.hass.async_add_executor_job(
+                self.somneo.set_volume_player, volume
+            )
             await self.async_request_refresh()
 
     async def async_set_source_player(self, source: str):
         """Set the volume of the audio player"""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(self.somneo.set_source_player, SOURCES[source])
+            await self.hass.async_add_executor_job(
+                self.somneo.set_source_player, SOURCES[source]
+            )
             await self.async_request_refresh()
