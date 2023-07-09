@@ -14,7 +14,7 @@
         "somneo"
     ],
     "requirements": [
-        "pysomneo==3.0.0"
+        "pysomneo==3.0.1"
     ],
     "ssdp": [
         {
