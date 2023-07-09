@@ -89,7 +89,6 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
         """Initialize the switches."""
         super().__init__(coordinator, unique_id, name, device_info, alarm)
 
-        self._attr_name = None
         self._attr_translation_key = alarm
         self._alarm = alarm
 
