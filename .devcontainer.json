@@ -2,15 +2,20 @@
     "name": "ludeeus/integration_blueprint",
     "image": "mcr.microsoft.com/vscode/devcontainers/python:0-3.11",
     "postCreateCommand": "scripts/setup",
-    //"forwardPorts": [
-    //    8123
-    //],
-    //"portsAttributes": {
-    //    "8123": {
-    //        "label": "Home Assistant",
-    //        "onAutoForward": "notify"
-    //    }
-    //},
+    "forwardPorts": [
+        8123,
+        5353,
+        1900
+    ],
+    "portsAttributes": {
+        "8123": {
+            "label": "Home Assistant",
+            "onAutoForward": "notify"
+        }
+    },
+    "runArgs": [
+        "--network=host"
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
