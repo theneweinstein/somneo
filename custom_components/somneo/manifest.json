@@ -16,5 +16,10 @@
     "requirements": [
         "pysomneo==3.0.0"
     ],
+    "ssdp": [
+        {
+            "nt": "urn:philips-com:device:DiProduct:1"
+        }
+    ],
     "version": "5.0.1"
 }

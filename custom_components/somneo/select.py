@@ -1,4 +1,4 @@
-"""Platform for select entity to catch alarm days."""
+"""Select entities for Somneo."""
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -36,6 +36,8 @@ async def async_setup_entry(
 
 
 class SomneoDays(SomneoEntity, SelectEntity):
+    """Representation of a alarm days."""
+
     _attr_should_poll = True
     _attr_icon = WORKDAYS_ICON
     _attr_assumed_state = False

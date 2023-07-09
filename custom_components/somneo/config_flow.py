@@ -1,15 +1,19 @@
+"""Config flow for Somneo."""
 from __future__ import annotations
 
 import ipaddress
 import re
 import logging
 from typing import Any
-import voluptuous as vol
+from urllib.parse import urlparse
+
 from contextlib import suppress
+import voluptuous as vol
 
 from pysomneo import Somneo
 
 from homeassistant import config_entries, exceptions
+from homeassistant.components.ssdp import SsdpServiceInfo
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
 from homeassistant.core import callback
@@ -19,6 +23,7 @@ from .const import DOMAIN, DEFAULT_NAME, CONF_SESSION
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def host_valid(host) -> bool:
     """Return True if hostname or IP address is valid."""
     with suppress(ValueError):
@@ -27,25 +32,41 @@ def host_valid(host) -> bool:
     disallowed = re.compile(r"[^a-zA-Z\d\-]")
     return all(x and not disallowed.search(x) for x in host.split("."))
 
+
+def _base_schema(discovery_info: SsdpServiceInfo | None) -> vol.Schema:
+    """Generate base schema for gateways."""
+    base_schema = vol.Schema(
+        {
+            vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+        }
+    )
+
+    if not discovery_info:
+        base_schema = base_schema.extend(
+            {
+                vol.Required(CONF_HOST): str,
+            }
+        )
+
+    return base_schema
+
+
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
 
     VERSION = 3
 
-    def __init__(self) -> None:
-        """Initialize."""
-        self.somneo: Somneo | None = None
-        self.host: str | None = None
-        self.name: str = DEFAULT_NAME
-        self.dev_info: dict | None = None
+    discovery_info: SsdpServiceInfo | None = None
+    host: str | None = None
+    name: str = DEFAULT_NAME
+    dev_info: dict | None = None
 
-    async def init_device(self) -> None:
-        """Initialize Somneo device."""
-        assert self.somneo is not None
-        self.dev_info = await self.hass.async_add_executor_job(self.somneo.get_device_info)
+    async def get_device_info(self):
+        """Get device info"""
+        somneo = Somneo(self.host)
+        dev_info = await self.hass.async_add_executor_job(somneo.get_device_info)
 
-        await self.async_set_unique_id(self.dev_info['serial'].lower())
-        self._abort_if_unique_id_configured()
+        return dev_info
 
     @staticmethod
     @callback
@@ -53,35 +74,56 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Thermosmart options callback."""
         return SomneoOptionsFlow(config_entry)
 
+    async def async_step_ssdp(self, discovery_info: SsdpServiceInfo) -> FlowResult:
+        """Prepare configuration for a discovered Somneo."""
+        _LOGGER.debug("SSDP user_input: %s", discovery_info)
+
+        self.discovery_info = discovery_info
+
+        serial_number = discovery_info.ssdp_udn.split("-")[-1]
+        self.host = urlparse(discovery_info.ssdp_location).hostname
+
+        _LOGGER.debug(self.host)
+
+        await self.async_set_unique_id(serial_number)
+
+        self._abort_if_unique_id_configured()
+
+        _LOGGER.debug("It is not aborted.")
+
+        return await self.async_step_user()
+
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
 
+        _LOGGER.debug(user_input)
+
         if user_input is not None:
+            if self.discovery_info:
+                _LOGGER.debug("Discovery info found.")
+                user_input[CONF_HOST] = self.host
+            else:
+                self.host = user_input[CONF_HOST]
+
             if host_valid(user_input[CONF_HOST]):
                 try:
-                    self.host = user_input[CONF_HOST]
-                    self.name = user_input[CONF_NAME]
-                    self.somneo = Somneo(self.host)
-                    await self.init_device()
+                    user_input["dev_info"] = await self.get_device_info()
                 except Exception as ex:
                     errors["base"] = str(ex)
                 else:
-                    user_input['dev_info'] = self.dev_info
-                    return self.async_create_entry(title=self.name, data=user_input)
+                    await self.async_set_unique_id(user_input["dev_info"]["serial"])
+                    self._abort_if_unique_id_configured()
+                    return self.async_create_entry(
+                        title=user_input[CONF_NAME], data=user_input
+                    )
 
         return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
-                    vol.Required(CONF_HOST): str,
-                }
-            ),
-            errors=errors
+            step_id="user", data_schema=_base_schema(self.discovery_info), errors=errors
         )
+
 
 class SomneoOptionsFlow(config_entries.OptionsFlow):
     """Config flow options for Somneo"""
@@ -96,20 +138,21 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
         return await self.async_step_user()
 
     async def async_step_user(
-            self, user_input: dict[str, Any] | None = None
+        self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Process user input."""
         if user_input is not None:
-            return self.async_create_entry(title = "Somneo", data = user_input)
+            return self.async_create_entry(title="Somneo", data=user_input)
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_SESSION, default = self.use_session): bool,
+                    vol.Optional(CONF_SESSION, default=self.use_session): bool,
                 }
-            )
+            ),
         )
+
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""
