@@ -5,7 +5,7 @@ from datetime import timedelta
 import logging
 import asyncio
 
-from pysomneo import Somneo
+from pysomneo import Somneo, SOURCES
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION, SOURCES
+from .const import DOMAIN, WEEKEND, WORKDAYS, TOMORROW, EVERYDAY, CONF_SESSION
 
 _LOGGER = logging.getLogger(__name__)
 
