@@ -76,20 +76,16 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_ssdp(self, discovery_info: SsdpServiceInfo) -> FlowResult:
         """Prepare configuration for a discovered Somneo."""
-        _LOGGER.debug("SSDP user_input: %s", discovery_info)
+        _LOGGER.debug("SSDP discovery: %s", discovery_info)
 
         self.discovery_info = discovery_info
 
-        serial_number = discovery_info.ssdp_udn.split("-")[-1]
+        serial_number = discovery_info.upnp['cppId']
         self.host = urlparse(discovery_info.ssdp_location).hostname
-
-        _LOGGER.debug(self.host)
 
         await self.async_set_unique_id(serial_number)
 
         self._abort_if_unique_id_configured()
-
-        _LOGGER.debug("It is not aborted.")
 
         return await self.async_step_user()
 

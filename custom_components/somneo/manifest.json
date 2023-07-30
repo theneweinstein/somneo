@@ -8,6 +8,7 @@
     "config_flow": true,
     "dependencies": [],
     "documentation": "https://github.com/theneweinstein/somneo",
+    "integration_type": "device",
     "iot_class": "local_polling",
     "issue_tracker": "https://github.com/theneweinstein/somneo/issues",
     "loggers": [
@@ -21,5 +22,5 @@
             "nt": "urn:philips-com:device:DiProduct:1"
         }
     ],
-    "version": "5.0.1"
+    "version": "5.0.2"
 }
