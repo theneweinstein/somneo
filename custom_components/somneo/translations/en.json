@@ -367,6 +367,7 @@
         }
       },
       "alarm5": {
+        "name": "Alarm5",
         "state_attributes": {
           "hour": {
             "name": "Hour"
