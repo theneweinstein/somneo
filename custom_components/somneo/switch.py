@@ -154,7 +154,7 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]
+        self._attr_is_on = self.coordinator.data["powerwake"][self._alarm]
         self._attr_extra_state_attributes = {
             "powerwake_delta": self.coordinator.data["powerwake_delta"][self._alarm]
         }
