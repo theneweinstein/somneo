@@ -15,13 +15,13 @@
         "somneo"
     ],
     "requirements": [
-        "pysomneo==3.0.1"
+        "pysomneo==3.1.3"
     ],
     "ssdp": [
         {
             "nt": "urn:philips-com:device:DiProduct:1",
-			"modelName": "Wake-up Light"
+            "modelName": "Wake-up Light"
         }
     ],
-    "version": "5.0.4"
+    "version": "5.1.0"
 }

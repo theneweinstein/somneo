@@ -26,6 +26,7 @@ PLATFORMS = [
     Platform.TIME,
     Platform.BUTTON,
     Platform.MEDIA_PLAYER,
+    Platform.TEXT
 ]
 SCAN_INTERVAL = timedelta(seconds=60)
 
@@ -210,26 +211,38 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def async_set_alarm_day(self, alarm, day):
         """Set the day of the alarm."""
         async with self.state_lock:
-            if day == WORKDAYS:
+            if type(day) == list:
                 await self.hass.async_add_executor_job(
-                    self.somneo.set_alarm_workdays, alarm
-                )
+                        self.somneo.set_alarm_days,
+                        alarm,
+                        day
+                    )
                 _LOGGER.debug("Optie is werkday")
-            elif day == WEEKEND:
-                await self.hass.async_add_executor_job(
-                    self.somneo.set_alarm_weekend, alarm
-                )
-                _LOGGER.debug("Optie is weekend")
-            elif day == TOMORROW:
-                await self.hass.async_add_executor_job(
-                    self.somneo.set_alarm_tomorrow, alarm
-                )
-                _LOGGER.debug("Optie is morgen")
-            elif day == EVERYDAY:
-                await self.hass.async_add_executor_job(
-                    self.somneo.set_alarm_everyday, alarm
-                )
-                _LOGGER.debug("Optie is elke dag")
+            else:
+                if day == WORKDAYS:
+                    await self.hass.async_add_executor_job(
+                        self.somneo.set_alarm_workdays,
+                        alarm
+                    )
+                    _LOGGER.debug("Optie is werkday")
+                elif day == WEEKEND:
+                    await self.hass.async_add_executor_job(
+                        self.somneo.set_alarm_weekend,
+                        alarm
+                    )
+                    _LOGGER.debug("Optie is weekend")
+                elif day == TOMORROW:
+                    await self.hass.async_add_executor_job(
+                        self.somneo.set_alarm_tomorrow,
+                        alarm
+                    )
+                    _LOGGER.debug("Optie is morgen")
+                elif day == EVERYDAY:
+                    await self.hass.async_add_executor_job(
+                        self.somneo.set_alarm_everyday,
+                        alarm
+                    )
+                    _LOGGER.debug("Optie is elke dag")
 
             await self.async_request_refresh()
 

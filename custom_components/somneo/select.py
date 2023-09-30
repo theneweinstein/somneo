@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.select import SelectEntity
 
-from .const import DOMAIN, WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, UNKNOWN, WORKDAYS_ICON
+from .const import DOMAIN, WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, CUSTOM, WORKDAYS_ICON
 from .entity import SomneoEntity
 
 
@@ -42,7 +42,7 @@ class SomneoDays(SomneoEntity, SelectEntity):
     _attr_icon = WORKDAYS_ICON
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, UNKNOWN]
+    _attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, CUSTOM]
     _attr_current_option = WORKDAYS
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
