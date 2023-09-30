@@ -25,7 +25,7 @@ WORKDAYS: Final = "workdays"
 WEEKEND: Final = "weekend"
 TOMORROW: Final = "tomorrow"
 EVERYDAY: Final = "daily"
-UNKNOWN: Final = "unknown"
+CUSTOM: Final = "custom"
 PW_DELTA: Final = "powerwake_delta"
 
 ALARMS_ICON: Final = "hass:alarm"

@@ -76,7 +76,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm1_days": {
@@ -85,7 +86,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm2_days": {
@@ -94,7 +96,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm3_days": {
@@ -103,7 +106,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm4_days": {
@@ -112,7 +116,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm5_days": {
@@ -121,7 +126,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm6_days": {
@@ -130,7 +136,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm7_days": {
@@ -139,7 +146,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm8_days": {
@@ -148,7 +156,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm9_days": {
@@ -157,7 +166,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm10_days": {
@@ -166,7 +176,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm11_days": {
@@ -175,7 +186,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm12_days": {
@@ -184,7 +196,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm13_days": {
@@ -193,7 +206,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm14_days": {
@@ -202,7 +216,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       },
       "alarm15_days": {
@@ -211,7 +226,8 @@
           "workdays": "Doordeweeks",
           "daily": "Dagelijks",
           "weekend": "Weekend",
-          "tomorrow": "Morgen"
+          "tomorrow": "Morgen",
+          "custom": "Aangepast"
         }
       }
     },
@@ -876,6 +892,56 @@
       },
       "snooze_time": {
         "name": "Sluimertijd"
+      }
+    },
+    "text": {
+      "alarm0_days_str": {
+        "name": "Alarm0 dagen"
+      },
+      "alarm1_days_str": {
+        "name": "Alarm1 dagen"
+      },
+      "alarm2_days_str": {
+        "name": "Alarm2 dagen"
+      },
+      "alarm3_days_str": {
+        "name": "Alarm3 dagen"
+      },
+      "alarm4_days_str": {
+        "name": "Alarm4 dagen"
+      },
+      "alarm5_days_str": {
+        "name": "Alarm5 dagen"
+      },
+      "alarm6_days_str": {
+        "name": "Alarm6 dagen"
+      },
+      "alarm7_days_str": {
+        "name": "Alarm7 dagen"
+      },
+      "alarm8_days_str": {
+        "name": "Alarm8 dagen"
+      },
+      "alarm9_days_str": {
+        "name": "Alarm9 dagen"
+      },
+      "alarm10_days_str": {
+        "name": "Alarm10 dagen"
+      },
+      "alarm11_days_str": {
+        "name": "Alarm11 dagen"
+      },
+      "alarm12_days_str": {
+        "name": "Alarm12 dagen"
+      },
+      "alarm13_days_str": {
+        "name": "Alarm13 dagen"
+      },
+      "alarm14_days_str": {
+        "name": "Alarm14 dagen"
+      },
+      "alarm15_days_str": {
+        "name": "Alarm15 dagen"
       }
     },
     "time": {
