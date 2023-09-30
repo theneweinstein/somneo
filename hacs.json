@@ -6,7 +6,10 @@
     "light",
     "switch",
     "select",
-    "number"
+    "number",
+    "time",
+    "media_player",
+    "text"
   ],
   "iot_class": "Local Polling",
   "homeassistant": "2023.6.0"
