@@ -14,7 +14,8 @@ Furthermore, it provides the following sensors:
 You can install this custom component via HACS as a custom repository (https://hacs.xyz/docs/faq/custom_repositories/). Alternatively you can clone or copy the files into the somneo folder in the custom_components folder of HomeAssistant.
 
 # Configuration
-The Somneo should be automatically detected via SSDP. If not, you can also manually configure the Somneo: https://my.home-assistant.io/redirect/config_flow_start/?domain=somneo.
+The Somneo should be automatically detected via SSDP. If not, you can also manually configure the Somneo:
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=somneo)
 
 # Alarm UI configuration
 Add a "manual" card into lovelace UI and copy paste the following code. It will create a card for the first Somneo Alarm (alarm0).
