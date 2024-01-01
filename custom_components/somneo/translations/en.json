@@ -867,11 +867,21 @@
       "sunset": {
         "name": "Sunset",
         "state_attributes": {
-          "duration": "Duration",
-          "curve": "Light curve",
-          "level": "Light level",
-          "sound": "Sound",
-          "volume": "Volume"
+          "duration": {
+            "name": "Duration"
+          },
+          "curve": {
+            "name": "Light curve"
+          },
+          "level": {
+            "name": "Light level"
+          },
+          "sound": {
+            "name": "Sound"
+          },
+          "volume": {
+            "name":  "Volume"
+          }
         }
       }
     },
