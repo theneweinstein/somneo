@@ -867,11 +867,21 @@
       "sunset": {
         "name": "Zonsondergang",
         "state_attributes": {
-          "duration": "Duur",
-          "curve": "Lichtcurve",
-          "level": "Lichtniveau",
-          "sound": "Geluid",
-          "volume": "Volume"
+          "duration": {
+            "name": "Duur"
+          },
+          "curve": {
+            "name": "Lichtcurve"
+          },
+          "level": {
+            "name":  "Lichtniveau"
+          },
+          "sound": {
+            "name": "Geluid"
+          },
+          "volume": {
+            "name": "Volume"
+          }
         }
       }
     },
