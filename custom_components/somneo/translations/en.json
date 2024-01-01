@@ -246,11 +246,11 @@
           "ocean_waves": "Ocean waves",
           "under_water": "Under water",
           "summer_lake": "Summer lake",
-          "FM_1": "FM 1",
-          "FM_2": "FM 2",
-          "FM_3": "FM 3",
-          "FM_4": "FM 4",
-          "FM_5": "FM 5",
+          "fm_1": "FM 1",
+          "fm_2": "FM 2",
+          "fm_3": "FM 3",
+          "fm_4": "FM 4",
+          "fm_5": "FM 5",
           "off": "Off"
         }
       }
