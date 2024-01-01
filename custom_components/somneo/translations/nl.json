@@ -234,23 +234,23 @@
       "sunset_curve": {
         "name": "Zonsondergang lichtcurve",
         "state": {
-          "sunny day": "Zonnige dag",
-          "island red": "Eiland rood",
-          "nordic white": "Noords wit"
+          "sunny_day": "Zonnige dag",
+          "island_red": "Eiland rood",
+          "nordic_white": "Noords wit"
         }
       },
       "sunset_sound": {
         "name": "Zonsondergang geluid",
         "state": {
-          "soft rain": "Zachte regen",
-          "ocean waves": "Oceaangolven",
-          "under water": "Onder water",
-          "summer lake": "Zomers meer",
-          "FM 1": "FM 1",
-          "FM 2": "FM 2",
-          "FM 3": "FM 3",
-          "FM 4": "FM 4",
-          "FM 5": "FM 5",
+          "soft_rain": "Zachte regen",
+          "ocean_waves": "Oceaangolven",
+          "under_water": "Onder water",
+          "summer_lake": "Zomers meer",
+          "fm_1": "FM 1",
+          "fm_2": "FM 2",
+          "fm_3": "FM 3",
+          "fm_4": "FM 4",
+          "fm_5": "FM 5",
           "off": "Uit"
         }
       }
