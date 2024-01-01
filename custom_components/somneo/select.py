@@ -77,18 +77,18 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     _attr_translation_key = "sunset_sound"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = list(SOUND_DUSK.keys())
-    _attr_current_option = 'soft rain'
+    _attr_options = [item.replace(" ", "_") for item in SOUND_DUSK.keys()]
+    _attr_current_option = 'soft_rain'
 
     @callback
     def _handle_coordinator_update(self) -> None:
         _LOGGER.debug(self.coordinator.data["sunset"]["sound"])
-        self._attr_current_option = self.coordinator.data["sunset"]["sound"]
+        self._attr_current_option = self.coordinator.data["sunset"]["sound"].replace(" ","_")
         self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""
-        await self.coordinator.async_set_sunset(sound = option)
+        await self.coordinator.async_set_sunset(sound = option.replace("_"," "))
 
 class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     """Representation of a sunset curve."""
@@ -98,15 +98,15 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     _attr_translation_key = "sunset_curve"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = list(LIGHT_CURVES.keys())
-    _attr_current_option = 'sunny day'
+    _attr_options = [item.replace(" ", "_") for item in LIGHT_CURVES.keys()]
+    _attr_current_option = 'sunny_day'
 
     @callback
     def _handle_coordinator_update(self) -> None:
         _LOGGER.debug(self.coordinator.data["sunset"]["curve"])
-        self._attr_current_option = self.coordinator.data["sunset"]["curve"].lower()
+        self._attr_current_option = self.coordinator.data["sunset"]["curve"].replace(" ","_")
         self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Called when user adjust the option in the UI."""
-        await self.coordinator.async_set_sunset(curve = option)
+        await self.coordinator.async_set_sunset(curve = option.replace("_"," "))
