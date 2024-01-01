@@ -234,23 +234,23 @@
       "sunset_curve": {
         "name": "Sunset light curve",
         "state": {
-          "sunny day": "Sunny day",
-          "island red": "Island red",
-          "nordic white": "Nordic white"
+          "sunny_day": "Sunny day",
+          "island_red": "Island red",
+          "nordic_white": "Nordic white"
         }
       },
       "sunset_sound": {
         "name": "Sunset sound",
         "state": {
-          "soft rain": "Soft rain",
-          "ocean waves": "Ocean waves",
-          "under water": "Under water",
-          "summer lake": "Summer lake",
-          "FM 1": "FM 1",
-          "FM 2": "FM 2",
-          "FM 3": "FM 3",
-          "FM 4": "FM 4",
-          "FM 5": "FM 5",
+          "soft_rain": "Soft rain",
+          "ocean_waves": "Ocean waves",
+          "under_water": "Under water",
+          "summer_lake": "Summer lake",
+          "FM_1": "FM 1",
+          "FM_2": "FM 2",
+          "FM_3": "FM 3",
+          "FM_4": "FM 4",
+          "FM_5": "FM 5",
           "off": "Off"
         }
       }
