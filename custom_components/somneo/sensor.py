@@ -115,3 +115,5 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
             return "mdi:alarm-snooze"
         if self._attr_native_value == "wake-up":
             return "mdi:weather-sunset-up"
+        if self._attr_native_value == "sunset":
+            return "mdi:weather-sunset-down"
