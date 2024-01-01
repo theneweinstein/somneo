@@ -40,7 +40,6 @@
             }
         }
     },
-    "runArgs": ["--network=host"],
     "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/rust:1": {}

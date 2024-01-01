@@ -35,6 +35,7 @@ TIME_ICON: Final = "hass:clock-digital"
 SNOOZE_ICON: Final = "hass:alarm-snooze"
 WORKDAYS_ICON: Final = "hass:calendar-range"
 WEEKEND_ICON: Final = "hass:calendar-range"
+SUNSET_ICON: Final = "hass:weather-sunset"
 
 ATTR_ALARM: Final = "alarm"
 ATTR_CURVE: Final = "curve"

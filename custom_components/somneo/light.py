@@ -55,11 +55,11 @@ class SomneoLight(SomneoEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
-        await self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
+        await self.coordinator.async_toggle_light(True, brightness = kwargs.get(ATTR_BRIGHTNESS))
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_turn_off_light()
+        await self.coordinator.async_toggle_light(False)
 
 
 class SomneoNightLight(SomneoEntity, LightEntity):
@@ -75,8 +75,8 @@ class SomneoNightLight(SomneoEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        await self.coordinator.async_turn_on_nightlight()
+        await self.coordinator.async_toggle_nightlight(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_turn_off_nightlight()
+        await self.coordinator.async_toggle_nightlight(False)

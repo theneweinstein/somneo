@@ -47,23 +47,20 @@ class SomneoTime(SomneoEntity, TimeEntity):
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
-        super().__init__(coordinator, unique_id, name, dev_info, alarm + "_time")
+        super().__init__(coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_time")
 
-        self._attr_translation_key = alarm + "_time"
+        self._attr_translation_key = "alarm" + str(alarm) + "_time"
 
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_native_value = time(
-            self.coordinator.data["alarms_hour"][self._alarm],
-            self.coordinator.data["alarms_minute"][self._alarm],
-        )
+        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]['time']
 
         self.async_write_ha_state()
 
     async def async_set_value(self, value: time) -> None:
         """Called when user adjust Hours / Minutes in the UI"""
         await self.coordinator.async_set_alarm(
-            self._alarm, hours=value.hour, minutes=value.minute
+            self._alarm, time = value
         )

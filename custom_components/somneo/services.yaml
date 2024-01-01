@@ -1,5 +1,5 @@
 # Service ID
-set_light_alarm:
+set_alarm_light:
   # Service name as shown in UI
   name: Set wake-up light
   # Description of the service
@@ -60,7 +60,7 @@ set_light_alarm:
           max: 40
           step: 1
 
-set_sound_alarm:
+set_alarm_sound:
   name: Set wake-up sound
   description: Set the sound of the alarm
   target:

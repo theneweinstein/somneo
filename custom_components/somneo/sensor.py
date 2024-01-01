@@ -102,7 +102,7 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_native_value = self.coordinator.data["alarm_status"]
+        self._attr_native_value = self.coordinator.data["somneo_status"]
         self.async_write_ha_state()
 
     @property

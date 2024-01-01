@@ -54,18 +54,18 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
-        super().__init__(coordinator, unique_id, name, device_info, alarm)
+        super().__init__(coordinator, unique_id, name, device_info, "alarm" + str(alarm))
 
-        self._attr_translation_key = alarm + '_days_str'
+        self._attr_translation_key = "alarm" + str(alarm) + '_days_str'
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        days_list = self.coordinator.data["alarm_day_list"][self._alarm]
+        days_list = self.coordinator.data["alarms"][self._alarm]['days']
         self._attr_native_value = ",".join([str(item) for item in days_list if item])
 
         self.async_write_ha_state()
 
     async def async_set_value(self, value: str) -> None:
         """Set the text value."""
-        await self.coordinator.async_set_alarm_day(self._alarm, value.split(','))
+        await self.coordinator.async_set_alarm(self._alarm, days = value.split(','))

@@ -68,12 +68,6 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return dev_info
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> SomneoOptionsFlow:
-        """Thermosmart options callback."""
-        return SomneoOptionsFlow(config_entry)
-
     async def async_step_ssdp(self, discovery_info: SsdpServiceInfo) -> FlowResult:
         """Prepare configuration for a discovered Somneo."""
         _LOGGER.debug("SSDP discovery: %s", discovery_info)
@@ -118,35 +112,6 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user", data_schema=_base_schema(self.discovery_info), errors=errors
-        )
-
-
-class SomneoOptionsFlow(config_entries.OptionsFlow):
-    """Config flow options for Somneo"""
-
-    def __init__(self, entry: ConfigEntry) -> None:
-        """Initialze the Somneo options flow."""
-        self.entry = entry
-        self.use_session = self.entry.options.get(CONF_SESSION, True)
-
-    async def async_step_init(self, _user_input=None):
-        """Manage the options."""
-        return await self.async_step_user()
-
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Process user input."""
-        if user_input is not None:
-            return self.async_create_entry(title="Somneo", data=user_input)
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(CONF_SESSION, default=self.use_session): bool,
-                }
-            ),
         )
 
 
