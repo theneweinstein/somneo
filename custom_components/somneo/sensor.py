@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import (
     SensorDeviceClass,
-    STATE_CLASS_MEASUREMENT,
+    SensorStateClass,
     SensorEntity,
 )
 
@@ -46,7 +46,7 @@ async def async_setup_entry(
 class SomneoSensor(SomneoEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    _attr_state_class = STATE_CLASS_MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
 
     def __init__(self, coordinator, unique_id, name, dev_info, sensor_type):
         """Initialize the sensor."""
