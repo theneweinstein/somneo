@@ -1,15 +1,15 @@
 """Sensor entities for Somneo."""
 import logging
 
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorStateClass,
-    SensorEntity,
-)
 
 from .const import DOMAIN, SENSORS
 from .entity import SomneoEntity
@@ -107,6 +107,7 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
 
     @property
     def icon(self):
+        """Icon."""
         if self._attr_native_value == "off":
             return "mdi:alarm-off"
         if self._attr_native_value == "on":

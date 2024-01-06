@@ -2,10 +2,10 @@
 from typing import Final
 
 from homeassistant.const import (
-    UnitOfTemperature,
-    PERCENTAGE,
     LIGHT_LUX,
+    PERCENTAGE,
     UnitOfSoundPressure,
+    UnitOfTemperature,
 )
 
 DOMAIN: Final = "somneo"

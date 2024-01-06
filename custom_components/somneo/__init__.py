@@ -1,39 +1,38 @@
-""" Support for Philips Somneo devices."""
+"""Support for Philips Somneo devices."""
 from __future__ import annotations
 
 import asyncio
-from datetime import timedelta, time
 import functools as ft
 import logging
-
-from pysomneo import Somneo, SOURCES
+from datetime import time, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from pysomneo import SOURCES, Somneo
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [
+    Platform.BUTTON,
     Platform.LIGHT,
+    Platform.MEDIA_PLAYER,
     Platform.NUMBER,
     Platform.SELECT,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.TEXT,
     Platform.TIME,
-    Platform.BUTTON,
-    Platform.MEDIA_PLAYER,
-    Platform.TEXT
 ]
 SCAN_INTERVAL = timedelta(seconds=60)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Setup the Somneo component."""
+    """Set up the Somneo component."""
     host = entry.data[CONF_HOST]
 
     coordinator = SomneoCoordinator(hass, host)
@@ -85,7 +84,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 
     if config_entry.version == 3:
         new = {**config_entry.data}
-        new['options'].pop('use_session')
+        new["options"].pop("use_session")
 
         config_entry.version = 4
         hass.config_entries.async_update_entry(config_entry, data=new)
@@ -98,11 +97,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 class SomneoCoordinator(DataUpdateCoordinator[None]):
     """Representation of a Somneo Coordinator."""
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        host: str
-        ) -> None:
+    def __init__(self, hass: HomeAssistant, host: str) -> None:
         """Initialize Somneo client."""
         self.somneo = Somneo(host)
         self.state_lock = asyncio.Lock()
@@ -125,22 +120,22 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
 
         return await self.hass.async_add_executor_job(self.somneo.fetch_data)
 
-    async def async_toggle_light(self, state: bool, brightness: int | None = None) -> None:
+    async def async_toggle_light(
+        self, state: bool, brightness: int | None = None
+    ) -> None:
         """Toggle the main light."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                ft.partial(
-                    self.somneo.toggle_light,
-                    state,
-                    brightness = brightness
-                )
+                ft.partial(self.somneo.toggle_light, state, brightness=brightness)
             )
             await self.async_request_refresh()
 
     async def async_toggle_nightlight(self, state: bool) -> None:
         """Toggle the night light."""
         async with self.state_lock:
-            await self.hass.async_add_executor_job(self.somneo.toggle_night_light, state)
+            await self.hass.async_add_executor_job(
+                self.somneo.toggle_night_light, state
+            )
             await self.async_request_refresh()
 
     async def async_toggle_alarm(self, alarm: str, state: bool) -> None:
@@ -158,17 +153,12 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.async_request_refresh()
 
     async def async_set_alarm(
-        self, alarm: str, time: time | None = None, days: str | list | None = None
+        self, alarm: str, alarm_time: time | None = None, days: str | list | None = None
     ):
         """Set alarm time."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                ft.partial(
-                    self.somneo.set_alarm,
-                    alarm,
-                    time = time,
-                    days = days
-                )
+                ft.partial(self.somneo.set_alarm, alarm, time=alarm_time, days=days)
             )
             await self.async_request_refresh()
 
@@ -177,10 +167,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 ft.partial(
-                    self.somneo.set_alarm_powerwake,
-                    alarm,
-                    onoff = state,
-                    delta = 10
+                    self.somneo.set_alarm_powerwake, alarm, onoff=state, delta=10
                 )
             )
             await self.async_request_refresh()
@@ -192,8 +179,8 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
                 ft.partial(
                     self.somneo.set_alarm_powerwake,
                     alarm,
-                    onoff = bool(delta),
-                    delta = delta
+                    onoff=bool(delta),
+                    delta=delta,
                 )
             )
             await self.async_request_refresh()
@@ -204,11 +191,11 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             await self.hass.async_add_executor_job(self.somneo.snooze_alarm)
             await self.async_request_refresh()
 
-    async def async_set_snooze_time(self, time):
+    async def async_set_snooze_time(self, snooze_time):
         """Set snooze time."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                self.somneo.set_snooze_time, int(time)
+                self.somneo.set_snooze_time, int(snooze_time)
             )
             await self.async_request_refresh()
 
@@ -221,9 +208,9 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
                 ft.partial(
                     self.somneo.set_alarm_light,
                     alarm,
-                    curve = curve,
-                    level = level,
-                    duration = duration
+                    curve=curve,
+                    level=level,
+                    duration=duration,
                 )
             )
             await self.async_request_refresh()
@@ -237,20 +224,20 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
                 ft.partial(
                     self.somneo.set_alarm_sound,
                     alarm,
-                    source = source,
-                    level = level,
-                    channel = channel
+                    source=source,
+                    level=level,
+                    channel=channel,
                 )
             )
             await self.async_request_refresh()
 
     async def async_remove_alarm(self, alarm: str):
-        """Function to remove alarm from list in Somneo app."""
+        """Remove alarm from list in Somneo app."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.remove_alarm, alarm)
 
     async def async_add_alarm(self, alarm: str):
-        """Function to add alarm to list in Somneo app."""
+        """Add alarm to list in Somneo app."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(self.somneo.add_alarm, alarm)
 
@@ -288,18 +275,18 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         level: int | None = None,
         duration: int | None = None,
         sound: str | None = None,
-        volume: int | None = None
+        volume: int | None = None,
     ):
         """Adjust the sunset settings."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
                 ft.partial(
                     self.somneo.set_sunset,
-                    curve = curve,
-                    level = level,
-                    duration = duration,
-                    sound = sound,
-                    volume = volume
+                    curve=curve,
+                    level=level,
+                    duration=duration,
+                    sound=sound,
+                    volume=volume,
                 )
             )
             await self.async_request_refresh()

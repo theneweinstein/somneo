@@ -2,8 +2,8 @@
 import logging
 from datetime import time
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.time import TimeEntity
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -28,7 +28,7 @@ async def async_setup_entry(
     device_info = config_entry.data["dev_info"]
 
     alarms = []
-    # Add hour & min number_entity for each alarms
+    # Add hour & min number_entity for each alarms.
     for alarm in list(coordinator.data["alarms"]):
         alarms.append(SomneoTime(coordinator, unique_id, name, device_info, alarm))
 
@@ -47,7 +47,9 @@ class SomneoTime(SomneoEntity, TimeEntity):
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
-        super().__init__(coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_time")
+        super().__init__(
+            coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_time"
+        )
 
         self._attr_translation_key = "alarm" + str(alarm) + "_time"
 
@@ -55,12 +57,10 @@ class SomneoTime(SomneoEntity, TimeEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]['time']
+        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]["time"]
 
         self.async_write_ha_state()
 
     async def async_set_value(self, value: time) -> None:
-        """Called when user adjust Hours / Minutes in the UI"""
-        await self.coordinator.async_set_alarm(
-            self._alarm, time = value
-        )
+        """Adjust Hours and Minutes."""
+        await self.coordinator.async_set_alarm(self._alarm, time=value)

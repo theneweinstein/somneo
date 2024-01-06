@@ -2,24 +2,20 @@
 from __future__ import annotations
 
 import ipaddress
-import re
 import logging
+import re
+from contextlib import suppress
 from typing import Any
 from urllib.parse import urlparse
 
-from contextlib import suppress
 import voluptuous as vol
-
-from pysomneo import Somneo
-
 from homeassistant import config_entries, exceptions
 from homeassistant.components.ssdp import SsdpServiceInfo
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
-from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from pysomneo import Somneo
 
-from .const import DOMAIN, DEFAULT_NAME, CONF_SESSION
+from .const import DEFAULT_NAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +58,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     dev_info: dict | None = None
 
     async def get_device_info(self):
-        """Get device info"""
+        """Get device info."""
         somneo = Somneo(self.host)
         dev_info = await self.hass.async_add_executor_job(somneo.get_device_info)
 
@@ -74,7 +70,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.discovery_info = discovery_info
 
-        serial_number = discovery_info.upnp['cppId']
+        serial_number = discovery_info.upnp["cppId"]
         self.host = urlparse(discovery_info.ssdp_location).hostname
 
         await self.async_set_unique_id(serial_number)

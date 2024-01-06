@@ -15,7 +15,7 @@
         "somneo"
     ],
     "requirements": [
-        "git+https://github.com/theneweinstein/pysomneo.git@rewrite#pysomneo>4.0.0"
+        "pysomneo==4.0.0"
     ],
     "ssdp": [
         {
@@ -23,5 +23,5 @@
             "modelName": "Wake-up Light"
         }
     ],
-    "version": "6.0.0"
+    "version": "2024.1.0"
 }
