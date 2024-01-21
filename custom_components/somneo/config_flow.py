@@ -75,7 +75,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         await self.async_set_unique_id(serial_number)
 
-        self._abort_if_unique_id_configured()
+        self._abort_if_unique_id_configured(updates={CONF_HOST: self.host})
 
         return await self.async_step_user()
 
