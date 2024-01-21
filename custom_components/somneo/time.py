@@ -63,4 +63,4 @@ class SomneoTime(SomneoEntity, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Adjust Hours and Minutes."""
-        await self.coordinator.async_set_alarm(self._alarm, time=value)
+        await self.coordinator.async_set_alarm(self._alarm, alarm_time=value)
