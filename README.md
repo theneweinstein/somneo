@@ -2,12 +2,13 @@
 Home Assistant custom integration to control a Philips Somneo device. This integration let's you control:
   - The light and nightlight of the Somneo
   - All the 16 available alarms (toggle, time, days, powerwake)
+  - Sunset features (toggle, duration, lightcurve, sound)
   - Media player of the Somneo (FM radio or aux. input)
   - Snooze or ignore alarm (buttons)
 
 Furthermore, it provides the following sensors:
   - Ambient sensors (temperature, humidity, luminance and noise)
-  - Alarm status (on, off, snooze, wake-up)
+  - Alarm status (on, off, snooze, wake-up, sunset)
   - Next alarm
 
 # Installation
