@@ -2,10 +2,10 @@
 from typing import Final
 
 from homeassistant.const import (
-    UnitOfTemperature,
-    PERCENTAGE,
     LIGHT_LUX,
+    PERCENTAGE,
     UnitOfSoundPressure,
+    UnitOfTemperature,
 )
 
 DOMAIN: Final = "somneo"
@@ -35,6 +35,7 @@ TIME_ICON: Final = "hass:clock-digital"
 SNOOZE_ICON: Final = "hass:alarm-snooze"
 WORKDAYS_ICON: Final = "hass:calendar-range"
 WEEKEND_ICON: Final = "hass:calendar-range"
+SUNSET_ICON: Final = "hass:weather-sunset"
 
 ATTR_ALARM: Final = "alarm"
 ATTR_CURVE: Final = "curve"

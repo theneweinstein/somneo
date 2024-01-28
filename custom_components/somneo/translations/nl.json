@@ -56,6 +56,7 @@
           "off": "Uit",
           "snooze": "Sluimeren",
           "wake-up": "Wake-up",
+          "sunset": "Zonsondergang",
           "on": "Aan",
           "unknown": "Onbekend"
         }
@@ -228,6 +229,29 @@
           "weekend": "Weekend",
           "tomorrow": "Morgen",
           "custom": "Aangepast"
+        }
+      },
+      "sunset_curve": {
+        "name": "Zonsondergang lichtcurve",
+        "state": {
+          "sunny_day": "Zonnige dag",
+          "island_red": "Eiland rood",
+          "nordic_white": "Noords wit"
+        }
+      },
+      "sunset_sound": {
+        "name": "Zonsondergang geluid",
+        "state": {
+          "soft_rain": "Zachte regen",
+          "ocean_waves": "Oceaangolven",
+          "under_water": "Onder water",
+          "summer_lake": "Zomers meer",
+          "fm_1": "FM 1",
+          "fm_2": "FM 2",
+          "fm_3": "FM 3",
+          "fm_4": "FM 4",
+          "fm_5": "FM 5",
+          "off": "Uit"
         }
       }
     },
@@ -839,6 +863,26 @@
             "name": "PowerWake vertraging"
           }
         }
+      },
+      "sunset": {
+        "name": "Zonsondergang",
+        "state_attributes": {
+          "duration": {
+            "name": "Duur"
+          },
+          "curve": {
+            "name": "Lichtcurve"
+          },
+          "level": {
+            "name":  "Lichtniveau"
+          },
+          "sound": {
+            "name": "Geluid"
+          },
+          "volume": {
+            "name": "Volume"
+          }
+        }
       }
     },
     "number": {
@@ -892,6 +936,15 @@
       },
       "snooze_time": {
         "name": "Sluimertijd"
+      },
+      "sunset_duration": {
+        "name": "Zonsondergang duur"
+      },
+      "sunset_level": {
+        "name": "Zonsondergang lichtniveau"
+      },
+      "sunset_volume": {
+        "name": "Zonsondergang volume"
       }
     },
     "text": {

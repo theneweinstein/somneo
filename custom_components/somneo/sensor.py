@@ -1,15 +1,15 @@
 """Sensor entities for Somneo."""
 import logging
 
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    STATE_CLASS_MEASUREMENT,
-    SensorEntity,
-)
 
 from .const import DOMAIN, SENSORS
 from .entity import SomneoEntity
@@ -46,7 +46,7 @@ async def async_setup_entry(
 class SomneoSensor(SomneoEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    _attr_state_class = STATE_CLASS_MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
 
     def __init__(self, coordinator, unique_id, name, dev_info, sensor_type):
         """Initialize the sensor."""
@@ -102,11 +102,12 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_native_value = self.coordinator.data["alarm_status"]
+        self._attr_native_value = self.coordinator.data["somneo_status"]
         self.async_write_ha_state()
 
     @property
     def icon(self):
+        """Icon."""
         if self._attr_native_value == "off":
             return "mdi:alarm-off"
         if self._attr_native_value == "on":
@@ -115,3 +116,5 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
             return "mdi:alarm-snooze"
         if self._attr_native_value == "wake-up":
             return "mdi:weather-sunset-up"
+        if self._attr_native_value == "sunset":
+            return "mdi:weather-sunset-down"

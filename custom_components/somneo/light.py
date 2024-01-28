@@ -1,13 +1,11 @@
 """Light entities for Somneo."""
+from __future__ import annotations
+
 import logging
 from typing import Any
 
+from homeassistant.components.light import ATTR_BRIGHTNESS, ColorMode, LightEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.light import (
-    LightEntity,
-    ColorMode,
-    ATTR_BRIGHTNESS,
-)
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -60,11 +58,13 @@ class SomneoLight(SomneoEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Instruct the light to turn on."""
-        await self.coordinator.async_turn_on_light(kwargs.get(ATTR_BRIGHTNESS))
+        await self.coordinator.async_toggle_light(
+            True, brightness=kwargs.get(ATTR_BRIGHTNESS)
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_turn_off_light()
+        await self.coordinator.async_toggle_light(False)
 
 
 class SomneoNightLight(SomneoEntity, LightEntity):
@@ -86,8 +86,8 @@ class SomneoNightLight(SomneoEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        await self.coordinator.async_turn_on_nightlight()
+        await self.coordinator.async_toggle_nightlight(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_turn_off_nightlight()
+        await self.coordinator.async_toggle_nightlight(False)

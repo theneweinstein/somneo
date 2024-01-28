@@ -1,21 +1,14 @@
 """Text entities for Somneo."""
 import logging
-from typing import Any
-import voluptuous as vol
 
+from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components.text import TextEntity
-from homeassistant.helpers import config_validation as cv, entity_platform
 
-from .const import (
-    DOMAIN,
-    WORKDAYS_ICON
-)
+from .const import DOMAIN, WORKDAYS_ICON
 from .entity import SomneoEntity
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,9 +28,7 @@ async def async_setup_entry(
 
     alarms = []
     for alarm in list(coordinator.data["alarms"]):
-        alarms.append(
-            SomneoAlarmDays(coordinator, unique_id, name, device_info, alarm)
-        )
+        alarms.append(SomneoAlarmDays(coordinator, unique_id, name, device_info, alarm))
 
     async_add_entities(alarms, update_before_add=True)
 
@@ -54,18 +45,20 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
-        super().__init__(coordinator, unique_id, name, device_info, alarm)
+        super().__init__(
+            coordinator, unique_id, name, device_info, "alarm" + str(alarm)
+        )
 
-        self._attr_translation_key = alarm + '_days_str'
+        self._attr_translation_key = "alarm" + str(alarm) + "_days_str"
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        days_list = self.coordinator.data["alarm_day_list"][self._alarm]
+        days_list = self.coordinator.data["alarms"][self._alarm]["days"]
         self._attr_native_value = ",".join([str(item) for item in days_list if item])
 
         self.async_write_ha_state()
 
     async def async_set_value(self, value: str) -> None:
         """Set the text value."""
-        await self.coordinator.async_set_alarm_day(self._alarm, value.split(','))
+        await self.coordinator.async_set_alarm(self._alarm, days=value.split(","))

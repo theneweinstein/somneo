@@ -1,27 +1,28 @@
 """Switch entities for Somneo."""
 import logging
 from typing import Any
-import voluptuous as vol
 
+import voluptuous as vol
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.components.switch import SwitchEntity
-from homeassistant.helpers import config_validation as cv, entity_platform
 
 from .const import (
+    ALARMS_ICON,
     ATTR_CHANNEL,
-    DOMAIN,
-    ATTR_LEVEL,
     ATTR_CURVE,
     ATTR_DURATION,
+    ATTR_LEVEL,
     ATTR_SOURCE,
-    ALARMS_ICON,
+    DOMAIN,
     PW_ICON,
+    SUNSET_ICON,
 )
 from .entity import SomneoEntity
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,29 +50,32 @@ async def async_setup_entry(
             SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
         )
 
+    sunset = [SomneoSunsetToggle(coordinator, unique_id, name, device_info, "sunset")]
+
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(pwrwk, update_before_add=True)
+    async_add_entities(sunset, update_before_add=True)
 
     platform = entity_platform.async_get_current_platform()
 
     platform.async_register_entity_service(
-        "set_light_alarm",
+        "set_alarm_light",
         {
             vol.Optional(ATTR_CURVE): cv.string,
             vol.Optional(ATTR_LEVEL): cv.positive_int,
             vol.Optional(ATTR_DURATION): cv.positive_int,
         },
-        "set_light_alarm",
+        "set_alarm_light",
     )
 
     platform.async_register_entity_service(
-        "set_sound_alarm",
+        "set_alarm_sound",
         {
             vol.Optional(ATTR_SOURCE): cv.string,
             vol.Optional(ATTR_LEVEL): cv.positive_int,
             vol.Optional(ATTR_CHANNEL): cv.string,
         },
-        "set_sound_alarm",
+        "set_alarm_sound",
     )
 
     platform.async_register_entity_service("remove_alarm", {}, "remove_alarm")
@@ -87,55 +91,58 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
-        super().__init__(coordinator, unique_id, name, device_info, alarm)
+        super().__init__(
+            coordinator, unique_id, name, device_info, "alarm" + str(alarm)
+        )
 
-        self._attr_translation_key = alarm
+        self._attr_translation_key = "alarm" + str(alarm)
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]
+        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]["enabled"]
 
         self._attr_extra_state_attributes = {
-            "hour": self.coordinator.data["alarms_hour"][self._alarm],
-            "minute": self.coordinator.data["alarms_minute"][self._alarm],
-            "day": self.coordinator.data["alarms_day"][self._alarm],
-            "powerwake": self.coordinator.data["powerwake"][self._alarm],
-            "powerwake_delta": self.coordinator.data["powerwake_delta"][self._alarm],
+            "time": self.coordinator.data["alarms"][self._alarm]["time"],
+            "days": self.coordinator.data["alarms"][self._alarm]["days"],
+            "powerwake": self.coordinator.data["alarms"][self._alarm]["powerwake"],
+            "powerwake_delta": self.coordinator.data["alarms"][self._alarm][
+                "powerwake_delta"
+            ],
         }
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
-        """Called when user Turn On the switch from UI."""
+        """Turn on the switch."""
         await self.coordinator.async_toggle_alarm(self._alarm, True)
 
     async def async_turn_off(self, **kwargs: Any):
-        """Called when user Turn Off the switch from UI."""
+        """Turn off the switch."""
         await self.coordinator.async_toggle_alarm(self._alarm, False)
 
     # Define service-calls
-    async def set_light_alarm(
+    async def set_alarm_light(
         self, curve: str = "sunny day", level: int = 20, duration: int = 30
     ):
         """Adjust the light settings of an alarm."""
-        await self.coordinator.async_set_light_alarm(
+        await self.coordinator.async_set_alarm_light(
             self._alarm, curve=curve, level=level, duration=duration
         )
 
-    async def set_sound_alarm(
+    async def set_alarm_sound(
         self, source: str = "wake-up", level: int = 12, channel: str = "forest birds"
     ):
         """Adjust the sound settings of an alarm."""
-        await self.coordinator.async_set_sound_alarm(
+        await self.coordinator.async_set_alarm_sound(
             self._alarm, source=source, level=level, channel=channel
         )
 
     async def remove_alarm(self):
-        """Function to remove alarm from list in wake-up app"""
+        """Remove alarm from list in wake-up app."""
         await self.coordinator.async_remove_alarm(self._alarm)
 
     async def add_alarm(self):
-        """Function to add alarm to list in wake-up app"""
+        """Add alarm to list in wake-up app."""
         await self.coordinator.async_add_alarm(self._alarm)
 
 
@@ -147,23 +154,55 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
-        super().__init__(coordinator, unique_id, name, device_info, alarm + "_PW")
+        super().__init__(
+            coordinator, unique_id, name, device_info, "alarm" + str(alarm) + "_PW"
+        )
 
-        self._attr_translation_key = alarm + "_powerwake"
+        self._attr_translation_key = "alarm" + str(alarm) + "_powerwake"
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._attr_is_on = self.coordinator.data["powerwake"][self._alarm]
+        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]["powerwake"]
         self._attr_extra_state_attributes = {
-            "powerwake_delta": self.coordinator.data["powerwake_delta"][self._alarm]
+            "powerwake_delta": self.coordinator.data["alarms"][self._alarm][
+                "powerwake_delta"
+            ]
         }
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any):
-        """Called when user Turn On the switch from UI."""
-        await self.coordinator.async_toggle_powerwake(self._alarm, True)
+        """Turn on the switch."""
+        await self.coordinator.async_toggle_alarm_powerwake(self._alarm, True)
 
     async def async_turn_off(self, **kwargs: Any):
-        """Called when user Turn Off the switch from UI."""
-        await self.coordinator.async_toggle_powerwake(self._alarm, False)
+        """Turn off the switch."""
+        await self.coordinator.async_toggle_alarm_powerwake(self._alarm, False)
+
+
+class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
+    """Representation of a Sunset switch."""
+
+    _attr_icon = SUNSET_ICON
+    _attr_should_poll = True
+    _attr_translation_key = "sunset"
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["sunset"]["is_on"]
+        self._attr_extra_state_attributes = {
+            "duration": self.coordinator.data["sunset"]["duration"],
+            "curve": self.coordinator.data["sunset"]["curve"],
+            "level": self.coordinator.data["sunset"]["level"],
+            "sound": self.coordinator.data["sunset"]["sound"],
+            "volume": self.coordinator.data["sunset"]["volume"],
+        }
+        self.async_write_ha_state()
+
+    async def async_turn_on(self, **kwargs: Any):
+        """Turn on the switch."""
+        await self.coordinator.async_toggle_sunset(True)
+
+    async def async_turn_off(self, **kwargs: Any):
+        """Turn off the switch."""
+        await self.coordinator.async_toggle_sunset(False)

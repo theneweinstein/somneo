@@ -2,24 +2,20 @@
 from __future__ import annotations
 
 import ipaddress
-import re
 import logging
+import re
+from contextlib import suppress
 from typing import Any
 from urllib.parse import urlparse
 
-from contextlib import suppress
 import voluptuous as vol
-
-from pysomneo import Somneo
-
 from homeassistant import config_entries, exceptions
 from homeassistant.components.ssdp import SsdpServiceInfo
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME
-from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from pysomneo import Somneo
 
-from .const import DOMAIN, DEFAULT_NAME, CONF_SESSION
+from .const import DEFAULT_NAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,17 +58,11 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     dev_info: dict | None = None
 
     async def get_device_info(self):
-        """Get device info"""
+        """Get device info."""
         somneo = Somneo(self.host)
         dev_info = await self.hass.async_add_executor_job(somneo.get_device_info)
 
         return dev_info
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> SomneoOptionsFlow:
-        """Thermosmart options callback."""
-        return SomneoOptionsFlow(config_entry)
 
     async def async_step_ssdp(self, discovery_info: SsdpServiceInfo) -> FlowResult:
         """Prepare configuration for a discovered Somneo."""
@@ -80,12 +70,12 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.discovery_info = discovery_info
 
-        serial_number = discovery_info.upnp['cppId']
+        serial_number = discovery_info.upnp["cppId"]
         self.host = urlparse(discovery_info.ssdp_location).hostname
 
         await self.async_set_unique_id(serial_number)
 
-        self._abort_if_unique_id_configured()
+        self._abort_if_unique_id_configured(updates={CONF_HOST: self.host})
 
         return await self.async_step_user()
 
@@ -118,35 +108,6 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user", data_schema=_base_schema(self.discovery_info), errors=errors
-        )
-
-
-class SomneoOptionsFlow(config_entries.OptionsFlow):
-    """Config flow options for Somneo"""
-
-    def __init__(self, entry: ConfigEntry) -> None:
-        """Initialze the Somneo options flow."""
-        self.entry = entry
-        self.use_session = self.entry.options.get(CONF_SESSION, True)
-
-    async def async_step_init(self, _user_input=None):
-        """Manage the options."""
-        return await self.async_step_user()
-
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Process user input."""
-        if user_input is not None:
-            return self.async_create_entry(title="Somneo", data=user_input)
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(CONF_SESSION, default=self.use_session): bool,
-                }
-            ),
         )
 
 

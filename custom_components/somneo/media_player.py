@@ -1,18 +1,17 @@
 """Media player entities for Somneo."""
 import logging
 
-from pysomneo import SOURCES
-
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.media_player import (
+    MediaPlayerDeviceClass,
     MediaPlayerEntity,
     MediaPlayerEntityFeature,
-    MediaPlayerDeviceClass,
     MediaPlayerState,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from pysomneo import SOURCES
 
 from .const import DOMAIN
 from .entity import SomneoEntity
@@ -66,14 +65,16 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
 
     async def async_turn_on(self) -> None:
         """Instruct the light to turn on."""
-        await self.coordinator.async_player_turn_on()
+        await self.coordinator.async_player_toggle(True)
 
     async def async_turn_off(self) -> None:
         """Instruct the light to turn off."""
-        await self.coordinator.async_player_turn_off()
+        await self.coordinator.async_player_toggle(False)
 
     async def async_set_volume_level(self, volume: float) -> None:
-        await self.coordinator.async_set_volume_player(volume)
+        """Set volume level."""
+        await self.coordinator.async_set_player_volume(volume)
 
     async def async_select_source(self, source: str) -> None:
-        await self.coordinator.async_set_source_player(source)
+        """Select source."""
+        await self.coordinator.async_set_player_source(source)

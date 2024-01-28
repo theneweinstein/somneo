@@ -56,6 +56,7 @@
           "off": "Off",
           "snooze": "Snooze",
           "wake-up": "Wake-up",
+          "sunset": "Sunset",
           "on": "On",
           "unknown": "Unknown"
         }
@@ -228,6 +229,29 @@
           "weekend": "Weekend",
           "tomorrow": "Tomorrow",
           "custom": "Custom"
+        }
+      },
+      "sunset_curve": {
+        "name": "Sunset light curve",
+        "state": {
+          "sunny_day": "Sunny day",
+          "island_red": "Island red",
+          "nordic_white": "Nordic white"
+        }
+      },
+      "sunset_sound": {
+        "name": "Sunset sound",
+        "state": {
+          "soft_rain": "Soft rain",
+          "ocean_waves": "Ocean waves",
+          "under_water": "Under water",
+          "summer_lake": "Summer lake",
+          "fm_1": "FM 1",
+          "fm_2": "FM 2",
+          "fm_3": "FM 3",
+          "fm_4": "FM 4",
+          "fm_5": "FM 5",
+          "off": "Off"
         }
       }
     },
@@ -839,6 +863,26 @@
             "name": "PowerWake delay"
           }
         }
+      },
+      "sunset": {
+        "name": "Sunset",
+        "state_attributes": {
+          "duration": {
+            "name": "Duration"
+          },
+          "curve": {
+            "name": "Light curve"
+          },
+          "level": {
+            "name": "Light level"
+          },
+          "sound": {
+            "name": "Sound"
+          },
+          "volume": {
+            "name":  "Volume"
+          }
+        }
       }
     },
     "number": {
@@ -892,6 +936,15 @@
       },
       "snooze_time": {
         "name": "Snooze time"
+      },
+      "sunset_duration": {
+        "name": "Sunset duration"
+      },
+      "sunset_level": {
+        "name": "Sunset light level"
+      },
+      "sunset_volume": {
+        "name": "Sunset volume"
       }
     },
     "text": {
