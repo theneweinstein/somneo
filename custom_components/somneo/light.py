@@ -42,8 +42,13 @@ class SomneoLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Light."""
 
     _attr_should_poll = True
-    _attr_supported_color_modes = ColorMode.BRIGHTNESS
+    _attr_supported_color_modes: set[ColorMode| str] = {ColorMode.BRIGHTNESS}
     _attr_translation_key = "normal_light"
+
+    @property
+    def color_mode(self) -> ColorMode:
+        """Return the color mode of the light."""
+        return ColorMode.BRIGHTNESS
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -66,7 +71,13 @@ class SomneoNightLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Night light."""
 
     _attr_should_poll = True
+    _attr_supported_color_modes: set[ColorMode| str] = {ColorMode.ONOFF}
     _attr_translation_key = "night_light"
+
+    @property
+    def color_mode(self) -> ColorMode:
+        """Return the color mode of the light."""
+        return ColorMode.ONOFF
 
     @callback
     def _handle_coordinator_update(self) -> None:
