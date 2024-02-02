@@ -16,14 +16,14 @@ fi
 ## without resulting to symlinks.
 export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
 
-#if [[ ! -d "${PWD}/pysomneo" ]]; then
-#    git clone --branch rewrite https://github.com/theneweinstein/pysomneo.git
-#else
+# if [[ ! -d "${PWD}/pysomneo" ]]; then
+#    git clone --branch sunset_fix https://github.com/theneweinstein/pysomneo.git
+# else
 #    cd pysomneo
 #    git pull
 #    cd ..
-#fi
-#pip install -e ./pysomneo --target ./config/deps
+# fi
+# pip install -e ./pysomneo --target ./config/deps
 
 # Start Home Assistant
 hass --config "${PWD}/config" --debug #--skip-pip-packages pysomneo

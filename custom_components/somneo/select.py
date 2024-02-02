@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from pysomneo import LIGHT_CURVES, SOUND_DUSK
+from pysomneo import SOUND_DUSK
 
 from .const import (
     CUSTOM,
@@ -112,8 +112,12 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     _attr_translation_key = "sunset_curve"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [item.replace(" ", "_") for item in LIGHT_CURVES]
     _attr_current_option = "sunny_day"
+
+    @property
+    def options(self) -> list:
+        """Return a set of selectable options."""
+        return [item.replace(" ", "_") for item in self.coordinator.somneo.light_curves]
 
     @callback
     def _handle_coordinator_update(self) -> None:

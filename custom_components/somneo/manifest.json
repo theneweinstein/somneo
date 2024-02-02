@@ -15,7 +15,7 @@
         "somneo"
     ],
     "requirements": [
-        "pysomneo==4.0.1"
+        "pysomneo==4.0.2"
     ],
     "ssdp": [
         {
@@ -23,5 +23,5 @@
             "modelName": "Wake-up Light"
         }
     ],
-    "version": "2024.1.0"
+    "version": "2024.2.0"
 }
