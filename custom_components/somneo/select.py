@@ -112,8 +112,12 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     _attr_translation_key = "sunset_curve"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [item.replace(" ", "_") for item in LIGHT_CURVES]
     _attr_current_option = "sunny_day"
+
+    @property
+    def options(self) -> list:
+        """Return a set of selectable options."""
+        return [item.replace(" ", "_") for item in LIGHT_CURVES[self.coordinator.somneo.version]]
 
     @callback
     def _handle_coordinator_update(self) -> None:
