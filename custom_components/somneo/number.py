@@ -7,7 +7,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, PW_ICON, SNOOZE_ICON, SUNSET_ICON
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
     _attr_has_entity_name = True
     _attr_native_min_value = 0
     _attr_native_max_value = 59
-    _attr_icon = PW_ICON
+    _attr_translation_key = "powerwake_delta"
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
@@ -61,7 +61,7 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
             coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_powerwake_delta"
         )
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_powerwake_delta"
+        self._attr_translation_placeholders = {"number": str(alarm)}
 
         self._alarm = alarm
 
@@ -86,7 +86,6 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
     _attr_native_min_value = 1
     _attr_native_max_value = 20
     _attr_native_step = 1
-    _attr_icon = SNOOZE_ICON
     _attr_has_entity_name = True
 
     @callback
@@ -108,7 +107,6 @@ class SomneoSunsetDuration(SomneoEntity, NumberEntity):
     _attr_native_min_value = 5
     _attr_native_max_value = 60
     _attr_native_step = 5
-    _attr_icon = SUNSET_ICON
     _attr_has_entity_name = True
 
     @callback
@@ -130,7 +128,6 @@ class SomneoSunsetLevel(SomneoEntity, NumberEntity):
     _attr_native_min_value = 0
     _attr_native_max_value = 25
     _attr_native_step = 1
-    _attr_icon = SUNSET_ICON
     _attr_has_entity_name = True
 
     @callback
@@ -152,7 +149,6 @@ class SomneoSunsetVolume(SomneoEntity, NumberEntity):
     _attr_native_min_value = 1
     _attr_native_max_value = 25
     _attr_native_step = 1
-    _attr_icon = SUNSET_ICON
     _attr_has_entity_name = True
 
     @callback

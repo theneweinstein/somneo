@@ -12,15 +12,12 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
-    ALARMS_ICON,
     ATTR_CHANNEL,
     ATTR_CURVE,
     ATTR_DURATION,
     ATTR_LEVEL,
     ATTR_SOURCE,
     DOMAIN,
-    PW_ICON,
-    SUNSET_ICON,
 )
 from .entity import SomneoEntity
 
@@ -86,8 +83,8 @@ async def async_setup_entry(
 class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
     """Representation of a alarm switch."""
 
-    _attr_icon = ALARMS_ICON
     _attr_should_poll = True
+    _attr_translation_key = "alarm"
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
@@ -95,7 +92,7 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
             coordinator, unique_id, name, device_info, "alarm" + str(alarm)
         )
 
-        self._attr_translation_key = "alarm" + str(alarm)
+        self._attr_translation_placeholders  = {"number": str(alarm)}
         self._alarm = alarm
 
     @callback
@@ -149,8 +146,8 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
 class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
     """Representation of a Powerwake switch."""
 
-    _attr_icon = PW_ICON
     _attr_should_poll = True
+    _attr_translation_key = "powerwake"
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
@@ -158,7 +155,7 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
             coordinator, unique_id, name, device_info, "alarm" + str(alarm) + "_PW"
         )
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_powerwake"
+        self._attr_translation_placeholders  = {"number": str(alarm)}
         self._alarm = alarm
 
     @callback
@@ -183,7 +180,6 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
 class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
     """Representation of a Sunset switch."""
 
-    _attr_icon = SUNSET_ICON
     _attr_should_poll = True
     _attr_translation_key = "sunset"
 

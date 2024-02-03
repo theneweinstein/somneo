@@ -8,7 +8,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, TIME_ICON
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,8 +42,8 @@ class SomneoTime(SomneoEntity, TimeEntity):
     _attr_assumed_state = False
     _attr_available = True
     _attr_has_entity_name = True
-    _attr_icon = TIME_ICON
     _attr_native_value = None
+    _attr_translation_key = "time"
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
@@ -51,7 +51,7 @@ class SomneoTime(SomneoEntity, TimeEntity):
             coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_time"
         )
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_time"
+        self._attr_translation_placeholders = {"number": str(alarm)}
 
         self._alarm = alarm
 

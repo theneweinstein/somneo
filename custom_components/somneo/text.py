@@ -7,7 +7,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, WORKDAYS_ICON
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,9 +39,9 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
     _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True
-    _attr_icon = WORKDAYS_ICON
     _attr_native_value = None
     _attr_pattern = "^((tomorrow|mon|tue|wed|thu|fri|sat|sun)(,)?)+$"
+    _attr_translation_key = "days_str"
 
     def __init__(self, coordinator, unique_id, name, device_info, alarm):
         """Initialize the switches."""
@@ -49,7 +49,7 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
             coordinator, unique_id, name, device_info, "alarm" + str(alarm)
         )
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_days_str"
+        self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
 
     @callback

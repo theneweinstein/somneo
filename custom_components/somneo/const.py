@@ -9,7 +9,6 @@ from homeassistant.const import (
 )
 
 DOMAIN: Final = "somneo"
-VERSION: Final = "0.3"
 
 DEFAULT_NAME: Final = "Somneo"
 
@@ -28,22 +27,12 @@ EVERYDAY: Final = "daily"
 CUSTOM: Final = "custom"
 PW_DELTA: Final = "powerwake_delta"
 
-ALARMS_ICON: Final = "hass:alarm"
-DISMISS_ICON: Final = "hass:alarm-off"
-PW_ICON: Final = "hass:alarm-plus"
-TIME_ICON: Final = "hass:clock-digital"
-SNOOZE_ICON: Final = "hass:alarm-snooze"
-WORKDAYS_ICON: Final = "hass:calendar-range"
-WEEKEND_ICON: Final = "hass:calendar-range"
-SUNSET_ICON: Final = "hass:weather-sunset"
-
 ATTR_ALARM: Final = "alarm"
 ATTR_CURVE: Final = "curve"
 ATTR_LEVEL: Final = "level"
 ATTR_DURATION: Final = "duration"
 ATTR_SOURCE: Final = "source"
 ATTR_CHANNEL: Final = "channel"
-
 
 SENSORS: Final = {
     "temperature": UnitOfTemperature.CELSIUS,

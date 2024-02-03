@@ -12,11 +12,9 @@ from .const import (
     CUSTOM,
     DOMAIN,
     EVERYDAY,
-    SUNSET_ICON,
     TOMORROW,
     WEEKEND,
     WORKDAYS,
-    WORKDAYS_ICON,
 )
 from .entity import SomneoEntity
 
@@ -54,17 +52,17 @@ class SomneoDays(SomneoEntity, SelectEntity):
     """Representation of a alarm days."""
 
     _attr_should_poll = True
-    _attr_icon = WORKDAYS_ICON
     _attr_assumed_state = False
     _attr_available = True
     _attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, CUSTOM]
     _attr_current_option = WORKDAYS
+    _attr_translation_key = "days"
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
         super().__init__(coordinator, unique_id, name, dev_info, "alarm" + str(alarm))
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_days"
+        self._attr_translation_placeholders = {"number":  str(alarm)}
         self._alarm = alarm
 
     @callback
@@ -84,7 +82,6 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     """Representation of a sunset sound source."""
 
     _attr_should_poll = True
-    _attr_icon = SUNSET_ICON
     _attr_translation_key = "sunset_sound"
     _attr_assumed_state = False
     _attr_available = True
@@ -108,7 +105,6 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     """Representation of a sunset curve."""
 
     _attr_should_poll = True
-    _attr_icon = SUNSET_ICON
     _attr_translation_key = "sunset_curve"
     _attr_assumed_state = False
     _attr_available = True
