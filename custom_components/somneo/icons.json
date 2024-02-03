@@ -74,7 +74,7 @@
             "default": "mdi:calendar-range"
           },
           "powerwake": {
-            "default": "PowerWake",
+            "default": "mdi:alarm",
             "state": {
               "on": "mdi:alarm-light",
               "off": "mdi:alarm-light-off"
