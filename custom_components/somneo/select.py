@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from pysomneo import SOUND_DUSK
+from pysomneo import FM_PRESETS
 
 from .const import (
     CUSTOM,
@@ -85,8 +85,12 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     _attr_translation_key = "sunset_sound"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [item.replace(" ", "_") for item in SOUND_DUSK.keys()]
     _attr_current_option = "soft_rain"
+
+    @property
+    def options(self) -> list:
+        """Return a set of selectable options."""
+        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_sound_themes] + [item.replace(" ", "_") for item in FM_PRESETS]
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -113,7 +117,7 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     @property
     def options(self) -> list:
         """Return a set of selectable options."""
-        return [item.replace(" ", "_") for item in self.coordinator.somneo.light_curves]
+        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_light_themes]
 
     @callback
     def _handle_coordinator_update(self) -> None:
