@@ -6,17 +6,15 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from pysomneo import SOUND_DUSK
+from pysomneo import FM_PRESETS
 
 from .const import (
     CUSTOM,
     DOMAIN,
     EVERYDAY,
-    SUNSET_ICON,
     TOMORROW,
     WEEKEND,
     WORKDAYS,
-    WORKDAYS_ICON,
 )
 from .entity import SomneoEntity
 
@@ -54,17 +52,17 @@ class SomneoDays(SomneoEntity, SelectEntity):
     """Representation of a alarm days."""
 
     _attr_should_poll = True
-    _attr_icon = WORKDAYS_ICON
     _attr_assumed_state = False
     _attr_available = True
     _attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, CUSTOM]
     _attr_current_option = WORKDAYS
+    _attr_translation_key = "days"
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
         """Initialize number entities."""
         super().__init__(coordinator, unique_id, name, dev_info, "alarm" + str(alarm))
 
-        self._attr_translation_key = "alarm" + str(alarm) + "_days"
+        self._attr_translation_placeholders = {"number":  str(alarm)}
         self._alarm = alarm
 
     @callback
@@ -84,12 +82,15 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     """Representation of a sunset sound source."""
 
     _attr_should_poll = True
-    _attr_icon = SUNSET_ICON
     _attr_translation_key = "sunset_sound"
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [item.replace(" ", "_") for item in SOUND_DUSK.keys()]
     _attr_current_option = "soft_rain"
+
+    @property
+    def options(self) -> list:
+        """Return a set of selectable options."""
+        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_sound_themes] + [item.replace(" ", "_") for item in FM_PRESETS]
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -108,7 +109,6 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     """Representation of a sunset curve."""
 
     _attr_should_poll = True
-    _attr_icon = SUNSET_ICON
     _attr_translation_key = "sunset_curve"
     _attr_assumed_state = False
     _attr_available = True
@@ -117,7 +117,7 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     @property
     def options(self) -> list:
         """Return a set of selectable options."""
-        return [item.replace(" ", "_") for item in self.coordinator.somneo.light_curves]
+        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_light_themes]
 
     @callback
     def _handle_coordinator_update(self) -> None:
