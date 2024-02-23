@@ -15,7 +15,7 @@
         "somneo"
     ],
     "requirements": [
-        "git+https://github.com/theneweinstein/pysomneo.git@retrieve_light_sound#pysomneo==4.1.0"
+        "pysomneo==4.1.0"
     ],
     "ssdp": [
         {
