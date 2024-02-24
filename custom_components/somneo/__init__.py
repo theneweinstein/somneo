@@ -13,7 +13,7 @@ from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pysomneo import SOURCES, Somneo
 
-from .const import DOMAIN
+from .const import CONF_SESSION, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,8 +34,9 @@ SCAN_INTERVAL = timedelta(seconds=60)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up the Somneo component."""
     host = entry.data[CONF_HOST]
+    use_session = entry.options.get(CONF_SESSION, True)
 
-    coordinator = SomneoCoordinator(hass, host)
+    coordinator = SomneoCoordinator(hass, host, use_session=use_session)
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
     await coordinator.async_config_entry_first_refresh()
@@ -97,9 +98,9 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 class SomneoCoordinator(DataUpdateCoordinator[None]):
     """Representation of a Somneo Coordinator."""
 
-    def __init__(self, hass: HomeAssistant, host: str) -> None:
+    def __init__(self, hass: HomeAssistant, host: str, use_session : bool = True) -> None:
         """Initialize Somneo client."""
-        self.somneo = Somneo(host)
+        self.somneo = Somneo(host, use_session=use_session)
         self.state_lock = asyncio.Lock()
 
         super().__init__(
