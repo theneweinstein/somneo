@@ -51,7 +51,7 @@ def _base_schema(discovery_info: SsdpServiceInfo | None) -> vol.Schema:
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
 
-    VERSION = 3
+    VERSION = 4
 
     discovery_info: SsdpServiceInfo | None = None
     host: str | None = None

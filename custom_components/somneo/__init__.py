@@ -85,10 +85,9 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 
     if config_entry.version == 3:
         new = {**config_entry.data}
-        new["options"].pop("use_session")
-
+        options = {CONF_SESSION: True}
         config_entry.version = 4
-        hass.config_entries.async_update_entry(config_entry, data=new)
+        hass.config_entries.async_update_entry(config_entry, data=new, options=options)
 
     _LOGGER.info("Migration to version %s successful", config_entry.version)
 
