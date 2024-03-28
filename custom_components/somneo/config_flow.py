@@ -12,10 +12,11 @@ import voluptuous as vol
 from homeassistant import config_entries, exceptions
 from homeassistant.components.ssdp import SsdpServiceInfo
 from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from pysomneo import Somneo
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import CONF_SESSION, DEFAULT_NAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ def _base_schema(discovery_info: SsdpServiceInfo | None) -> vol.Schema:
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
 
-    VERSION = 3
+    VERSION = 4
 
     discovery_info: SsdpServiceInfo | None = None
     host: str | None = None
@@ -110,6 +111,40 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=_base_schema(self.discovery_info), errors=errors
         )
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return SomneoOptionsFlow(config_entry)
+
+class SomneoOptionsFlow(config_entries.OptionsFlow):
+    """Config flow options for Somneo"""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialze the Somneo options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+            self,
+            user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title = "Somneo", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_SESSION,
+                        default=self.config_entry.options.get(CONF_SESSION, True)
+                    ): bool,
+                }
+            )
+        )
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""

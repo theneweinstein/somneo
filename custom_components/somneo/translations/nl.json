@@ -12,10 +12,10 @@
   },
   "options": {
     "step": {
-      "user": {
+      "init": {
         "title": "Opties voor Philips Somneo",
         "data": {
-          "session": "Hergebruik TLS verbindingen."
+          "session": "Hergebruik TLS verbindingen (standaard is ja)."
         }
       }
     }
