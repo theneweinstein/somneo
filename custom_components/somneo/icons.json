@@ -128,5 +128,11 @@
         "default": "mdi:clock-digital"
       }
     }
+  },
+  "services": {
+    "set_alarm_light": "mdi:sun-clock",
+    "set_alarm_sound": "mdi:alarm-note",
+    "add_alarm": "mdi:alarm-plus",
+    "remove_alarm": "mdi:alarm-off"
   }
 }
