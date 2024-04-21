@@ -111,6 +111,22 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=_base_schema(self.discovery_info), errors=errors
         )
 
+    async def async_step_reconfigure(
+        self, _: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle reconfiguration."""
+        _entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=self.add_suggested_values_to_schema(
+                _base_schema(self.discovery_info),
+                _entry.data
+            ),
+        )
+
+
+
     @staticmethod
     @callback
     def async_get_options_flow(
@@ -120,7 +136,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return SomneoOptionsFlow(config_entry)
 
 class SomneoOptionsFlow(config_entries.OptionsFlow):
-    """Config flow options for Somneo"""
+    """Config flow options for Somneo."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialze the Somneo options flow."""
