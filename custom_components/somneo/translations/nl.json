@@ -163,6 +163,9 @@
             "name": "Volume"
           }
         }
+      },
+      "display_on": {
+        "name": "Scherm altijd aan"
       }
     },
     "number": {
@@ -180,6 +183,9 @@
       },
       "sunset_volume": {
         "name": "Zonsondergang volume"
+      },
+      "display_brightness": {
+        "name": "Scherm helderheid"
       }
     },
     "text": {

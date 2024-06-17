@@ -163,6 +163,9 @@
             "name":  "Volume"
           }
         }
+      },
+      "display_on": {
+        "name": "Display always on"
       }
     },
     "number": {
@@ -180,6 +183,9 @@
       },
       "sunset_volume": {
         "name": "Sunset volume"
+      },
+      "display_brightness": {
+        "name": "Display brightness"
       }
     },
     "text": {

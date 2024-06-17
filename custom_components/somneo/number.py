@@ -38,9 +38,12 @@ async def async_setup_entry(
               SomneoSunsetVolume(coordinator, unique_id, name, device_info, "sunset_volume")
     ]
 
+    display = [SomneoDisplayBrightness(coordinator, unique_id, name, device_info, "display_brightness")]
+
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(snooze, update_before_add=True)
     async_add_entities(sunset, update_before_add=True)
+    async_add_entities(display, update_before_add=True)
 
 
 class SomneoPowerWake(SomneoEntity, NumberEntity):
@@ -159,3 +162,25 @@ class SomneoSunsetVolume(SomneoEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjust snooze time in the UI"""
         await self.coordinator.async_set_sunset(volume = int(value))
+
+
+class SomneoDisplayBrightness(SomneoEntity, NumberEntity):
+    """Represenation of the Sunset volume."""
+
+    _attr_should_poll = True
+    _attr_available = True
+    _attr_assumed_state = False
+    _attr_translation_key = "display_brightness"
+    _attr_native_min_value = 1
+    _attr_native_max_value = 6
+    _attr_native_step = 1
+    _attr_has_entity_name = True
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_native_value = self.coordinator.data["display_brightness"]
+        self.async_write_ha_state()
+
+    async def async_set_native_value(self, value: float) -> None:
+        """Called when user adjust snooze time in the UI"""
+        await self.coordinator.async_set_display(brightness = int(value))

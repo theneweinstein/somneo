@@ -31,6 +31,9 @@
       },
       "sunset_volume": {
         "default": "mdi:volume-high"
+      },
+      "display_brightness": {
+        "default": "mdi:brightness-5"
       }
     },
     "select": {
@@ -116,6 +119,9 @@
             "default":  "mdi:volume-high"
           }
         }
+      },
+      "display_on": {
+        "default": "mdi:monitor"
       }
     },
     "text":{

@@ -49,9 +49,12 @@ async def async_setup_entry(
 
     sunset = [SomneoSunsetToggle(coordinator, unique_id, name, device_info, "sunset")]
 
+    display = [SomneoDisplayToggle(coordinator, unique_id, name, device_info, 'display_on')]
+
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(pwrwk, update_before_add=True)
     async_add_entities(sunset, update_before_add=True)
+    async_add_entities(display, update_before_add=True)
 
     platform = entity_platform.async_get_current_platform()
 
@@ -202,3 +205,22 @@ class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs: Any):
         """Turn off the switch."""
         await self.coordinator.async_toggle_sunset(False)
+
+class SomneoDisplayToggle(SomneoEntity, SwitchEntity):
+    """Representation of a display always on switch."""
+
+    _attr_should_poll = True
+    _attr_translation_key = 'display_on'
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._attr_is_on = self.coordinator.data["display_always_on"]
+        self.async_write_ha_state()
+
+    async def async_turn_on(self, **kwargs: Any):
+        """Turn on the switch."""
+        await self.coordinator.async_set_display(state=True)
+
+    async def async_turn_off(self, **kwargs: Any):
+        """Turn off the switch."""
+        await self.coordinator.async_set_display(state=False)

@@ -290,3 +290,12 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
                 )
             )
             await self.async_request_refresh()
+    
+    async def async_set_display(
+        self, state: bool | None = None, brightness: int | None = None):
+        """Adjust the display."""
+        async with self.state_lock:
+            await self.hass.async_add_executor_job(
+                ft.partial(self.somneo.set_display, state=state, brightness=brightness)
+            )
+            await self.async_request_refresh()
