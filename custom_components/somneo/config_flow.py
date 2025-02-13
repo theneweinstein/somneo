@@ -140,7 +140,6 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialze the Somneo options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
             self,
