@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 import voluptuous as vol
 from homeassistant import config_entries, exceptions
-from homeassistant.components.ssdp import SsdpServiceInfo
+from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo
 from homeassistant.const import CONF_HOST, CONF_NAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
@@ -140,7 +140,6 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialze the Somneo options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
             self,
