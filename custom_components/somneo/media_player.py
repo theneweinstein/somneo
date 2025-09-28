@@ -11,7 +11,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from pysomneo import SOURCES
 
 from .const import DOMAIN
 from .entity import SomneoEntity
@@ -53,14 +52,15 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
+        player_data = self.coordinator.data["player"]
         self._attr_state = (
             MediaPlayerState.ON
-            if self.coordinator.data["player"]["state"]
+            if player_data["state"]
             else MediaPlayerState.OFF
         )
-        self._attr_volume_level = self.coordinator.data["player"]["volume"]
-        self._attr_source = self.coordinator.data["player"]["source"]
-        self._attr_source_list = list(SOURCES.keys())
+        self._attr_volume_level = player_data["volume"]
+        self._attr_source = player_data["source"]
+        self._attr_source_list = player_data["possible_sources"]
         self.async_write_ha_state()
 
     async def async_turn_on(self) -> None:

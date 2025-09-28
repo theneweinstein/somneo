@@ -49,7 +49,7 @@ async def async_setup_entry(
 
 
 class SomneoDays(SomneoEntity, SelectEntity):
-    """Representation of a alarm days."""
+    """Representation of alarm days."""
 
     _attr_should_poll = True
     _attr_assumed_state = False
@@ -59,19 +59,23 @@ class SomneoDays(SomneoEntity, SelectEntity):
     _attr_translation_key = "days"
 
     def __init__(self, coordinator, unique_id, name, dev_info, alarm):
-        """Initialize number entities."""
+        """Initialize select entity for alarm days."""
         super().__init__(coordinator, unique_id, name, dev_info, "alarm" + str(alarm))
-
-        self._attr_translation_placeholders = {"number":  str(alarm)}
+        self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        _LOGGER.debug(self.coordinator.data["alarms"][self._alarm]["days_type"])
-        self._attr_current_option = self.coordinator.data["alarms"][self._alarm][
-            "days_type"
-        ]
-        self.async_write_ha_state()
+        new_option = self.coordinator.data["alarms"][self._alarm]["days_type"]
+        if new_option != self._attr_current_option:
+            _LOGGER.debug(
+                "Alarm %s days changed: %s -> %s",
+                self._alarm,
+                self._attr_current_option,
+                new_option,
+            )
+            self._attr_current_option = new_option
+            self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Adjust the option in the UI."""
@@ -90,15 +94,21 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     @property
     def options(self) -> list:
         """Return a set of selectable options."""
-        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_sound_themes] + [item.replace(" ", "_") for item in FM_PRESETS]
+        return [
+            item.replace(" ", "_") for item in self.coordinator.somneo.dusk_sound_themes
+        ] + [item.replace(" ", "_") for item in FM_PRESETS]
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        _LOGGER.debug(self.coordinator.data["sunset"]["sound"])
-        self._attr_current_option = self.coordinator.data["sunset"]["sound"].replace(
-            " ", "_"
-        )
-        self.async_write_ha_state()
+        new_option = self.coordinator.data["sunset"]["sound"].replace(" ", "_")
+        if new_option != self._attr_current_option:
+            _LOGGER.debug(
+                "Sunset sound changed: %s -> %s",
+                self._attr_current_option,
+                new_option,
+            )
+            self._attr_current_option = new_option
+            self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Adjust the option in the UI."""
@@ -121,11 +131,15 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        _LOGGER.debug(self.coordinator.data["sunset"]["curve"])
-        self._attr_current_option = self.coordinator.data["sunset"]["curve"].replace(
-            " ", "_"
-        )
-        self.async_write_ha_state()
+        new_option = self.coordinator.data["sunset"]["curve"].replace(" ", "_")
+        if new_option != self._attr_current_option:
+            _LOGGER.debug(
+                "Sunset curve changed: %s -> %s",
+                self._attr_current_option,
+                new_option,
+            )
+            self._attr_current_option = new_option
+            self.async_write_ha_state()
 
     async def async_select_option(self, option: str) -> None:
         """Adjust the option in the UI."""
