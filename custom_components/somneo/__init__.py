@@ -11,7 +11,7 @@ from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from pysomneo import SOURCES, Somneo
+from pysomneo import Somneo
 
 from .const import CONF_SESSION, DOMAIN
 
@@ -28,7 +28,7 @@ PLATFORMS = [
     Platform.TEXT,
     Platform.TIME,
 ]
-SCAN_INTERVAL = timedelta(seconds=60)
+SCAN_INTERVAL = timedelta(seconds=10)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -259,7 +259,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         """Set the volume of the audio player."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                self.somneo.set_player_source, SOURCES[source]
+                self.somneo.set_player_source, source
             )
             await self.async_request_refresh()
 
