@@ -158,7 +158,7 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
         """Set alarm time."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
-                ft.partial(self.somneo.set_alarm, alarm, time=alarm_time, days=days)
+                ft.partial(self.somneo.set_alarm, alarm, v_time=alarm_time, days=days)
             )
             await self.async_request_refresh()
 
