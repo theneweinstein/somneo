@@ -102,7 +102,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     errors["base"] = str(ex)
                 else:
                     await self.async_set_unique_id(user_input["dev_info"]["serial"])
-                    self._abort_if_unique_id_configured()
+                    self._abort_if_unique_id_configured(updates={CONF_HOST: user_input[CONF_HOST]})
                     return self.async_create_entry(
                         title=user_input[CONF_NAME], data=user_input
                     )
