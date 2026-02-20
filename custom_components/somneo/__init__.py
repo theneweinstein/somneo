@@ -1,4 +1,5 @@
 """Support for Philips Somneo devices."""
+
 from __future__ import annotations
 
 import asyncio
@@ -6,9 +7,11 @@ import functools as ft
 import logging
 from datetime import time, timedelta
 
+import requests
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pysomneo import Somneo
@@ -28,7 +31,7 @@ PLATFORMS = [
     Platform.TEXT,
     Platform.TIME,
 ]
-SCAN_INTERVAL = timedelta(seconds=10)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -97,7 +100,9 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 class SomneoCoordinator(DataUpdateCoordinator[None]):
     """Representation of a Somneo Coordinator."""
 
-    def __init__(self, hass: HomeAssistant, host: str, use_session : bool = True) -> None:
+    def __init__(
+        self, hass: HomeAssistant, host: str, use_session: bool = True
+    ) -> None:
         """Initialize Somneo client."""
         self.somneo = Somneo(host, use_session=use_session)
         self.state_lock = asyncio.Lock()
@@ -116,9 +121,18 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def _async_update(self):
         """Fetch the latest data."""
         if self.state_lock.locked():
-            return
+            return None
 
-        return await self.hass.async_add_executor_job(self.somneo.fetch_data)
+        try:
+            return await self.hass.async_add_executor_job(self.somneo.fetch_data)
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ) as err:
+            _LOGGER.warning(
+                "Somneo verbinding mislukt (is het apparaat offline?): %s", err
+            )
+            return None
 
     async def async_toggle_light(
         self, state: bool, brightness: int | None = None
@@ -290,9 +304,10 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
                 )
             )
             await self.async_request_refresh()
-    
+
     async def async_set_display(
-        self, state: bool | None = None, brightness: int | None = None):
+        self, state: bool | None = None, brightness: int | None = None
+    ):
         """Adjust the display."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
