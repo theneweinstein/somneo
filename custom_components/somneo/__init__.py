@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import functools as ft
-import logging
 from datetime import time, timedelta
+import logging
 
 import requests
 from homeassistant.config_entries import ConfigEntry
@@ -13,7 +13,7 @@ from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from pysomneo import Somneo
 
 from .const import CONF_SESSION, DOMAIN
@@ -97,7 +97,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     return True
 
 
-class SomneoCoordinator(DataUpdateCoordinator[None]):
+class SomneoCoordinator(DataUpdateCoordinator):
     """Representation of a Somneo Coordinator."""
 
     def __init__(
@@ -121,18 +121,19 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def _async_update(self):
         """Fetch the latest data."""
         if self.state_lock.locked():
-            return None
+            return self.data
 
         try:
+            # HGet new data from the library
             return await self.hass.async_add_executor_job(self.somneo.fetch_data)
-        except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ) as err:
+        except (requests.exceptions.RequestException, Exception) as err:
+            # Log e without crashing. Return old data to avoid entities become 'None'.
             _LOGGER.warning(
                 "Somneo verbinding mislukt (is het apparaat offline?): %s", err
             )
-            return None
+            if self.data is None:
+                return {}  # Avoid NoneType errors at the first start.
+            return self.data
 
     async def async_toggle_light(
         self, state: bool, brightness: int | None = None
