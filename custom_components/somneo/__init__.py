@@ -1,19 +1,16 @@
 """Support for Philips Somneo devices."""
-
 from __future__ import annotations
 
 import asyncio
 import functools as ft
-from datetime import time, timedelta
 import logging
+from datetime import time, timedelta
 
-import requests
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.debounce import Debouncer
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pysomneo import Somneo
 
 from .const import CONF_SESSION, DOMAIN
@@ -31,7 +28,9 @@ PLATFORMS = [
     Platform.TEXT,
     Platform.TIME,
 ]
-SCAN_INTERVAL = timedelta(seconds=30)
+
+# Verhoogd naar 60 seconden voor betere stabiliteit bij netwerkproblemen
+SCAN_INTERVAL = timedelta(seconds=60)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -97,19 +96,25 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     return True
 
 
-class SomneoCoordinator(DataUpdateCoordinator):
+class SomneoCoordinator(DataUpdateCoordinator[dict]):
     """Representation of a Somneo Coordinator."""
 
-    def __init__(
-        self, hass: HomeAssistant, host: str, use_session: bool = True
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, host: str, use_session: bool = True) -> None:
         """Initialize Somneo client."""
-        self.somneo = Somneo(host, use_session=use_session)
+        # Verhoogde timeouts om 'Read timeout' errors op te vangen
+        self.somneo = Somneo(
+            host, 
+            use_session=use_session, 
+            connect_timeout=10.0, 
+            read_timeout=20.0
+        )
         self.state_lock = asyncio.Lock()
 
         super().__init__(
             hass,
             _LOGGER,
+            # Gebruik een lege dict als initiële data om crashes te voorkomen
+            # voordat de eerste succesvolle fetch is gedaan.
             name=DOMAIN,
             update_interval=SCAN_INTERVAL,
             update_method=self._async_update,
@@ -118,22 +123,26 @@ class SomneoCoordinator(DataUpdateCoordinator):
             ),
         )
 
-    async def _async_update(self):
+    async def _async_update(self) -> dict:
         """Fetch the latest data."""
         if self.state_lock.locked():
-            return self.data
+            return self.data or {}
 
         try:
-            # HGet new data from the library
-            return await self.hass.async_add_executor_job(self.somneo.fetch_data)
-        except (requests.exceptions.RequestException, Exception) as err:
-            # Log e without crashing. Return old data to avoid entities become 'None'.
-            _LOGGER.warning(
-                "Somneo verbinding mislukt (is het apparaat offline?): %s", err
-            )
-            if self.data is None:
-                return {}  # Avoid NoneType errors at the first start.
-            return self.data
+            # Voer de fetch uit in de executor (requests is blocking)
+            data = await self.hass.async_add_executor_job(self.somneo.fetch_data)
+            
+            # Zorg dat we altijd een dictionary teruggeven
+            if data is None:
+                _LOGGER.debug("Somneo fetch returned None, using last known data")
+                return self.data or {}
+                
+            return data
+            
+        except Exception as err:
+            _LOGGER.warning("Error fetching Somneo data: %s", err)
+            # Retourneer de laatst bekende data bij een fout om crashes te voorkomen
+            return self.data or {}
 
     async def async_toggle_light(
         self, state: bool, brightness: int | None = None
@@ -305,10 +314,9 @@ class SomneoCoordinator(DataUpdateCoordinator):
                 )
             )
             await self.async_request_refresh()
-
+    
     async def async_set_display(
-        self, state: bool | None = None, brightness: int | None = None
-    ):
+        self, state: bool | None = None, brightness: int | None = None):
         """Adjust the display."""
         async with self.state_lock:
             await self.hass.async_add_executor_job(
