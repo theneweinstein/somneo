@@ -28,7 +28,9 @@ PLATFORMS = [
     Platform.TEXT,
     Platform.TIME,
 ]
-SCAN_INTERVAL = timedelta(seconds=10)
+
+# Verhoogd naar 60 seconden voor betere stabiliteit bij netwerkproblemen
+SCAN_INTERVAL = timedelta(seconds=60)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -94,17 +96,25 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     return True
 
 
-class SomneoCoordinator(DataUpdateCoordinator[None]):
+class SomneoCoordinator(DataUpdateCoordinator[dict]):
     """Representation of a Somneo Coordinator."""
 
-    def __init__(self, hass: HomeAssistant, host: str, use_session : bool = True) -> None:
+    def __init__(self, hass: HomeAssistant, host: str, use_session: bool = True) -> None:
         """Initialize Somneo client."""
-        self.somneo = Somneo(host, use_session=use_session)
+        # Verhoogde timeouts om 'Read timeout' errors op te vangen
+        self.somneo = Somneo(
+            host, 
+            use_session=use_session, 
+            connect_timeout=10.0, 
+            read_timeout=20.0
+        )
         self.state_lock = asyncio.Lock()
 
         super().__init__(
             hass,
             _LOGGER,
+            # Gebruik een lege dict als initiële data om crashes te voorkomen
+            # voordat de eerste succesvolle fetch is gedaan.
             name=DOMAIN,
             update_interval=SCAN_INTERVAL,
             update_method=self._async_update,
@@ -113,12 +123,26 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
             ),
         )
 
-    async def _async_update(self):
+    async def _async_update(self) -> dict:
         """Fetch the latest data."""
         if self.state_lock.locked():
-            return
+            return self.data or {}
 
-        return await self.hass.async_add_executor_job(self.somneo.fetch_data)
+        try:
+            # Voer de fetch uit in de executor (requests is blocking)
+            data = await self.hass.async_add_executor_job(self.somneo.fetch_data)
+            
+            # Zorg dat we altijd een dictionary teruggeven
+            if data is None:
+                _LOGGER.debug("Somneo fetch returned None, using last known data")
+                return self.data or {}
+                
+            return data
+            
+        except Exception as err:
+            _LOGGER.warning("Error fetching Somneo data: %s", err)
+            # Retourneer de laatst bekende data bij een fout om crashes te voorkomen
+            return self.data or {}
 
     async def async_toggle_light(
         self, state: bool, brightness: int | None = None
