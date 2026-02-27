@@ -1,5 +1,4 @@
 """Light entities for Somneo."""
-
 from __future__ import annotations
 
 import logging
@@ -43,7 +42,7 @@ class SomneoLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Light."""
 
     _attr_should_poll = True
-    _attr_supported_color_modes: set[ColorMode | str] = {ColorMode.BRIGHTNESS}
+    _attr_supported_color_modes: set[ColorMode| str] = {ColorMode.BRIGHTNESS}
     _attr_translation_key = "normal_light"
 
     @property
@@ -53,15 +52,8 @@ class SomneoLight(SomneoEntity, LightEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        if not self.coordinator.data:
-            _LOGGER.debug("No data received from Somneo coordinator")
-            return
-
-        # Use .get() to avoiod TypeError when a key is missing.
-        self._attr_is_on = self.coordinator.data.get("light_is_on", False)
-        self._attr_brightness = self.coordinator.data.get("light_brightness", 0)
-
+        self._attr_is_on = self.coordinator.data["light_is_on"]
+        self._attr_brightness = self.coordinator.data["light_brightness"]
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -79,7 +71,7 @@ class SomneoNightLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Night light."""
 
     _attr_should_poll = True
-    _attr_supported_color_modes: set[ColorMode | str] = {ColorMode.ONOFF}
+    _attr_supported_color_modes: set[ColorMode| str] = {ColorMode.ONOFF}
     _attr_translation_key = "night_light"
 
     @property
