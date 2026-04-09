@@ -73,6 +73,9 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         serial_number = discovery_info.upnp["cppId"]
         self.host = urlparse(discovery_info.ssdp_location).hostname
+        
+        if not host_valid(self.host):
+            return self.async_abort(reason="not_ipv4")
 
         await self.async_set_unique_id(serial_number)
 
