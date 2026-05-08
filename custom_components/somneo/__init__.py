@@ -116,9 +116,20 @@ class SomneoCoordinator(DataUpdateCoordinator[None]):
     async def _async_update(self):
         """Fetch the latest data."""
         if self.state_lock.locked():
-            return
+            return self.data or {}
+        
+        try:
+            data = await self.hass.async_add_executor_job(self.somneo.fetch_data)
 
-        return await self.hass.async_add_executor_job(self.somneo.fetch_data)
+            if data is None:
+                _LOGGER.debug("Somneo fetch returned None, using previous data")
+                return self.data or {}
+            
+            return data
+        
+        except Exception as e:
+            _LOGGER.error("Error fetching data from Somneo: %s", e)
+            return self.data or {}
 
     async def async_toggle_light(
         self, state: bool, brightness: int | None = None
