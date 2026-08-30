@@ -145,15 +145,13 @@ async def async_migrate_entry(
         # v1 stored a legacy "options" blob inside the data dict.
         new = {**config_entry.data}
         new.pop("options", None)
-        config_entry.version = 3
-        hass.config_entries.async_update_entry(config_entry, data=new)
+        hass.config_entries.async_update_entry(config_entry, data=new, version=3)
 
     if config_entry.version == 2:
         # v2 stored use_session directly in the data dict.
         new = {**config_entry.data}
         new.pop("use_session", None)
-        config_entry.version = 3
-        hass.config_entries.async_update_entry(config_entry, data=new)
+        hass.config_entries.async_update_entry(config_entry, data=new, version=3)
 
     if config_entry.version == 3:
         # v3 stored dev_info in the entry data; it now lives on the
@@ -161,8 +159,7 @@ async def async_migrate_entry(
         new = {**config_entry.data}
         new.pop("dev_info", None)
         new.pop("options", None)
-        config_entry.version = 4
-        hass.config_entries.async_update_entry(config_entry, data=new)
+        hass.config_entries.async_update_entry(config_entry, data=new, version=4)
 
     _LOGGER.info("Migration to version %s successful", config_entry.version)
 

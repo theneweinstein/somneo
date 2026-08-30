@@ -34,3 +34,10 @@ keep-runtime-typing = true
 
 [lint.mccabe]
 max-complexity = 25
+
+[lint.per-file-ignores]
+"tests/**/*" = [
+    "ANN201", # pytest fixtures commonly omit return annotations
+    "DTZ001", # deliberate naive datetimes in timezone conversion tests
+    "SLF001", # unit tests intentionally exercise private coordinator methods
+]
