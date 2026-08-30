@@ -67,13 +67,10 @@
           "off": "mdi:alarm-off"
         },
         "state_attributes": {
-          "hour": {
-            "default": "mdi:alpha-d"
+          "time": {
+            "default": "mdi:clock-digital"
           },
-          "minute": {
-            "default": "mdi:alpha-m"
-          },
-          "day": {
+          "days": {
             "default": "mdi:calendar-range"
           },
           "powerwake": {

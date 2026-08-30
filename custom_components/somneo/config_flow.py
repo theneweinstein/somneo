@@ -82,12 +82,18 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.discovery_info = discovery_info
 
-        serial_number = discovery_info.upnp["cppId"]
+        serial_number = discovery_info.upnp.get("cppId")
+        if serial_number is None:
+            return self.async_abort(reason="no_serial")
+
         self.host = urlparse(discovery_info.ssdp_location).hostname
 
         if not host_valid(self.host):
             return self.async_abort(reason="not_ipv4")
 
+        # The cppId from SSDP is the stable, device-specific unique id. It is
+        # intentionally NOT overwritten later (see async_step_user) so that a
+        # discovered device and a manually configured one share one identity.
         await self.async_set_unique_id(serial_number)
 
         self._abort_if_unique_id_configured(updates={CONF_HOST: self.host})
@@ -115,7 +121,11 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 except CannotConnect:
                     errors["base"] = "cannot_connect"
                 else:
-                    await self.async_set_unique_id(dev_info["serial"])
+                    # For SSDP discovery the unique id is already set from the
+                    # stable cppId; only derive it from the device for manual
+                    # setup (dev_info serial can be a random fallback UUID).
+                    if not self.discovery_info:
+                        await self.async_set_unique_id(dev_info["serial"])
                     self._abort_if_unique_id_configured(
                         updates={CONF_HOST: user_input[CONF_HOST]}
                     )
@@ -144,12 +154,13 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors[CONF_HOST] = "invalid_host"
             else:
                 try:
-                    dev_info = await self.get_device_info()
+                    await self.get_device_info()
                 except CannotConnect:
                     errors["base"] = "cannot_connect"
                 else:
-                    await self.async_set_unique_id(dev_info["serial"])
-                    self._abort_if_unique_id_mismatch()
+                    # The unique id is kept as-is: it may be a cppId (from
+                    # discovery) or a device serial, so no identity check is
+                    # performed here.
                     return self.async_update_reload_and_abort(
                         reconfigure_entry,
                         title=user_input[CONF_NAME],

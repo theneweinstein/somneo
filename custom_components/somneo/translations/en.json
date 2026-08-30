@@ -19,6 +19,10 @@
     "error": {
       "cannot_connect": "Cannot connect to the Somneo device. Check the host and that the device is reachable.",
       "invalid_host": "The host is not a valid IPv4 address or hostname."
+    },
+    "abort": {
+      "no_serial": "The discovered device did not provide a serial number (cppId).",
+      "not_ipv4": "The discovered device does not have a valid IPv4 address."
     }
   },
   "entity": {
@@ -110,20 +114,11 @@
       "alarm": {
         "name": "Alarm{number}",
         "state_attributes": {
-          "hour": {
-            "name": "Hour"
+          "time": {
+            "name": "Time"
           },
-          "minute": {
-            "name": "Minute"
-          },
-          "day": {
-            "name": "Day",
-            "state": {
-              "workdays": "Workdays",
-              "daily": "Daily",
-              "weekend": "Weekend",
-              "tomorrow": "Tomorrow"
-            }
+          "days": {
+            "name": "Days"
           },
           "powerwake": {
             "name": "PowerWake",

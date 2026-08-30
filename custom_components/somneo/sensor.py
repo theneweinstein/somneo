@@ -6,16 +6,58 @@ import logging
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorEntityDescription,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    LIGHT_LUX,
+    PERCENTAGE,
+    UnitOfSoundPressure,
+    UnitOfTemperature,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, SENSORS
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 _LOGGER = logging.getLogger(__name__)
+
+SENSOR_DESCRIPTIONS: dict[str, SensorEntityDescription] = {
+    "temperature": SensorEntityDescription(
+        key="temperature",
+        translation_key="temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=1,
+    ),
+    "humidity": SensorEntityDescription(
+        key="humidity",
+        translation_key="humidity",
+        device_class=SensorDeviceClass.HUMIDITY,
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=1,
+    ),
+    "luminance": SensorEntityDescription(
+        key="luminance",
+        translation_key="luminance",
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        native_unit_of_measurement=LIGHT_LUX,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
+    ),
+    "noise": SensorEntityDescription(
+        key="noise",
+        translation_key="noise",
+        device_class=SensorDeviceClass.SOUND_PRESSURE,
+        native_unit_of_measurement=UnitOfSoundPressure.DECIBEL,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=1,
+    ),
+}
 
 
 async def async_setup_entry(
@@ -30,7 +72,7 @@ async def async_setup_entry(
     assert unique_id is not None
 
     sensors = []
-    for sensor in list(SENSORS):
+    for sensor in list(SENSOR_DESCRIPTIONS):
         sensors.append(SomneoSensor(coordinator, unique_id, sensor))
     sensors.append(SomneoNextAlarmSensor(coordinator, unique_id, "next"))
     sensors.append(SomneoAlarmStatus(coordinator, unique_id, "alarm_status"))
@@ -41,8 +83,6 @@ async def async_setup_entry(
 class SomneoSensor(SomneoEntity, SensorEntity):
     """Representation of a Sensor."""
 
-    _attr_state_class = SensorStateClass.MEASUREMENT
-
     def __init__(
         self,
         coordinator,
@@ -52,35 +92,14 @@ class SomneoSensor(SomneoEntity, SensorEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, unique_id, sensor_type)
 
-        self._attr_translation_key = sensor_type
-        self._attr_native_unit_of_measurement = SENSORS[sensor_type]
+        self.entity_description = SENSOR_DESCRIPTIONS[sensor_type]
         self._type = sensor_type
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sensor value."""
-        if self._type == "temperature":
-            self._attr_native_value = self.coordinator.data["temperature"]
-        elif self._type == "humidity":
-            self._attr_native_value = self.coordinator.data["humidity"]
-        elif self._type == "luminance":
-            self._attr_native_value = self.coordinator.data["luminance"]
-        elif self._type == "noise":
-            self._attr_native_value = self.coordinator.data["noise"]
+        self._attr_native_value = self.coordinator.data[self._type]
         self.async_write_ha_state()
-
-    @property
-    def device_class(self) -> SensorDeviceClass | None:
-        """Return the class of this device, from component DEVICE_CLASSES."""
-        if self._type == "temperature":
-            return SensorDeviceClass.TEMPERATURE
-        if self._type == "humidity":
-            return SensorDeviceClass.HUMIDITY
-        if self._type == "luminance":
-            return SensorDeviceClass.ILLUMINANCE
-        if self._type == "noise":
-            return SensorDeviceClass.SOUND_PRESSURE
-        return None
 
 
 class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
@@ -92,7 +111,15 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the next alarm sensor value."""
-        self._attr_native_value = self.coordinator.data["next_alarm"]
+        next_alarm = self.coordinator.data["next_alarm"]
+        # The coordinator guarantees a timezone-aware datetime; a naive value
+        # would be invalid for a TIMESTAMP sensor, so drop it defensively.
+        if next_alarm is not None and next_alarm.tzinfo is None:
+            _LOGGER.warning(
+                "next_alarm is not timezone-aware (%s), ignoring", next_alarm
+            )
+            next_alarm = None
+        self._attr_native_value = next_alarm
         self.async_write_ha_state()
 
 
@@ -106,3 +133,4 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
         """Update the alarm status sensor value."""
         self._attr_native_value = self.coordinator.data["somneo_status"]
         self.async_write_ha_state()
+
