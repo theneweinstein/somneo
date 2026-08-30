@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import ClassVar
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -28,15 +29,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
 
-    alarms = []
-    # Add hour & min number_entity for each alarms
-    for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoDays(coordinator, unique_id, alarm))
+    alarms = [
+        SomneoDays(coordinator, unique_id, alarm)
+        for alarm in list(coordinator.data["alarms"])
+    ]
 
     sunset = [
         SomneoSunsetSound(coordinator, unique_id, "sunset_sound"),
@@ -52,7 +52,13 @@ class SomneoDays(SomneoEntity, SelectEntity):
 
     _attr_assumed_state = False
     _attr_available = True
-    _attr_options = [WORKDAYS, WEEKEND, TOMORROW, EVERYDAY, CUSTOM]
+    _attr_options: ClassVar[list[str]] = [
+        WORKDAYS,
+        WEEKEND,
+        TOMORROW,
+        EVERYDAY,
+        CUSTOM,
+    ]
     _attr_current_option = WORKDAYS
     _attr_translation_key = "days"
 
@@ -130,7 +136,10 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     @property
     def options(self) -> list[str]:
         """Return a set of selectable options."""
-        return [item.replace(" ", "_") for item in self.coordinator.somneo.dusk_light_themes]
+        return [
+            item.replace(" ", "_")
+            for item in self.coordinator.somneo.dusk_light_themes
+        ]
 
     @callback
     def _handle_coordinator_update(self) -> None:

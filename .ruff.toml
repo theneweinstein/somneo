@@ -8,9 +8,20 @@ select = [
 ]
 
 ignore = [
+    "ANN001", # Missing type annotation for function argument (untyped `coordinator` param)
     "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "ARG001", # Unused function argument (async_setup `config` arg)
+    "ARG002", # Unused method argument (**kwargs in async_turn_on/off entity API)
     "D203", # no-blank-line-before-class (incompatible with formatter)
     "D212", # multi-line-summary-first-line (incompatible with formatter)
+    "D401", # First line should be in imperative mood (HA-style noun-phrase docstrings)
+    "FBT001", # Boolean-typed positional argument in function definition
+    "FBT003", # Boolean positional value in function call
+    "PLR2004", # Magic value used in comparison (config entry version numbers)
+    "S101", # Use of `assert` (assert unique_id is not None)
+    "TC002", # Move third-party import into type-checking block
+    "TC003", # Move stdlib import into type-checking block
+    "TC006", # Add quotes to type expression in typing.cast
     "COM812", # incompatible with formatter
     "ISC001", # incompatible with formatter
 ]

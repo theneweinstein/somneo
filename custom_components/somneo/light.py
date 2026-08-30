@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 from homeassistant.components.light import ATTR_BRIGHTNESS, ColorMode, LightEntity
 from homeassistant.config_entries import ConfigEntry
@@ -21,7 +21,6 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo light from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
@@ -38,7 +37,9 @@ async def async_setup_entry(
 class SomneoLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Light."""
 
-    _attr_supported_color_modes: set[ColorMode | str] = {ColorMode.BRIGHTNESS}
+    _attr_supported_color_modes: ClassVar[set[ColorMode | str]] = {
+        ColorMode.BRIGHTNESS
+    }
     _attr_translation_key = "normal_light"
 
     @property
@@ -71,7 +72,9 @@ class SomneoLight(SomneoEntity, LightEntity):
 class SomneoNightLight(SomneoEntity, LightEntity):
     """Representation of an Somneo Night light."""
 
-    _attr_supported_color_modes: set[ColorMode | str] = {ColorMode.ONOFF}
+    _attr_supported_color_modes: ClassVar[set[ColorMode | str]] = {
+        ColorMode.ONOFF
+    }
     _attr_translation_key = "night_light"
 
     @property

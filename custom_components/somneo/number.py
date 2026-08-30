@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.number import NumberEntity
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -20,15 +20,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
 
-    alarms = []
-    # Add all PowerWake deltas
-    for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoPowerWake(coordinator, unique_id, alarm))
+    alarms = [
+        SomneoPowerWake(coordinator, unique_id, alarm)
+        for alarm in list(coordinator.data["alarms"])
+    ]
 
     snooze = [SomneoSnooze(coordinator, unique_id, "snooze")]
 
@@ -75,7 +74,9 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the PowerWake delta value."""
-        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]["powerwake_delta"]
+        self._attr_native_value = self.coordinator.data["alarms"][self._alarm][
+            "powerwake_delta"
+        ]
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:

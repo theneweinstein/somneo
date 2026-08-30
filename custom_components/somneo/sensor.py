@@ -66,14 +66,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
 
-    sensors = []
-    for sensor in list(SENSOR_DESCRIPTIONS):
-        sensors.append(SomneoSensor(coordinator, unique_id, sensor))
+    sensors = [
+        SomneoSensor(coordinator, unique_id, sensor)
+        for sensor in list(SENSOR_DESCRIPTIONS)
+    ]
     sensors.append(SomneoNextAlarmSensor(coordinator, unique_id, "next"))
     sensors.append(SomneoAlarmStatus(coordinator, unique_id, "alarm_status"))
 

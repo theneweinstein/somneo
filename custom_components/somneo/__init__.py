@@ -170,7 +170,16 @@ async def async_migrate_entry(
 
 
 class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
-    """Representation of a Somneo Coordinator."""
+    """
+    Represent a Somneo Coordinator.
+
+    The coordinator is the single source of truth for all device state. The
+    set of alarm slots is fixed per device model; the per-alarm entities
+    (switch, number, select, text, time) are created once at setup time based
+    on the alarms reported by the first successful refresh. If the device
+    reports a different number of alarm slots (e.g. after a firmware change),
+    reload the integration to recreate the entities.
+    """
 
     def __init__(
         self,
@@ -243,29 +252,29 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
 
             if data is None:
                 _LOGGER.debug("Somneo fetch returned None, using previous data")
-                return self.data or self._default_data()
-
-            # Convert naive next_alarm datetime to timezone-aware UTC datetime
-            # using the Home Assistant configured timezone
-            next_alarm = data.get("next_alarm")
-            if isinstance(next_alarm, datetime) and next_alarm.tzinfo is None:
-                ha_tz = ha_dt.get_time_zone(self.hass.config.time_zone)
-                if ha_tz:
-                    data["next_alarm"] = next_alarm.replace(tzinfo=ha_tz).astimezone(
-                        ha_dt.UTC
-                    )
-
-            return data
-
-        except Exception as e:  # noqa: BLE001
-            _LOGGER.error("Error fetching data from Somneo: %s", e)
-            # If we have previous data, return it; otherwise return empty dict with defaults
+                data = self.data or self._default_data()
+            else:
+                # Convert naive next_alarm datetime to timezone-aware UTC datetime
+                # using the Home Assistant configured timezone
+                next_alarm = data.get("next_alarm")
+                if isinstance(next_alarm, datetime) and next_alarm.tzinfo is None:
+                    ha_tz = ha_dt.get_time_zone(self.hass.config.time_zone)
+                    if ha_tz:
+                        data["next_alarm"] = next_alarm.replace(
+                            tzinfo=ha_tz
+                        ).astimezone(ha_dt.UTC)
+        except Exception:
+            _LOGGER.exception("Error fetching data from Somneo")
+            # If we have previous data, return it; otherwise return empty dict
+            # with defaults
             if self.data is not None:
                 return self.data
             return self._default_data()
 
+        return data
+
     def _default_data(self) -> SomneoData:
-        """Return a data dictionary with default values to prevent KeyError in platforms."""
+        """Return data dict with defaults to prevent KeyError in platforms."""
         return {
             "alarms": {},
             "player": {},
@@ -345,7 +354,11 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
         await self.async_request_refresh()
 
     async def async_set_alarm_sound(
-        self, alarm: str, source: str = "wake-up", level: int = 12, channel: str = "forest birds"
+        self,
+        alarm: str,
+        source: str = "wake-up",
+        level: int = 12,
+        channel: str = "forest birds",
     ) -> None:
         """Adjust the sound settings of an alarm."""
         await self.somneo.set_alarm_sound(

@@ -21,15 +21,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
 
-    alarms = []
-    # Add hour & min number_entity for each alarms.
-    for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoTime(coordinator, unique_id, alarm))
+    alarms = [
+        SomneoTime(coordinator, unique_id, alarm)
+        for alarm in list(coordinator.data["alarms"])
+    ]
 
     async_add_entities(alarms, update_before_add=True)
 
