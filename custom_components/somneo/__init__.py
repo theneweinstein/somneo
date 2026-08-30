@@ -5,16 +5,28 @@ import logging
 from datetime import datetime, time, timedelta
 from typing import cast
 
+import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_NAME, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.service import async_register_platform_entity_service
+from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as ha_dt
 from pysomneo import Somneo
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import (
+    ATTR_CHANNEL,
+    ATTR_CURVE,
+    ATTR_DURATION,
+    ATTR_LEVEL,
+    ATTR_SOURCE,
+    DEFAULT_NAME,
+    DOMAIN,
+)
 from .models import SomneoData
 
 _LOGGER = logging.getLogger(__name__)
@@ -32,15 +44,76 @@ PLATFORMS = [
 ]
 SCAN_INTERVAL = timedelta(seconds=10)
 
+SERVICE_SET_ALARM_LIGHT = "set_alarm_light"
+SERVICE_SET_ALARM_SOUND = "set_alarm_sound"
+SERVICE_ADD_ALARM = "add_alarm"
+SERVICE_REMOVE_ALARM = "remove_alarm"
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the Somneo component."""
+    _async_register_entity_services(hass)
+
+    return True
+
+
+@callback
+def _async_register_entity_services(hass: HomeAssistant) -> None:
+    """Register entity services for the Somneo integration."""
+    async_register_platform_entity_service(
+        hass,
+        DOMAIN,
+        SERVICE_SET_ALARM_LIGHT,
+        entity_domain=Platform.SWITCH,
+        schema={
+            vol.Optional(ATTR_CURVE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_DURATION): cv.positive_int,
+        },
+        func="set_alarm_light",
+    )
+
+    async_register_platform_entity_service(
+        hass,
+        DOMAIN,
+        SERVICE_SET_ALARM_SOUND,
+        entity_domain=Platform.SWITCH,
+        schema={
+            vol.Optional(ATTR_SOURCE): cv.string,
+            vol.Optional(ATTR_LEVEL): cv.positive_int,
+            vol.Optional(ATTR_CHANNEL): cv.string,
+        },
+        func="set_alarm_sound",
+    )
+
+    async_register_platform_entity_service(
+        hass,
+        DOMAIN,
+        SERVICE_REMOVE_ALARM,
+        entity_domain=Platform.SWITCH,
+        schema={},
+        func="remove_alarm",
+    )
+
+    async_register_platform_entity_service(
+        hass,
+        DOMAIN,
+        SERVICE_ADD_ALARM,
+        entity_domain=Platform.SWITCH,
+        schema={},
+        func="add_alarm",
+    )
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up the Somneo component."""
     host = entry.data[CONF_HOST]
     name = entry.data.get(CONF_NAME, DEFAULT_NAME)
-    dev_info = entry.data.get("dev_info")
+    unique_id = entry.unique_id
+    assert unique_id is not None
 
-    coordinator = SomneoCoordinator(hass, host, name, dev_info)
-    entry.async_on_unload(entry.add_update_listener(update_listener))
+    coordinator = SomneoCoordinator(hass, host, name, unique_id)
+    await coordinator.async_fetch_device_info()
 
     await coordinator.async_config_entry_first_refresh()
 
@@ -62,11 +135,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Handle options update."""
-    await hass.config_entries.async_reload(entry.entry_id)
-
-
 async def async_migrate_entry(
     hass: HomeAssistant, config_entry: ConfigEntry
 ) -> bool:
@@ -74,18 +142,26 @@ async def async_migrate_entry(
     _LOGGER.debug("Migrating from version %s", config_entry.version)
 
     if config_entry.version == 1:
+        # v1 stored a legacy "options" blob inside the data dict.
         new = {**config_entry.data}
-        new.update({"options": {"use_session": True}})
-
+        new.pop("options", None)
         config_entry.version = 3
         hass.config_entries.async_update_entry(config_entry, data=new)
 
     if config_entry.version == 2:
+        # v2 stored use_session directly in the data dict.
         new = {**config_entry.data}
-        use_session = new.pop("use_session")
-        new.update({"options": {"use_session": use_session}})
-
+        new.pop("use_session", None)
         config_entry.version = 3
+        hass.config_entries.async_update_entry(config_entry, data=new)
+
+    if config_entry.version == 3:
+        # v3 stored dev_info in the entry data; it now lives on the
+        # coordinator and is fetched from the device at setup time.
+        new = {**config_entry.data}
+        new.pop("dev_info", None)
+        new.pop("options", None)
+        config_entry.version = 4
         hass.config_entries.async_update_entry(config_entry, data=new)
 
     _LOGGER.info("Migration to version %s successful", config_entry.version)
@@ -101,24 +177,21 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
         hass: HomeAssistant,
         host: str,
         name: str,
-        dev_info: dict[str, str] | None = None,
+        unique_id: str,
     ) -> None:
         """Initialize Somneo client."""
         self.somneo = Somneo(host)
+        self._unique_id = unique_id
+        self._name = name
+        self._dev_info: dict[str, str] = {}
 
-        # Build a stable DeviceInfo for all entities of this device.
-        dev_info = dev_info or {}
+        # Build a stable DeviceInfo for all entities of this device. The
+        # identifier uses the config entry unique_id (stable), never the
+        # device-reported serial which may fall back to a random UUID.
         self.device_info = DeviceInfo(
-            identifiers={(DOMAIN, dev_info.get("serial", host))},
-            manufacturer=dev_info.get("manufacturer", "Royal Philips Electronics"),
-            model=" ".join(
-                part
-                for part in (
-                    dev_info.get("model", "Wake-up Light"),
-                    dev_info.get("modelnumber"),
-                )
-                if part
-            ),
+            identifiers={(DOMAIN, unique_id)},
+            manufacturer="Royal Philips Electronics",
+            model="Wake-up Light",
             name=name,
         )
 
@@ -131,6 +204,36 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
             request_refresh_debouncer=Debouncer(
                 hass, _LOGGER, cooldown=1.0, immediate=False
             ),
+        )
+
+    async def async_fetch_device_info(self) -> None:
+        """
+        Fetch device info from the device to enrich DeviceInfo.
+
+        Best-effort: failures keep the default device info so that setup is
+        not blocked on device metadata.
+        """
+        try:
+            self._dev_info = await self.somneo.get_device_info()
+        except Exception:  # noqa: BLE001
+            _LOGGER.warning(
+                "Unable to fetch device info from %s, using defaults", self._name
+            )
+
+        self.device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._unique_id)},
+            manufacturer=self._dev_info.get(
+                "manufacturer", "Royal Philips Electronics"
+            ),
+            model=" ".join(
+                part
+                for part in (
+                    self._dev_info.get("model", "Wake-up Light"),
+                    self._dev_info.get("modelnumber"),
+                )
+                if part
+            ),
+            name=self._name,
         )
 
     async def _async_update(self) -> SomneoData:

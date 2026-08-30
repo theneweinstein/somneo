@@ -4,22 +4,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-import voluptuous as vol
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    ATTR_CHANNEL,
-    ATTR_CURVE,
-    ATTR_DURATION,
-    ATTR_LEVEL,
-    ATTR_SOURCE,
-    DOMAIN,
-)
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 if TYPE_CHECKING:
@@ -55,32 +45,6 @@ async def async_setup_entry(
     async_add_entities(pwrwk, update_before_add=True)
     async_add_entities(sunset, update_before_add=True)
     async_add_entities(display, update_before_add=True)
-
-    platform = entity_platform.async_get_current_platform()
-
-    platform.async_register_entity_service(
-        "set_alarm_light",
-        {
-            vol.Optional(ATTR_CURVE): cv.string,
-            vol.Optional(ATTR_LEVEL): cv.positive_int,
-            vol.Optional(ATTR_DURATION): cv.positive_int,
-        },
-        "set_alarm_light",
-    )
-
-    platform.async_register_entity_service(
-        "set_alarm_sound",
-        {
-            vol.Optional(ATTR_SOURCE): cv.string,
-            vol.Optional(ATTR_LEVEL): cv.positive_int,
-            vol.Optional(ATTR_CHANNEL): cv.string,
-        },
-        "set_alarm_sound",
-    )
-
-    platform.async_register_entity_service("remove_alarm", {}, "remove_alarm")
-
-    platform.async_register_entity_service("add_alarm", {}, "add_alarm")
 
 
 class SomneoAlarmToggle(SomneoEntity, SwitchEntity):

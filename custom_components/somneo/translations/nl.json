@@ -7,17 +7,18 @@
           "host": "IP-adres",
           "name": "Naam"
         }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Opties voor Philips Somneo",
+      },
+      "reconfigure": {
+        "title": "Philips Somneo opnieuw configureren",
         "data": {
-          "session": "Hergebruik TLS verbindingen (standaard is ja)."
+          "host": "IP-adres",
+          "name": "Naam"
         }
       }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met het Somneo-apparaat. Controleer het adres en dat het apparaat bereikbaar is.",
+      "invalid_host": "Het adres is geen geldig IPv4-adres of hostnaam."
     }
   },
   "entity": {

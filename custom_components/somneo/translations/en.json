@@ -7,17 +7,18 @@
           "host": "Host",
           "name": "Name"
         }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Options for Philips Somneo",
+      },
+      "reconfigure": {
+        "title": "Reconfigure Philips Somneo",
         "data": {
-          "session": "Reuse TLS connections (default to true)."
+          "host": "Host",
+          "name": "Name"
         }
       }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the Somneo device. Check the host and that the device is reachable.",
+      "invalid_host": "The host is not a valid IPv4 address or hostname."
     }
   },
   "entity": {
