@@ -9,7 +9,6 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -29,18 +28,12 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
-    name = config_entry.data[CONF_NAME]
-    device_info = config_entry.data["dev_info"]
 
     sensors = []
     for sensor in list(SENSORS):
-        sensors.append(SomneoSensor(coordinator, unique_id, name, device_info, sensor))
-    sensors.append(
-        SomneoNextAlarmSensor(coordinator, unique_id, name, device_info, "next")
-    )
-    sensors.append(
-        SomneoAlarmStatus(coordinator, unique_id, name, device_info, "alarm_status")
-    )
+        sensors.append(SomneoSensor(coordinator, unique_id, sensor))
+    sensors.append(SomneoNextAlarmSensor(coordinator, unique_id, "next"))
+    sensors.append(SomneoAlarmStatus(coordinator, unique_id, "alarm_status"))
 
     async_add_entities(sensors, update_before_add=True)
 
@@ -54,12 +47,10 @@ class SomneoSensor(SomneoEntity, SensorEntity):
         self,
         coordinator,
         unique_id: str,
-        name: str,
-        dev_info: dict,
         sensor_type: str,
     ) -> None:
         """Initialize the sensor."""
-        super().__init__(coordinator, unique_id, name, dev_info, sensor_type)
+        super().__init__(coordinator, unique_id, sensor_type)
 
         self._attr_translation_key = sensor_type
         self._attr_native_unit_of_measurement = SENSORS[sensor_type]

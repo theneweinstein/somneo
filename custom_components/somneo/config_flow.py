@@ -16,7 +16,7 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from pysomneo import Somneo
 
-from .const import CONF_SESSION, DEFAULT_NAME, DOMAIN
+from .const import DEFAULT_NAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def get_device_info(self) -> dict:
         """Get device info."""
         somneo = Somneo(self.host)
-        dev_info = await self.hass.async_add_executor_job(somneo.get_device_info)
+        dev_info = await somneo.get_device_info()
 
         return dev_info
 
@@ -155,14 +155,7 @@ class SomneoOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        CONF_SESSION,
-                        default=self.config_entry.options.get(CONF_SESSION, True),
-                    ): bool,
-                }
-            ),
+            data_schema=vol.Schema({}),
         )
 
 class CannotConnect(exceptions.HomeAssistantError):
