@@ -72,6 +72,9 @@ class SomneoDays(SomneoEntity, SelectEntity):
         super().__init__(coordinator, unique_id, "alarm" + str(alarm))
         self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:

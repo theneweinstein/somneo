@@ -38,7 +38,7 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
     _attr_assumed_state = False
     _attr_available = True
     _attr_native_value = None
-    _attr_pattern = "^((tomorrow|mon|tue|wed|thu|fri|sat|sun)(,)?)+$"
+    _attr_pattern = "^((tomorrow|daily|mon|tue|wed|thu|fri|sat|sun)(,)?)+$"
     _attr_translation_key = "days_str"
 
     def __init__(
@@ -52,6 +52,9 @@ class SomneoAlarmDays(SomneoEntity, TextEntity):
 
         self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:

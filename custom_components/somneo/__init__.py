@@ -245,7 +245,7 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
     async def _async_update(self) -> SomneoData:
         """Fetch the latest data."""
         try:
-            data = cast(SomneoData, await self.somneo.fetch_data())
+            data = cast(SomneoData, await self.somneo.fetch_data(force_slow_refresh=True))
 
             if data is None:
                 _LOGGER.debug("Somneo fetch returned None, using previous data")

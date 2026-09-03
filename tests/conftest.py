@@ -10,7 +10,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.somneo.const import DOMAIN
 
-from .common import FAKE_DATA, FAKE_DEVICE_INFO, HOST, NAME, SERIAL
+from .common import FAKE_DATA, FAKE_DATA_HIDDEN, FAKE_DEVICE_INFO, HOST, NAME, SERIAL
 
 
 @pytest.fixture(autouse=True)
@@ -83,6 +83,26 @@ def config_entry(hass: HomeAssistant) -> MockConfigEntry:
 
 
 @pytest.fixture
+def mock_somneo_with_hidden():
+    """Mock the Somneo client with one alarm slot hidden (invisible)."""
+    with (
+        patch("custom_components.somneo.Somneo") as somneo_cls,
+        patch("custom_components.somneo.config_flow.Somneo") as somneo_cf_cls,
+    ):
+        instance = somneo_cls.return_value
+        for method in SOMNEO_METHODS:
+            setattr(instance, method, AsyncMock())
+        instance.fetch_data.return_value = dict(FAKE_DATA_HIDDEN)
+        instance.get_device_info.return_value = dict(FAKE_DEVICE_INFO)
+
+        somneo_cf_cls.return_value.get_device_info.return_value = dict(
+            FAKE_DEVICE_INFO
+        )
+
+        yield instance
+
+
+@pytest.fixture
 async def setup_integration(
     hass: HomeAssistant, config_entry, mock_somneo
 ) -> MockConfigEntry:
@@ -92,6 +112,19 @@ async def setup_integration(
     # Push the already-fetched coordinator data to all just-subscribed
     # entities so their state is deterministic without waiting for the
     # 10 second polling interval.
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    return config_entry
+
+
+@pytest.fixture
+async def setup_integration_with_hidden(
+    hass: HomeAssistant, config_entry, mock_somneo_with_hidden
+) -> MockConfigEntry:
+    """Set up the Somneo integration with one alarm slot hidden."""
+    assert await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     await coordinator.async_refresh()
     await hass.async_block_till_done()

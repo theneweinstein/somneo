@@ -5,7 +5,11 @@ from datetime import time
 
 from homeassistant.const import ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 
+from custom_components.somneo.const import DOMAIN
+
+from .common import SERIAL
 from .test_entities import entity_id
 
 
@@ -115,3 +119,89 @@ async def test_text_alarm_days_set(
     mock_somneo.set_alarm.assert_awaited_once_with(
         0, v_time=None, days=["mon", "tue"]
     )
+
+
+# ── Alarm visibility (entity_registry_enabled_default) ──────────────
+
+
+async def test_visible_alarm_entities_enabled(
+    setup_integration, hass: HomeAssistant
+) -> None:
+    """Test that visible alarm slot entities are enabled by default."""
+    registry = er.async_get(hass)
+
+    # All entities for alarm0 (visible=True) should be enabled
+    for domain, identifier in [
+        (Platform.SWITCH, "alarm0"),
+        (Platform.SWITCH, "alarm0_PW"),
+        (Platform.TIME, "alarm0_time"),
+        (Platform.SELECT, "alarm0"),
+        (Platform.TEXT, "alarm0"),
+        (Platform.NUMBER, "alarm0_powerwake_delta"),
+    ]:
+        entry = registry.async_get_entity_id(domain, DOMAIN, f"{SERIAL}_{identifier}")
+        assert entry is not None, f"Missing entity for {domain}.{identifier}"
+        entity = registry.async_get(entry)
+        assert entity is not None
+        assert entity.disabled_by is None, (
+            f"Visible alarm entity {domain}.{identifier} should be enabled, "
+            f"but disabled_by={entity.disabled_by}"
+        )
+
+
+async def test_visible_alarm_entities_state(
+    setup_integration, hass: HomeAssistant
+) -> None:
+    """Test that visible alarm entities report state correctly."""
+    alarm = hass.states.get(entity_id(hass, Platform.SWITCH, "alarm0"))
+    assert alarm is not None
+    assert alarm.state == "on"
+
+
+async def test_invisible_alarm_entities_disabled(
+    setup_integration_with_hidden, hass: HomeAssistant
+) -> None:
+    """Test that invisible alarm slot entities are disabled by default."""
+    registry = er.async_get(hass)
+
+    # All entities for alarm1 (visible=False) should be disabled-by-default
+    for domain, identifier in [
+        (Platform.SWITCH, "alarm1"),
+        (Platform.SWITCH, "alarm1_PW"),
+        (Platform.TIME, "alarm1_time"),
+        (Platform.SELECT, "alarm1"),
+        (Platform.TEXT, "alarm1"),
+        (Platform.NUMBER, "alarm1_powerwake_delta"),
+    ]:
+        entry = registry.async_get_entity_id(domain, DOMAIN, f"{SERIAL}_{identifier}")
+        assert entry is not None, f"Missing entity for {domain}.{identifier}"
+        entity = registry.async_get(entry)
+        assert entity is not None
+        assert entity.disabled_by == "integration", (
+            f"Invisible alarm entity {domain}.{identifier} should be disabled "
+            f"by integration, but disabled_by={entity.disabled_by}"
+        )
+
+
+async def test_invisible_alarm_entities_have_no_state(
+    setup_integration_with_hidden, hass: HomeAssistant
+) -> None:
+    """Test that invisible alarm entities have no state (they are disabled)."""
+    alarm1 = hass.states.get(entity_id(hass, Platform.SWITCH, "alarm1"))
+    assert alarm1 is None, (
+        "Invisible alarm entity should not have a state "
+        "since it is disabled by default"
+    )
+
+
+async def test_visible_alarm_entities_still_work_when_hidden_present(
+    setup_integration_with_hidden, hass: HomeAssistant
+) -> None:
+    """Test that visible alarm entities work normally alongside hidden ones."""
+    alarm0 = hass.states.get(entity_id(hass, Platform.SWITCH, "alarm0"))
+    assert alarm0 is not None
+    assert alarm0.state == "on"
+
+    time0 = hass.states.get(entity_id(hass, Platform.TIME, "alarm0_time"))
+    assert time0 is not None
+    assert time0.state == "07:30:00"

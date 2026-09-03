@@ -59,6 +59,31 @@ title: Alarm work
 <img src="https://github.com/theneweinstein/somneo/blob/master/lovelace2.jpg" alt="Example Lovelace with custom days" width="80%"/>
 
 
+# Alarm visibility
+
+The Somneo device supports up to 16 alarm slots, but you may only use a few of them. To keep your Home Assistant entity list clean, per-alarm entities (switch, time, select, text, number) are **hidden by default** for alarm slots that are marked as **invisible** on the device.
+
+The visibility of an alarm slot is controlled on the device itself — through the Philips Somneo app or the device's touch interface — using the option to show or hide an alarm in the alarm list. The integration reads this setting and applies it to Home Assistant:
+
+- **Visible alarm slots** → entities are enabled by default
+- **Invisible alarm slots** → entities are registered but disabled by default
+
+You can always override this per entity by going to **Settings → Devices & Services → Entities**, finding the entity, and enabling or disabling it manually.
+
+## Showing and hiding alarms
+
+To add a new alarm slot or remove an existing one, use the `somneo.add_alarm` and `somneo.remove_alarm` services. These services make the alarm slot visible or invisible on the device, which is then reflected in Home Assistant.
+
+**Important:** After adding or removing an alarm, the entities for that slot are created or destroyed on the device side. To synchronize the Home Assistant entities, you need to **reload the integration**:
+
+1. Go to **Settings → Devices & Services → Integrations**
+2. Find the Somneo integration
+3. Click the three-dot menu and select **Reload**
+
+Alternatively, you can reload from the **Developer Tools → Actions** tab by calling `homeassistant.reload_config_entry` with the Somneo config entry.
+
+After reloading, the new alarm entities will appear (enabled or disabled-by-default depending on the device's visibility setting).
+
 # Services
 This component includes two services to adjust the wake-up light and sound settings. To adjust the light settings of an alarm you can call the following function:
 ```
@@ -96,3 +121,5 @@ service: somneo.remove_alarm
 target:
   entity_id: switch.somneo_alarm0
 ```
+
+After adding or removing an alarm, **reload the integration** (see [Alarm visibility](#alarm-visibility)) to create or remove the corresponding Home Assistant entities.

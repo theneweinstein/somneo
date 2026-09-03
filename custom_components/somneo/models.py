@@ -11,6 +11,7 @@ class SomneoAlarm(TypedDict):
     position: int
     name: str
     enabled: bool
+    visible: bool
     time: time
     days: list[str]
     days_type: str
