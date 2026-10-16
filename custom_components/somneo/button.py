@@ -5,7 +5,6 @@ import logging
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -21,16 +20,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
-    name = config_entry.data[CONF_NAME]
-    device_info = config_entry.data["dev_info"]
 
     buttons = [
-        SomneoDismiss(coordinator, unique_id, name, device_info, "alarm_dismiss"),
-        SomneoSnooze(coordinator, unique_id, name, device_info, "alarm_snooze"),
+        SomneoDismiss(coordinator, unique_id, "alarm_dismiss"),
+        SomneoSnooze(coordinator, unique_id, "alarm_snooze"),
     ]
 
     async_add_entities(buttons, update_before_add=True)
@@ -39,7 +35,6 @@ async def async_setup_entry(
 class SomneoDismiss(SomneoEntity, ButtonEntity):
     """Dismiss alarm button."""
 
-    _attr_should_poll = True
     _attr_translation_key = "alarm_dismiss"
 
     async def async_press(self) -> None:
@@ -50,7 +45,6 @@ class SomneoDismiss(SomneoEntity, ButtonEntity):
 class SomneoSnooze(SomneoEntity, ButtonEntity):
     """Snooze alarm button."""
 
-    _attr_should_poll = True
     _attr_translation_key = "alarm_snooze"
 
     async def async_press(self) -> None:

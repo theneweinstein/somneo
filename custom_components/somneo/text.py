@@ -5,7 +5,6 @@ import logging
 
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -21,16 +20,14 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
-    name = config_entry.data[CONF_NAME]
-    device_info = config_entry.data["dev_info"]
 
-    alarms = []
-    for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoAlarmDays(coordinator, unique_id, name, device_info, alarm))
+    alarms = [
+        SomneoAlarmDays(coordinator, unique_id, alarm)
+        for alarm in list(coordinator.data["alarms"])
+    ]
 
     async_add_entities(alarms, update_before_add=True)
 
@@ -38,28 +35,26 @@ async def async_setup_entry(
 class SomneoAlarmDays(SomneoEntity, TextEntity):
     """Representation of a alarm switch."""
 
-    _attr_should_poll = True
     _attr_assumed_state = False
     _attr_available = True
     _attr_native_value = None
-    _attr_pattern = "^((tomorrow|mon|tue|wed|thu|fri|sat|sun)(,)?)+$"
+    _attr_pattern = "^((tomorrow|daily|mon|tue|wed|thu|fri|sat|sun)(,)?)+$"
     _attr_translation_key = "days_str"
 
     def __init__(
         self,
         coordinator,
         unique_id: str,
-        name: str,
-        device_info: dict,
         alarm: int | str,
     ) -> None:
         """Initialize the text entity."""
-        super().__init__(
-            coordinator, unique_id, name, device_info, "alarm" + str(alarm)
-        )
+        super().__init__(coordinator, unique_id, "alarm" + str(alarm))
 
         self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:

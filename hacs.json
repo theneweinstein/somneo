@@ -2,14 +2,15 @@
   "name": "Philips Somneo",
   "render_readme": true,
   "domains": [
-    "sensor",
+    "button",
     "light",
-    "switch",
-    "select",
-    "number",
-    "time",
     "media_player",
-    "text"
+    "number",
+    "select",
+    "sensor",
+    "switch",
+    "text",
+    "time"
   ],
   "iot_class": "Local Polling",
   "homeassistant": "2024.2.0"

@@ -4,23 +4,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-import voluptuous as vol
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    ATTR_CHANNEL,
-    ATTR_CURVE,
-    ATTR_DURATION,
-    ATTR_LEVEL,
-    ATTR_SOURCE,
-    DOMAIN,
-)
+from .const import DOMAIN
 from .entity import SomneoEntity
 
 if TYPE_CHECKING:
@@ -35,80 +24,47 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
-    name = config_entry.data[CONF_NAME]
-    device_info = config_entry.data["dev_info"]
 
     alarms = []
     pwrwk = []
     for alarm in list(coordinator.data["alarms"]):
-        alarms.append(
-            SomneoAlarmToggle(coordinator, unique_id, name, device_info, alarm)
-        )
-        pwrwk.append(
-            SomneoPowerWakeToggle(coordinator, unique_id, name, device_info, alarm)
-        )
+        alarms.append(SomneoAlarmToggle(coordinator, unique_id, alarm))
+        pwrwk.append(SomneoPowerWakeToggle(coordinator, unique_id, alarm))
 
-    sunset = [SomneoSunsetToggle(coordinator, unique_id, name, device_info, "sunset")]
+    sunset = [SomneoSunsetToggle(coordinator, unique_id, "sunset")]
 
-    display = [SomneoDisplayToggle(coordinator, unique_id, name, device_info, "display_on")]
+    display = [
+        SomneoDisplayToggle(coordinator, unique_id, "display_on")
+    ]
 
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(pwrwk, update_before_add=True)
     async_add_entities(sunset, update_before_add=True)
     async_add_entities(display, update_before_add=True)
 
-    platform = entity_platform.async_get_current_platform()
-
-    platform.async_register_entity_service(
-        "set_alarm_light",
-        {
-            vol.Optional(ATTR_CURVE): cv.string,
-            vol.Optional(ATTR_LEVEL): cv.positive_int,
-            vol.Optional(ATTR_DURATION): cv.positive_int,
-        },
-        "set_alarm_light",
-    )
-
-    platform.async_register_entity_service(
-        "set_alarm_sound",
-        {
-            vol.Optional(ATTR_SOURCE): cv.string,
-            vol.Optional(ATTR_LEVEL): cv.positive_int,
-            vol.Optional(ATTR_CHANNEL): cv.string,
-        },
-        "set_alarm_sound",
-    )
-
-    platform.async_register_entity_service("remove_alarm", {}, "remove_alarm")
-
-    platform.async_register_entity_service("add_alarm", {}, "add_alarm")
-
 
 class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
     """Representation of a alarm switch."""
 
-    _attr_should_poll = True
     _attr_translation_key = "alarm"
 
     def __init__(
         self,
         coordinator: SomneoCoordinator,
         unique_id: str,
-        name: str,
-        device_info: dict,
         alarm: int | str,
     ) -> None:
         """Initialize the switches."""
-        super().__init__(
-            coordinator, unique_id, name, device_info, "alarm" + str(alarm)
-        )
+        super().__init__(coordinator, unique_id, "alarm" + str(alarm))
 
         self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -161,24 +117,24 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
 class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
     """Representation of a Powerwake switch."""
 
-    _attr_should_poll = True
     _attr_translation_key = "powerwake"
 
     def __init__(
         self,
         coordinator: SomneoCoordinator,
         unique_id: str,
-        name: str,
-        device_info: dict,
         alarm: int | str,
     ) -> None:
         """Initialize the switches."""
         super().__init__(
-            coordinator, unique_id, name, device_info, "alarm" + str(alarm) + "_PW"
+            coordinator, unique_id, "alarm" + str(alarm) + "_PW"
         )
 
         self._attr_translation_placeholders = {"number": str(alarm)}
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -203,7 +159,6 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
 class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
     """Representation of a Sunset switch."""
 
-    _attr_should_poll = True
     _attr_translation_key = "sunset"
 
     @callback
@@ -230,7 +185,6 @@ class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
 class SomneoDisplayToggle(SomneoEntity, SwitchEntity):
     """Representation of a display always on switch."""
 
-    _attr_should_poll = True
     _attr_translation_key = "display_on"
 
     @callback

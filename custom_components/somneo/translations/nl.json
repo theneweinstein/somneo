@@ -7,17 +7,22 @@
           "host": "IP-adres",
           "name": "Naam"
         }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Opties voor Philips Somneo",
+      },
+      "reconfigure": {
+        "title": "Philips Somneo opnieuw configureren",
         "data": {
-          "session": "Hergebruik TLS verbindingen (standaard is ja)."
+          "host": "IP-adres",
+          "name": "Naam"
         }
       }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met het Somneo-apparaat. Controleer het adres en dat het apparaat bereikbaar is.",
+      "invalid_host": "Het adres is geen geldig IPv4-adres of hostnaam."
+    },
+    "abort": {
+      "no_serial": "Het gevonden apparaat leverde geen serienummer (cppId) op.",
+      "not_ipv4": "Het gevonden apparaat heeft geen geldig IPv4-adres."
     }
   },
   "entity": {
@@ -109,20 +114,11 @@
       "alarm": {
         "name": "Alarm{number}",
         "state_attributes": {
-          "hour": {
-            "name": "Uur"
+          "time": {
+            "name": "Tijd"
           },
-          "minute": {
-            "name": "Minuut"
-          },
-          "day": {
-            "name": "Dag",
-            "state": {
-              "workdays": "Doordeweeks",
-              "daily": "Dagelijks",
-              "weekend": "Weekend",
-              "tomorrow": "Morgen"
-            }
+          "days": {
+            "name": "Dagen"
           },
           "powerwake": {
             "name": "PowerWake",

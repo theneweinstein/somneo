@@ -10,13 +10,12 @@ from urllib.parse import urlparse
 
 import voluptuous as vol
 from homeassistant import config_entries, exceptions
-from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo
 from homeassistant.const import CONF_HOST, CONF_NAME
-from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo
 from pysomneo import Somneo
 
-from .const import CONF_SESSION, DEFAULT_NAME, DOMAIN
+from .const import DEFAULT_NAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,6 +47,16 @@ def _base_schema(discovery_info: SsdpServiceInfo | None) -> vol.Schema:
     return base_schema
 
 
+def _reconfigure_schema() -> vol.Schema:
+    """Generate a schema for reconfiguring an existing entry."""
+    return vol.Schema(
+        {
+            vol.Required(CONF_HOST): str,
+            vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+        }
+    )
+
+
 class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Example config flow."""
 
@@ -56,12 +65,14 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     discovery_info: SsdpServiceInfo | None = None
     host: str | None = None
     name: str = DEFAULT_NAME
-    dev_info: dict | None = None
 
     async def get_device_info(self) -> dict:
         """Get device info."""
         somneo = Somneo(self.host)
-        dev_info = await self.hass.async_add_executor_job(somneo.get_device_info)
+        try:
+            dev_info = await somneo.get_device_info()
+        except Exception as ex:
+            raise CannotConnect from ex
 
         return dev_info
 
@@ -71,12 +82,18 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.discovery_info = discovery_info
 
-        serial_number = discovery_info.upnp["cppId"]
+        serial_number = discovery_info.upnp.get("cppId")
+        if serial_number is None:
+            return self.async_abort(reason="no_serial")
+
         self.host = urlparse(discovery_info.ssdp_location).hostname
-        
+
         if not host_valid(self.host):
             return self.async_abort(reason="not_ipv4")
 
+        # The cppId from SSDP is the stable, device-specific unique id. It is
+        # intentionally NOT overwritten later (see async_step_user) so that a
+        # discovered device and a manually configured one share one identity.
         await self.async_set_unique_id(serial_number)
 
         self._abort_if_unique_id_configured(updates={CONF_HOST: self.host})
@@ -100,15 +117,24 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             if host_valid(user_input[CONF_HOST]):
                 try:
-                    user_input["dev_info"] = await self.get_device_info()
-                except Exception as ex:  # noqa: BLE001
-                    _LOGGER.error("Error connecting to Somneo: %s", ex)
-                    errors["base"] = str(ex)
+                    dev_info = await self.get_device_info()
+                except CannotConnect:
+                    errors["base"] = "cannot_connect"
                 else:
-                    await self.async_set_unique_id(user_input["dev_info"]["serial"])
-                    self._abort_if_unique_id_configured(updates={CONF_HOST: user_input[CONF_HOST]})
+                    # For SSDP discovery the unique id is already set from the
+                    # stable cppId; only derive it from the device for manual
+                    # setup (dev_info serial can be a random fallback UUID).
+                    if not self.discovery_info:
+                        await self.async_set_unique_id(dev_info["serial"])
+                    self._abort_if_unique_id_configured(
+                        updates={CONF_HOST: user_input[CONF_HOST]}
+                    )
                     return self.async_create_entry(
-                        title=user_input[CONF_NAME], data=user_input
+                        title=user_input[CONF_NAME],
+                        data={
+                            CONF_HOST: user_input[CONF_HOST],
+                            CONF_NAME: user_input[CONF_NAME],
+                        },
                     )
 
         return self.async_show_form(
@@ -116,54 +142,43 @@ class SomneoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_reconfigure(
-        self, _: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Handle reconfiguration."""
-        _entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=self.add_suggested_values_to_schema(
-                _base_schema(self.discovery_info),
-                _entry.data
-            ),
-        )
-
-
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
-    ) -> config_entries.OptionsFlow:
-        """Create the options flow."""
-        return SomneoOptionsFlow(config_entry)
-
-class SomneoOptionsFlow(config_entries.OptionsFlow):
-    """Config flow options for Somneo."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize the Somneo options flow."""
-        self.config_entry = config_entry
-
-    async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Manage the options."""
+        """Handle reconfiguration of an existing entry."""
+        errors: dict[str, str] = {}
+        reconfigure_entry = self._get_reconfigure_entry()
+
         if user_input is not None:
-            return self.async_create_entry(title="Somneo", data=user_input)
+            self.host = user_input[CONF_HOST]
+            if not host_valid(self.host):
+                errors[CONF_HOST] = "invalid_host"
+            else:
+                try:
+                    await self.get_device_info()
+                except CannotConnect:
+                    errors["base"] = "cannot_connect"
+                else:
+                    # The unique id is kept as-is: it may be a cppId (from
+                    # discovery) or a device serial, so no identity check is
+                    # performed here.
+                    return self.async_update_reload_and_abort(
+                        reconfigure_entry,
+                        title=user_input[CONF_NAME],
+                        data={
+                            CONF_HOST: user_input[CONF_HOST],
+                            CONF_NAME: user_input[CONF_NAME],
+                        },
+                    )
 
         return self.async_show_form(
-            step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        CONF_SESSION,
-                        default=self.config_entry.options.get(CONF_SESSION, True),
-                    ): bool,
-                }
+            step_id="reconfigure",
+            data_schema=self.add_suggested_values_to_schema(
+                _reconfigure_schema(),
+                reconfigure_entry.data,
             ),
+            errors=errors,
         )
+
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""

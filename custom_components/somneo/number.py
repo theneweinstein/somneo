@@ -3,9 +3,8 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.number import NumberEntity
-from homeassistant.const import CONF_NAME
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -21,26 +20,26 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Somneo from config_entry."""
-
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
     unique_id = config_entry.unique_id
     assert unique_id is not None
-    name = config_entry.data[CONF_NAME]
-    device_info = config_entry.data["dev_info"]
 
-    alarms = []
-    # Add all PowerWake deltas
-    for alarm in list(coordinator.data["alarms"]):
-        alarms.append(SomneoPowerWake(coordinator, unique_id, name, device_info, alarm))
-
-    snooze = [SomneoSnooze(coordinator, unique_id, name, device_info, "snooze")]
-
-    sunset = [SomneoSunsetDuration(coordinator, unique_id, name, device_info, "sunset_duration"),
-              SomneoSunsetLevel(coordinator, unique_id, name, device_info, "sunset_level"),
-              SomneoSunsetVolume(coordinator, unique_id, name, device_info, "sunset_volume")
+    alarms = [
+        SomneoPowerWake(coordinator, unique_id, alarm)
+        for alarm in list(coordinator.data["alarms"])
     ]
 
-    display = [SomneoDisplayBrightness(coordinator, unique_id, name, device_info, "display_brightness")]
+    snooze = [SomneoSnooze(coordinator, unique_id, "snooze")]
+
+    sunset = [
+        SomneoSunsetDuration(coordinator, unique_id, "sunset_duration"),
+        SomneoSunsetLevel(coordinator, unique_id, "sunset_level"),
+        SomneoSunsetVolume(coordinator, unique_id, "sunset_volume"),
+    ]
+
+    display = [
+        SomneoDisplayBrightness(coordinator, unique_id, "display_brightness")
+    ]
 
     async_add_entities(alarms, update_before_add=True)
     async_add_entities(snooze, update_before_add=True)
@@ -51,36 +50,36 @@ async def async_setup_entry(
 class SomneoPowerWake(SomneoEntity, NumberEntity):
     """Representation of a Powerwake number."""
 
-    _attr_should_poll = True
-    _attr_assumed_state = False
-    _attr_available = True
-    _attr_native_step = 1
     _attr_has_entity_name = True
     _attr_native_min_value = 0
     _attr_native_max_value = 59
+    _attr_native_step = 1
     _attr_translation_key = "powerwake_delta"
 
     def __init__(
         self,
         coordinator,
         unique_id: str,
-        name: str,
-        dev_info: dict,
         alarm: int | str,
     ) -> None:
         """Initialize number entities."""
         super().__init__(
-            coordinator, unique_id, name, dev_info, "alarm" + str(alarm) + "_powerwake_delta"
+            coordinator, unique_id, "alarm" + str(alarm) + "_powerwake_delta"
         )
 
         self._attr_translation_placeholders = {"number": str(alarm)}
 
         self._alarm = alarm
+        self._attr_entity_registry_enabled_default = coordinator.data["alarms"].get(
+            alarm, {}
+        ).get("visible", False)
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the PowerWake delta value."""
-        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]["powerwake_delta"]
+        self._attr_native_value = self.coordinator.data["alarms"][self._alarm][
+            "powerwake_delta"
+        ]
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
@@ -91,7 +90,6 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
 class SomneoSnooze(SomneoEntity, NumberEntity):
     """Representation of a snooze time."""
 
-    _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
     _attr_translation_key = "snooze_time"
@@ -113,7 +111,6 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
 class SomneoSunsetDuration(SomneoEntity, NumberEntity):
     """Represenation of the Sunset duration."""
 
-    _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
     _attr_translation_key = "sunset_duration"
@@ -135,7 +132,6 @@ class SomneoSunsetDuration(SomneoEntity, NumberEntity):
 class SomneoSunsetLevel(SomneoEntity, NumberEntity):
     """Represenation of the Sunset level."""
 
-    _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
     _attr_translation_key = "sunset_level"
@@ -157,7 +153,6 @@ class SomneoSunsetLevel(SomneoEntity, NumberEntity):
 class SomneoSunsetVolume(SomneoEntity, NumberEntity):
     """Represenation of the Sunset volume."""
 
-    _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
     _attr_translation_key = "sunset_volume"
@@ -180,7 +175,6 @@ class SomneoSunsetVolume(SomneoEntity, NumberEntity):
 class SomneoDisplayBrightness(SomneoEntity, NumberEntity):
     """Representation of the display brightness."""
 
-    _attr_should_poll = True
     _attr_available = True
     _attr_assumed_state = False
     _attr_translation_key = "display_brightness"
