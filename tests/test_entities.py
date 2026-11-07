@@ -170,3 +170,14 @@ async def test_entity_registry_entries(setup_integration, hass: HomeAssistant) -
     assert registry.async_get_entity_id(Platform.LIGHT, DOMAIN, f"{SERIAL}_light")
     assert registry.async_get_entity_id(Platform.SWITCH, DOMAIN, f"{SERIAL}_alarm0")
 
+
+async def test_entities_handle_empty_coordinator_data_without_keyerror(
+    setup_integration, hass: HomeAssistant, mock_somneo
+) -> None:
+    """Test that coordinator update with fallback defaults avoids KeyError."""
+    coordinator = hass.data[DOMAIN][setup_integration.entry_id]
+    mock_somneo.fetch_data.return_value = coordinator._default_data()
+    # Trigger refresh with empty defaults: must not raise in any listener
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+

@@ -77,10 +77,10 @@ class SomneoPowerWake(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the PowerWake delta value."""
-        self._attr_native_value = self.coordinator.data["alarms"][self._alarm][
-            "powerwake_delta"
-        ]
-        self.async_write_ha_state()
+        alarm_data = self.coordinator.data.get("alarms", {}).get(self._alarm)
+        if alarm_data and "powerwake_delta" in alarm_data:
+            self._attr_native_value = alarm_data["powerwake_delta"]
+            self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjusts PowerWake delta in the UI."""
@@ -101,8 +101,9 @@ class SomneoSnooze(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the snooze time value."""
-        self._attr_native_value = self.coordinator.data["snooze_time"]
-        self.async_write_ha_state()
+        if "snooze_time" in self.coordinator.data:
+            self._attr_native_value = self.coordinator.data["snooze_time"]
+            self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjusts snooze time in the UI."""
@@ -122,8 +123,10 @@ class SomneoSunsetDuration(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset duration value."""
-        self._attr_native_value = self.coordinator.data["sunset"]["duration"]
-        self.async_write_ha_state()
+        sunset = self.coordinator.data.get("sunset")
+        if sunset and "duration" in sunset:
+            self._attr_native_value = sunset["duration"]
+            self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjusts sunset duration in the UI."""
@@ -143,8 +146,10 @@ class SomneoSunsetLevel(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset level value."""
-        self._attr_native_value = self.coordinator.data["sunset"]["level"]
-        self.async_write_ha_state()
+        sunset = self.coordinator.data.get("sunset")
+        if sunset and "level" in sunset:
+            self._attr_native_value = sunset["level"]
+            self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjusts sunset level in the UI."""
@@ -164,8 +169,10 @@ class SomneoSunsetVolume(SomneoEntity, NumberEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset volume value."""
-        self._attr_native_value = self.coordinator.data["sunset"]["volume"]
-        self.async_write_ha_state()
+        sunset = self.coordinator.data.get("sunset")
+        if sunset and "volume" in sunset:
+            self._attr_native_value = sunset["volume"]
+            self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Called when user adjusts sunset volume in the UI."""

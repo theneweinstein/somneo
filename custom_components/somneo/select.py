@@ -79,7 +79,10 @@ class SomneoDays(SomneoEntity, SelectEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the alarm days selection."""
-        new_option = self.coordinator.data["alarms"][self._alarm]["days_type"]
+        alarm_data = self.coordinator.data.get("alarms", {}).get(self._alarm)
+        if not alarm_data or "days_type" not in alarm_data:
+            return
+        new_option = alarm_data["days_type"]
         if new_option != self._attr_current_option:
             _LOGGER.debug(
                 "Alarm %s days changed: %s -> %s",
@@ -113,7 +116,10 @@ class SomneoSunsetSound(SomneoEntity, SelectEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset sound option."""
-        new_option = self.coordinator.data["sunset"]["sound"].replace(" ", "_")
+        sunset = self.coordinator.data.get("sunset")
+        if not sunset or "sound" not in sunset:
+            return
+        new_option = sunset["sound"].replace(" ", "_")
         if new_option != self._attr_current_option:
             _LOGGER.debug(
                 "Sunset sound changed: %s -> %s",
@@ -147,7 +153,10 @@ class SomneoSunsetCurve(SomneoEntity, SelectEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset curve option."""
-        new_option = self.coordinator.data["sunset"]["curve"].replace(" ", "_")
+        sunset = self.coordinator.data.get("sunset")
+        if not sunset or "curve" not in sunset:
+            return
+        new_option = sunset["curve"].replace(" ", "_")
         if new_option != self._attr_current_option:
             _LOGGER.debug(
                 "Sunset curve changed: %s -> %s",

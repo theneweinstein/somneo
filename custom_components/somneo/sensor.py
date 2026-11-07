@@ -98,7 +98,7 @@ class SomneoSensor(SomneoEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sensor value."""
-        self._attr_native_value = self.coordinator.data[self._type]
+        self._attr_native_value = self.coordinator.data.get(self._type)
         self.async_write_ha_state()
 
 
@@ -111,7 +111,7 @@ class SomneoNextAlarmSensor(SomneoEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the next alarm sensor value."""
-        next_alarm = self.coordinator.data["next_alarm"]
+        next_alarm = self.coordinator.data.get("next_alarm")
         # The coordinator guarantees a timezone-aware datetime; a naive value
         # would be invalid for a TIMESTAMP sensor, so drop it defensively.
         if next_alarm is not None and next_alarm.tzinfo is None:
@@ -131,6 +131,6 @@ class SomneoAlarmStatus(SomneoEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the alarm status sensor value."""
-        self._attr_native_value = self.coordinator.data["somneo_status"]
+        self._attr_native_value = self.coordinator.data.get("somneo_status")
         self.async_write_ha_state()
 

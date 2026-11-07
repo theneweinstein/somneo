@@ -61,7 +61,10 @@ class SomneoTime(SomneoEntity, TimeEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the alarm time value."""
-        self._attr_native_value = self.coordinator.data["alarms"][self._alarm]["time"]
+        alarm_data = self.coordinator.data.get("alarms", {}).get(self._alarm)
+        if not alarm_data or "time" not in alarm_data:
+            return
+        self._attr_native_value = alarm_data["time"]
 
         self.async_write_ha_state()
 
