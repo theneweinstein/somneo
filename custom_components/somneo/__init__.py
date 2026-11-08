@@ -112,7 +112,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unique_id = entry.unique_id
     assert unique_id is not None
 
-    coordinator = SomneoCoordinator(hass, host, name, unique_id)
+    coordinator = SomneoCoordinator(hass, host, name, unique_id, config_entry=entry)
     await coordinator.async_fetch_device_info()
 
     await coordinator.async_config_entry_first_refresh()
@@ -184,6 +184,7 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
         host: str,
         name: str,
         unique_id: str,
+        config_entry: ConfigEntry | None = None,
     ) -> None:
         """Initialize Somneo client."""
         self.somneo = Somneo(host)
@@ -204,6 +205,7 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
         super().__init__(
             hass,
             _LOGGER,
+            config_entry=config_entry,
             name=DOMAIN,
             update_interval=SCAN_INTERVAL,
             update_method=self._async_update,
@@ -245,7 +247,9 @@ class SomneoCoordinator(DataUpdateCoordinator[SomneoData]):
     async def _async_update(self) -> SomneoData:
         """Fetch the latest data."""
         try:
-            data = cast(SomneoData, await self.somneo.fetch_data(force_slow_refresh=True))
+            data = cast(
+                SomneoData, await self.somneo.fetch_data(force_slow_refresh=True)
+            )
 
             if data is None:
                 _LOGGER.debug("Somneo fetch returned None, using previous data")

@@ -50,15 +50,17 @@ class SomneoMediaPlayer(SomneoEntity, MediaPlayerEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update media player state from coordinator data."""
-        player_data = self.coordinator.data["player"]
+        player_data = self.coordinator.data.get("player")
+        if not player_data:
+            return
         self._attr_state = (
             MediaPlayerState.ON
-            if player_data["state"]
+            if player_data.get("state")
             else MediaPlayerState.OFF
         )
-        self._attr_volume_level = player_data["volume"]
-        self._attr_source = player_data["source"]
-        self._attr_source_list = player_data["possible_sources"]
+        self._attr_volume_level = player_data.get("volume", 0.0)
+        self._attr_source = player_data.get("source")
+        self._attr_source_list = player_data.get("possible_sources", [])
         self.async_write_ha_state()
 
     async def async_turn_on(self) -> None:

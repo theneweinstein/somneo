@@ -15,10 +15,10 @@ from .common import FAKE_DATA, FAKE_DEVICE_INFO, HOST, NAME, SERIAL
 
 @pytest.fixture
 async def coordinator(
-    hass: HomeAssistant, mock_somneo
+    hass: HomeAssistant, config_entry, mock_somneo
 ) -> SomneoCoordinator:
     """Create a coordinator with mocked device data."""
-    return SomneoCoordinator(hass, HOST, NAME, SERIAL)
+    return SomneoCoordinator(hass, HOST, NAME, SERIAL, config_entry=config_entry)
 
 
 async def test_default_data_shape(coordinator: SomneoCoordinator) -> None:

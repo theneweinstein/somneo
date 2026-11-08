@@ -69,15 +69,16 @@ class SomneoAlarmToggle(SomneoEntity, SwitchEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the alarm state."""
-        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]["enabled"]
+        alarm_data = self.coordinator.data.get("alarms", {}).get(self._alarm)
+        if not alarm_data:
+            return
+        self._attr_is_on = alarm_data.get("enabled", False)
 
         self._attr_extra_state_attributes = {
-            "time": self.coordinator.data["alarms"][self._alarm]["time"],
-            "days": self.coordinator.data["alarms"][self._alarm]["days"],
-            "powerwake": self.coordinator.data["alarms"][self._alarm]["powerwake"],
-            "powerwake_delta": self.coordinator.data["alarms"][self._alarm][
-                "powerwake_delta"
-            ],
+            "time": alarm_data.get("time"),
+            "days": alarm_data.get("days"),
+            "powerwake": alarm_data.get("powerwake"),
+            "powerwake_delta": alarm_data.get("powerwake_delta"),
         }
         self.async_write_ha_state()
 
@@ -139,11 +140,12 @@ class SomneoPowerWakeToggle(SomneoEntity, SwitchEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the powerwake switch state."""
-        self._attr_is_on = self.coordinator.data["alarms"][self._alarm]["powerwake"]
+        alarm_data = self.coordinator.data.get("alarms", {}).get(self._alarm)
+        if not alarm_data:
+            return
+        self._attr_is_on = alarm_data.get("powerwake", False)
         self._attr_extra_state_attributes = {
-            "powerwake_delta": self.coordinator.data["alarms"][self._alarm][
-                "powerwake_delta"
-            ]
+            "powerwake_delta": alarm_data.get("powerwake_delta")
         }
         self.async_write_ha_state()
 
@@ -164,13 +166,16 @@ class SomneoSunsetToggle(SomneoEntity, SwitchEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Update the sunset switch state."""
-        self._attr_is_on = self.coordinator.data["sunset"]["is_on"]
+        sunset = self.coordinator.data.get("sunset")
+        if not sunset:
+            return
+        self._attr_is_on = sunset.get("is_on", False)
         self._attr_extra_state_attributes = {
-            "duration": self.coordinator.data["sunset"]["duration"],
-            "curve": self.coordinator.data["sunset"]["curve"],
-            "level": self.coordinator.data["sunset"]["level"],
-            "sound": self.coordinator.data["sunset"]["sound"],
-            "volume": self.coordinator.data["sunset"]["volume"],
+            "duration": sunset.get("duration"),
+            "curve": sunset.get("curve"),
+            "level": sunset.get("level"),
+            "sound": sunset.get("sound"),
+            "volume": sunset.get("volume"),
         }
         self.async_write_ha_state()
 
